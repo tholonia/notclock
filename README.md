@@ -31,17 +31,12 @@ The latest version of this file is usually [here](https://tholonia.com/Images/SV
 
 Here some interesting configs (live links)
 
-[Basic Lines, fast](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.234375&l=0&k=0&q=1&a1=1&a2=1&a3=1&a4=1&a5=1&a6=1&n=0&o=1&g=1&p=1&a=0)
-
-[Basic Lines w/ polygons](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.0146484375&l=0&k=0&q=1&a1=1&a2=1&a3=1&a4=1&a5=1&a6=1&n=1&o=1&g=1&p=1&a=0)
-
-[Asymmetry](https://tholonia.com/Images/SVG/notclock.svg?c=1000&i=7.5&l=2&k=1&q=1&a1=0&a2=0&a3=1&a4=1&a5=1&a6=1&n=0&o=1&g=1&p=1&a=4)
-
-[Balls only](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.0146484375&l=5&k=0&q=0&n=5&o=1&g=1&p=16&a=0)
-
-[Balls with Rays](https://tholonia.com/Images/SVG/notclock.svg?c=-2&i=0.003&l=2&k=1&a1=0&a2=0&a3=0&a4=0&a5=0&a6=0&n=1&o=0.04\)
-
-[Connected Balls](https://tholonia.com/Images/SVG/notclock.svg?c=-2&i=0.003&l=2&k=1&a1=0&a2=0&a3=0&a4=0&a5=0&a6=0&n=1&o=0.04\)
+- [Basic Lines, fast](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.234375&l=0&k=0&q=1&a1=1&a2=1&a3=1&a4=1&a5=1&a6=1&n=0&o=1&g=1&p=1&a=0)
+- [Basic Lines w/ polygons](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.0146484375&l=0&k=0&q=1&a1=1&a2=1&a3=1&a4=1&a5=1&a6=1&n=1&o=1&g=1&p=1&a=0)
+- [Asymmetry](https://tholonia.com/Images/SVG/notclock.svg?c=1000&i=7.5&l=2&k=1&q=1&a1=0&a2=0&a3=1&a4=1&a5=1&a6=1&n=0&o=1&g=1&p=1&a=4)
+- [Balls only](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.0146484375&l=5&k=0&q=0&n=5&o=1&g=1&p=16&a=0)
+- [Balls with Rays](https://tholonia.com/Images/SVG/notclock.svg?c=-2&i=0.003&l=2&k=1&a1=0&a2=0&a3=0&a4=0&a5=0&a6=0&n=1&o=0.04\)
+- [Connected Balls](https://tholonia.com/Images/SVG/notclock.svg?c=-2&i=0.003&l=2&k=1&a1=0&a2=0&a3=0&a4=0&a5=0&a6=0&n=1&o=0.04\)
 
 Some screenshots
 
@@ -58,46 +53,45 @@ Some screenshots
 <img src="images/clock_polyballs.png"/>
 
 ### Key Commands
-```
-    [HOME]  Toggle BG Color (B/W)   # changes bacjground color
-(c) [UP]    ++Faster                # speeds up teh loop.  Can be very CPU intensive
-    [DN]    --Slower                # slows down the loop speed
-    [PGUP]  ++Longer                # makes the line longer
-    [PGDN]  --Shorter               # makes the line shorter
-    [RIGHT] ++Fatter                # makes the line wider
-    [LEFT]  --Thinner               # makes the line thinner
-(i) [INS]   ++Deg*2                	# Doubles the degrees rotated per frame
-    [DEL]   --Deg/2                 # Halfs the degrees rotated per frame
+**HOME**   Toggle BG Color (B/W)   # *changes background color*
+**UP** (c)    ++Faster              *Speeds up the loop.  Can be very CPU intensive*
+**DN**         --Slower              *slows down the loop speed*
+**PGUP**   ++Longer             *Makes all the lines longer*
+**PGDN**    --Shorter              *Makes all the lines shorter*
+**RIGHT** ++Fatter                *Makes all the lines wider*
+**LEFT**     --Thinner             *Makes all the lines thinner*
+**INS** (i)   ++Deg\*2               *Doubles the degrees rotated per frame*
+**DEL**       --Deg/2                 *Half's the degrees rotated per frame*
 
-(l) [ALT-N]      ++Circles Radius   # Increases size of spheres AND cycles the spheres
-    [ALT-B]      --Circles Radius   # Decreases size of spheres AND cycles the spheres
-(p) [ALT-X]      ++Circles Opacity  # Increases density of sphere
-    [ALT-Z]      --Circles Opacity  # Increases translucency of sphere
-    
-(k) [ALT-R]      Cycle colors       # Cycles thru various color schemes
-(g) [ALT-G]      Cycle audio        # Cycles thru various sound/music themes
-(u) [ALT-U]      Cycle dataset      # Cycles though transformed datasets of base data
+**ALT-N** (l)   ++Circles Radius      *Increases size of spheres AND cycles the spheres*
+**ALT-B**        --Circles Radius        *Decreases size of spheres AND cycles the spheres*
+**ALT-X** (p)  ++Circles Opacity     *Increases density of sphere*
+**ALT-Z**        --Circles Opacity       *Increases translucency of sphere*
+**ALT-R** (k)      Cycle colors          *Cycles thru various color schemes*
+**ALT-G** (g)      Cycle audio           *Cycles thru various sound/music themes*
+**ALT-U** (u)      Cycle dataset         *Cycles though transformed datasets of base data* ^*^
 
-(a) [ALT-K]      Cycle Connectors   # Connecting teh points in various ways
-(n) [ALT-V]      Cycle Polygons     # Cycling thru various polygons based on the data
-    [ALT-O]      ++poly opacity     # Increases density of polygon
-(o) [ALT-I]      --poly opacity     # Increases tramslucency of polygon
-    [ALT-J]      Jump fwd 5 deg     # Advance all diverging angles by 5 degrees
-    [CTRL-Y]     Toggle audio       # Start sound system (requires manual initiation)
+**ALT-K** (a)      Cycle Connectors   *Connecting the points in various ways*
+**ALT-V** (n)      Cycle Polygons      *Cycling thru various polygons based on the data*
+**ALT-O**      ++poly opacity             *Increases density of polygon*
+**ALT-I** (o)    --poly opacity             *Increases translucency of polygon*
+**ALT-J**            Jump fwd 5 deg       *Advance all diverging angles by 5 degrees*
+**CTRL-Y**        Toggle audio           *Start sound system (requires manual initiation)*
 
-(a1) [ALT-CTRL-1]    Toggle show/hide line 1
-(a2) [ALT-CTRL-2]    Toggle show/hide line 2
-(a3) [ALT-CTRL-3]    Toggle show/hide line 3
-(a4) [ALT-CTRL-4]    Toggle show/hide line 4
-(a5) [ALT-CTRL-5]    Toggle show/hide line 5
-(a6) [ALT-CTRL-6]    Toggle show/hide line 6
-(q)  [ALT-CTRL 0]    Toggle show/hide all Lines
+(a1) **ALT-CTRL-1**    *Toggle show/hide line 1*
+(a2) **ALT-CTRL-2**    *Toggle show/hide line 2*
+(a3) **ALT-CTRL-3**    *Toggle show/hide line 3*
+(a4) **ALT-CTRL-4**    *Toggle show/hide line 4*
+(a5) **ALT-CTRL-5**    *Toggle show/hide line 5*
+(a6) **ALT-CTRL-6**    *Toggle show/hide line 6*
 
-	[CTRL-SFT-F1]   Shorten line 1		[CTRL-SFT-1]    Lengthen Lines 1
-	[CTRL-SFT-F2]   Shorten line 2		[CTRL-SFT-2]    Lengthen Lines 2
-	[CTRL-SFT-F3]   Shorten line 3		[CTRL-SFT-3]    Lengthen Lines 3
-	[CTRL-SFT-F4]   Shorten line 4		[CTRL-SFT-4]    Lengthen Lines 4
-	[CTRL-SFT-F5]   Shorten line 5		[CTRL-SFT-5]    Lengthen Lines 5
-	[CTRL-SFT-F6]   Shorten line 6		[CTRL-SFT-6]    Lengthen Lines 6
-	
-```
+(q) **ALT-CTRL 0**    *Toggle show/hide all Lines*
+
+**CTRL-SFT-F1**   *Shorten line 1*		**CTRL-SFT-1**    *Lengthen Lines 1*
+**CTRL-SFT-F2**   Shorten line 2		**CTRL-SFT-2**    *Lengthen Lines 2*
+**CTRL-SFT-F3**   *Shorten line 3*		**CTRL-SFT-3**    *Lengthen Lines 3*
+**CTRL-SFT-F4**   *Shorten line 4*		**CTRL-SFT-4**    *Lengthen Lines 4*
+**CTRL-SFT-F5**   *Shorten line 5*		**CTRL-SFT-5**    *Lengthen Lines 5*
+**CTRL-SFT-F6**   *Shorten line 6*		**CTRL-SFT-6**    *Lengthen Lines 6*
+
+^*^ 
