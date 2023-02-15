@@ -382,7 +382,7 @@ function drawTree(branch_angle, rotation) {
         var totcirc = 3
    
         //% █████████████ ADJUSTMENTS █████████████
-        var cr_rad = circle_radius*((7-order))
+        var cr_rad = Math.round(circle_radius*((7-order)/3))
 
         //? report mouse x/y position on teh screen
         wText({'str':"x="+point.x+",y="+point.y, 'row':2,'col':3})
@@ -500,12 +500,12 @@ function drawTree(branch_angle, rotation) {
                     [
                         [nx2, ny2],
                         [
-                            (nx2 * Math.cos(rotation)) - (nx2 * Math.sin(rotation)),
-                            (ny2 * Math.cos(rotation)) + (ny2 * Math.sin(rotation)),
+                            (nx1 - 10) * Math.cos(rotation) - (nx2 + 10) * Math.sin(rotation),
+                            (ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
                         ],
                         [
-                            (nx2 * Math.cos(rotation)) - (nx2 * Math.sin(rotation)),
-                            (ny2 * Math.cos(rotation)) + (ny2 * Math.sin(rotation)),
+                            (nx1 + 10) * Math.cos(rotation) + (nx2 - 10) * Math.sin(rotation),
+                            (ny1 - 10) * Math.cos(rotation) - (ny2 - 10) * Math.sin(rotation),
                         ],
                     ];
         }
@@ -1377,6 +1377,7 @@ function buildpath(xfr) {
     }
     //? CUBIC CURVE - not curvy at all
     function makepath_CS(q) {
+        path_width = 4
         path_ary = []
         path=[0,0,0,0,0,0]
         j=0
@@ -1397,6 +1398,7 @@ function buildpath(xfr) {
 
     //? QUADRATIC CURVE = not very curvy
     function makepath_QT(q) {
+        path_width=3
         path_ary = []
         path=[0,0,0,0,0,0]
 
@@ -1418,6 +1420,7 @@ function buildpath(xfr) {
 
     //? ARC PATHS - sorta useless
     function makepath_LA(q) {
+        path_width=3
         path_ary = []
         path=[0,0,0,0,0,0]
         for (k=0;k< sqary_r.length;k++) {
@@ -1443,6 +1446,7 @@ function buildpath(xfr) {
     function makepath_CS2(q) {
         path_ary = []
         path=[0,0,0,0,0,0]
+        path_width=4  
 
         let x = ""
         for (k=0;k< sqary_r.length;k++) {
@@ -1463,6 +1467,7 @@ function buildpath(xfr) {
     }
     //? CUBIC CURVE v3
     function makepath_CS3(q) {
+        path_width = 2
         path_ary = []
         path=[0,0,0,0,0,0]
 
@@ -1509,9 +1514,10 @@ function buildpath(xfr) {
  
     //? CUBIC CURVE v4
     function makepath_CS4(q) {
+        path_width=2
         path_ary = []
         path=[0,0,0,0,0,0]
-        path_width=1
+        path_width=2  //? this is a very dense and bust path, so thinner lines
 
         let x = ""
         for (k=0;k< sqary_r.length;k++) {

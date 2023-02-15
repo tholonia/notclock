@@ -152,12 +152,12 @@
             }
             //? ════════════════════════════════════════════════ CIRCLE RADIUS
             if (lastkey['Alt'] && lastkey['KeyN']) {
-                circle_radius++
+                circle_radius = circle_radius + 1
                 console.log("Increasing Circle Radius: "+circle_radius)
             }
             //? ────────────────────────────────────────────────  
             if (lastkey['Alt'] && lastkey['KeyB']) {
-                circle_radius = circle_radius - 2
+                circle_radius = circle_radius - 1
                 console.log("Decreasing Circle Radius: "+circle_radius)
             }
             
@@ -179,7 +179,7 @@
 
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyV']) {
-                which_poly = (which_poly+1) % num_of_polys // number of polys
+                which_poly = (which_poly+1) % num_of_polys 
                 console.log("Show polys: "+which_poly)
             }
             //? ────────────────────────────────────────────────
