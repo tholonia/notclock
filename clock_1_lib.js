@@ -77,8 +77,10 @@ class Tree {
                     y + (newlinelength) * Math.sin(toRadians(newangleRIGHT))
                     );
 
+            //? push all the x.y values to a simple array
             fullary_right.push({'x':x,'y':y})
-            //@ DEBUG
+
+            //? push all the ADJUTSED x/y values WITH their generations number to a simple array
             xfullary_right.push({
                 'g':gens,
                 'x':(x + (newlinelength) * Math.cos(toRadians(newangleRIGHT))).toFixed(2),//Math.round(x*100)/100,
@@ -92,13 +94,14 @@ class Tree {
                     y + (newlinelength) * Math.sin(toRadians(newangleLEFT))
                     );
 
-            // fullary_left.push({'x':x,'y':y})
-            // //@ DEBUG
-            // xfullary_left.push({
-            //     'g':gens,
-            //     'x':x + (newlinelength) * Math.cos(toRadians(newangleLEFT)),// Math.round(x*100)/100,
-            //     'y':y +   Math.round(y*100)/100
-            // })
+            //? push all the x.y values to a simple array
+            fullary_left.push({'x':x,'y':y})
+            //? push all the ADJUTSED x/y values WITH their generations number to a simple array
+            xfullary_left.push({
+                'g':gens,
+                'x':x + (newlinelength) * Math.cos(toRadians(newangleLEFT)),// Math.round(x*100)/100,
+                'y':(y + (newlinelength) * Math.sin(toRadians(newangleRIGHT))).toFixed(2)//Math.round(y*100)/100
+            })
 
             //<!--  create edges in the graph that connect the base node to the following nodes -->
             this.right_branch = new Edge(this.base_node, this.right_node);
@@ -177,42 +180,9 @@ function drawTree(branch_angle, rotation) {
     //% let noteseed = (54+tree_counter+ rotation)%108+108
 
 
-    rnum=0;
-    writ('    [HOME]  Toggle BG Color (B/W)',   '');
-    writ('(c) [UP]    ++Faster',                '(' + loop_delay / 1000 + 's)');
-    writ('    [DN]    --Slower',                '(' + loop_delay / 1000 + 's)');
-    writ('    [PGUP]  ++Longer',                '(' + linelength_adj + ')');
-    writ('    [PGDN]  --Shorter',               '(' + linelength_adj + ')');
-    writ('    [RIGHT] ++Fatter',                '');
-    writ('    [LEFT]  --Thinner',               '');
-    writ('(i) [INS]   ++Deg*2',                 '(' + deg_adj % 360 + ')');
-    writ('    [DEL]   --Deg/2',                 '(' + deg_adj % 360 + ')');
-    writ('',                                    '');
-    writ('(l) [ALT-N]      ++Circles Radius',   '(' + circle_radius + ')');
-    writ('    [ALT-B]      --Circles Radius',   '(' + circle_radius + ')');
-    writ('(p) [ALT-X]      ++Circles Opacity',  '(' + circle_opacity + ')');
-    writ('    [ALT-Z]      --Circles Opacity',  '(' + circle_opacity + ')');
-    
-    writ('(k) [ALT-R]      Cycle colors',       '');
-    writ('(g) [ALT-G]      Cycle audio',        '(' + cycle_audio + ')');
-    
-    writ('(a) [ALT-K]      Cycle Connectors',   '(' + current_path + ')');
-    writ('(n) [ALT-V]      Cycle Polygons',     '(' + which_poly + ')');
-    writ('    [ALT-O]      ++poly opacity',     '(' + poly_opacity + ')');
-    writ('(o) [ALT-I]      --poly opacity',     '(' + poly_opacity + ')');
-    writ('    [ALT-J]      Jump fwd 5 deg',     '');
-    writ('    [CTRL-Y]     Toggle audio',       '(' + sound_initialized + ')');
-    writ('','');
-    writ('(a1-a6) [ALT-CTRL 1-6]    Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')');
-    writ('(q)     [ALT-CTRL 0]      Toggle All Lines',      '(' + show_all + ')');
-    writ('        [CTRL-SFT-(F1-F6) Longer Lines 1-6','');
-    writ('        [CTRL-SFT-(1-6)   Shorter Lines 1-6','');
-    writ('-------------------------------------------------','');
-    writ('[CTRL=SFT-Z]   Show/Hide this menu',  '');
-    writ('[SPACE] Pause/Run',                   '');
-    writ('TIME PER CYCLE:',                     cycletime);
-    writ('Current Angle:',                      rotation % 360);
-
+    //! ┌───────────────────────────────────────────────
+    //! │ build the query string
+    //! └───────────────────────────────────────────────
     function makeQs(qs) {
         // let qs = "https://tholonia.com/Images/SVG/notclock.svg"
         // let qs = "file:///home/jw/store/src/music/clock_1.svg"
@@ -236,24 +206,56 @@ function drawTree(branch_angle, rotation) {
         qs = qs + "&g=" + cycle_audio
         qs = qs + "&p=" + circle_opacity
         qs = qs + "&a=" + current_path
+        qs = qs + "&u=" + current_set
         return(qs)
-
     }
+
+    rnum=0;
+    writ('    [HOME]  Toggle BG Color (B/W)',   '');
+    writ('(c) [UP]    ++Faster',                '(' + loop_delay / 1000 + 's)');
+    writ('    [DN]    --Slower',                '(' + loop_delay / 1000 + 's)');
+    writ('    [PGUP]  ++Longer',                '(' + linelength_adj + ')');
+    writ('    [PGDN]  --Shorter',               '(' + linelength_adj + ')');
+    writ('    [RIGHT] ++Fatter',                '');
+    writ('    [LEFT]  --Thinner',               '');
+    writ('(i) [INS]   ++Deg*2',                 '(' + deg_adj % 360 + ')');
+    writ('    [DEL]   --Deg/2',                 '(' + deg_adj % 360 + ')');
+    writ('',                                    '');
+    writ('(l) [ALT-N]      ++Circles Radius',   '(' + circle_radius + ')');
+    writ('    [ALT-B]      --Circles Radius',   '(' + circle_radius + ')');
+    writ('(p) [ALT-X]      ++Circles Opacity',  '(' + circle_opacity + ')');
+    writ('    [ALT-Z]      --Circles Opacity',  '(' + circle_opacity + ')');
+    
+    writ('(k) [ALT-R]      Cycle colors',       '');
+    writ('(g) [ALT-G]      Cycle audio',        '(' + cycle_audio + ')');
+    writ('(u) [ALT-U]      Cycle dataset',      '(' + current_set + ')');
+    
+    writ('(a) [ALT-K]      Cycle Connectors',   '(' + current_path + ')');
+    writ('(n) [ALT-V]      Cycle Polygons',     '(' + which_poly + ')');
+    writ('    [ALT-O]      ++poly opacity',     '(' + poly_opacity + ')');
+    writ('(o) [ALT-I]      --poly opacity',     '(' + poly_opacity + ')');
+    writ('    [ALT-J]      Jump fwd 5 deg',     '');
+    writ('    [CTRL-Y]     Toggle audio',       '(' + sound_initialized + ')');
+    writ('','');
+    writ('(a1-a6) [ALT-CTRL 1-6]    Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')');
+    writ('(q)     [ALT-CTRL 0]      Toggle All Lines',      '(' + show_all + ')');
+    writ('        [CTRL-SFT-(F1-F6) Longer Lines 1-6','');
+    writ('        [CTRL-SFT-(1-6)   Shorter Lines 1-6','');
+    writ('-------------------------------------------------','');
+    writ('[CTRL=SFT-Z]   Show/Hide this menu',  '');
+    writ('[SPACE] Pause/Run',                   '');
+    writ('TIME PER CYCLE:',                     cycletime);
+    writ('Current Angle:',                      rotation % 360);
+
+
     writ('QUERY STR: ', makeQs("https://tholonia.com/Images/SVG/notclock.svg"));
     if (_PRIVATE_MODE) {
         writ('QUERY STR: ', makeQs("file:///home/jw/store/src/music/clock_1.svg"));
     }
-    writ('v.'+_VERSION,                          '');
-
+    writ('v.'+_VERSION+ " https://github.com/tholonia/notclock",                          '');
     //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
     //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
 
-    if (sound_initialized == 1) {
-        alternotes = [54, 67.5, 43.2, 34.56, 84.375]
-        let noteseed = (tree_counter + rotation) % 4
-        let rx = randint(0, alternotes.length - 1)
-        let xx = alternotes[rx] * 2
-    }
 
     var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
 
@@ -263,38 +265,46 @@ function drawTree(branch_angle, rotation) {
     gen = 0
  
 
-    //@ ████████████████████████████████████████████████
+    //* ████████████████████████████████████████████████
+    //* ███████████████████ DATASETS ███████████████████
+    //* ████████████████████████████████████████████████
+
     //? create data sets from original data
 
     // var bezierary_right = BezierCurve(fullary_right);
     // var bezierary_left = BezierCurve(fullary_left);
 
-    adata_right = []
+    adata_right = [] //? these hold the final data used to creates lines
     adata_left = []
 
-    if (current_path == 0) {dataform ="line"}
-    if (current_path >0 ) {dataform ="buildpath"}
+    //? any current_path > 0 runs concurrently with "lines"
+    if (current_path == 0) {dataform ="line"}  //? nomal lines are the default
+    if (current_path >0 ) {dataform ="buildpath"} //? 'dataform is a flag for later processing
 
-    //? this is always on as the default, can be turned off by hiding lines function
-    draw_edges.forEach(element => {
-        adata_right.push({'x':element.node_1.x, 'y':element.node_1.y})
-        adata_left.push({'x':element.node_2.x, 'y':element.node_2.y})
-    })
+    //? this is the default using standrd x/y data
+    if (current_set == 0) {
+        draw_edges.forEach(element => {
+            adata_right.push({'x':element.node_1.x, 'y':element.node_1.y})
+            adata_left.push({'x':element.node_2.x, 'y':element.node_2.y})
+        })
+    }
     //? these are ugly and broken
-    // if (dataform == "bez") {
-    //     adata_right = BezierCurve(fullary_right);
-    //     adata_left = BezierCurve(fullary_left);
-    // }
-    // if (dataform == "bezSrtx") {
-    //     adata_right = BezierCurve(fullary_right);
-    //     adata_left = BezierCurve(fullary_left);
-    //     adata_right = sortByKey(adata_right,'x');
-    //     adata_left = sortByKey(adata_left,'y');
-    // }
+    if (current_set == 1) {
+        //? "bez"
+        adata_right = BezierCurve(fullary_right);
+        adata_left = BezierCurve(fullary_left);
+    }
+    if (current_set == 2) {
+        //? "bezSrtx"
+        adata_right = BezierCurve(fullary_right);
+        adata_left = BezierCurve(fullary_left);
+        adata_right = sortByKey(adata_right,'x');
+        adata_left = sortByKey(adata_left,'y');
+    }
+    //* ████████████████████████████████████████████████
 
 
-    //@ ████████████████████████████████████████████████
-
+    
     if (dataform=="buildpath") {
         //? build the paths
         //@ DEBUG need trigger to turn on/off paths
@@ -319,21 +329,12 @@ function drawTree(branch_angle, rotation) {
         //     log(path_width)
         // }
 
-        //? prepare the gradiant stroke
+        //? prepare the gradiant stroke for the PATHS
+
         var svgns = 'http://www.w3.org/2000/svg';
         var defs = document.createElementNS(svgns, 'defs');
         var gradient = document.createElementNS(svgns, 'radialGradient');
-
-        var stops = [
-            {
-                "color": "white",
-                "offset": "0%"
-            },
-            {
-                "color": "#000000",
-                "offset": "100%"
-            }
-        ];
+        var stops = [{"color": "white","offset": "0%"},{"color": "#000000","offset": "100%"}];
 
         for (var i = 0, length = stops.length; i < length; i++) {
             var stop = document.createElementNS(svgns, 'stop');
@@ -341,6 +342,7 @@ function drawTree(branch_angle, rotation) {
             stop.setAttribute('stop-color', stops[i].color);
             gradient.appendChild(stop);
         }
+
         gradient.id = 'Gradient';
         gradient.setAttribute('cx', '0.5');
         gradient.setAttribute('cy', '0.3');  //? light is slightly above horizon
@@ -370,22 +372,27 @@ function drawTree(branch_angle, rotation) {
         nx2 = adata_left[idx].x
         ny2 = adata_left[idx].y
 
+        //? create LINE instance
         var newLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         newLine.setAttribute('x1', nx1.toString());
         newLine.setAttribute('y1', ny1.toString());
         newLine.setAttribute('x2', nx2.toString());
         newLine.setAttribute('y2', ny2.toString());
 
-        let order = lOrder[gen] //? get the actual gen value from the gensm, which goes uo to 125
+        let order = lOrder[gen] //? get the actual gen value from the gens, which goes uo to 126
+
+        //? report mouse x/y position on teh screen
+        wText({'str':"x="+point.x+",y="+point.y, 'row':2,'col':3})
+
+        //@ ████████████████████████████████████████████████
+        //@ ███████████████████ CIRCLES ████████████████████
+        //@ ████████████████████████████████████████████████
 
         //? add circle
         var totcirc = 3
    
         //% █████████████ ADJUSTMENTS █████████████
-        var cr_rad = Math.round(circle_radius*((7-order)/3))
-
-        //? report mouse x/y position on teh screen
-        wText({'str':"x="+point.x+",y="+point.y, 'row':2,'col':3})
+        var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycles throug the circle-types
 
         if (circle_radius > 0) { //? we have a circle
             //? cyces through the total number of circles patterns available, i.e., 0,1,2...
@@ -473,9 +480,11 @@ function drawTree(branch_angle, rotation) {
             }
         }
 
+        //@ ████████████████████████████████████████████████
 
-
-
+        //? ████████████████████████████████████████████████
+        //? ███████████████████ POLYS ██████████████████████
+        //? ████████████████████████████████████████████████
 
         var poly_arr = false
 
@@ -565,6 +574,7 @@ function drawTree(branch_angle, rotation) {
             poly.setAttribute("stroke-linecap", "round");
             svg.appendChild(poly);
         }
+        //? ████████████████████████████████████████████████
 
         //% █████████████ ADJUSTMENTS █████████████
         newpensize = pensize[order] * line_thickness
@@ -576,9 +586,6 @@ function drawTree(branch_angle, rotation) {
         newLine.setAttribute("stroke", this_color);
         this_opacity = opacities[order]
         newLine.setAttribute("opacity", this_opacity);
-
-
-
 
         // what line sto show/hide
         if (show_all == 1) {
@@ -604,8 +611,17 @@ function drawTree(branch_angle, rotation) {
         gen++;
     };
 
+        //! ████████████████████████████████████████████████
+        //! ███████████████████ SOUND ██████████████████████
+        //! ████████████████████████████████████████████████
     if (sound_initialized == 1) {
-        
+
+        //? make some new sounds based on vars
+        alternotes = [54, 67.5, 43.2, 34.56, 84.375]
+        let noteseed = (tree_counter + rotation) % 4
+        let rx = randint(0, alternotes.length - 1)
+        let xx = alternotes[rx] * 2
+
         //@ g=0: playSound_0()  Long sound
         //@ g=1: playSound_1()  Short sound
         //@ g=2: playSoundData()  snd.play(MP3) - currenly not used
@@ -670,6 +686,7 @@ function drawTree(branch_angle, rotation) {
         //     }
         // }
     }
+        //! ████████████████████████████████████████████████
 }
 //! ┌───────────────────────────────────────────────
 //! │ Convert HSV to RGB

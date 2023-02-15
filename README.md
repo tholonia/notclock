@@ -57,5 +57,47 @@ Some screenshots
 
 <img src="images/clock_polyballs.png"/>
 
+### Key Commands
+```
+    [HOME]  Toggle BG Color (B/W)   # changes bacjground color
+(c) [UP]    ++Faster                # speeds up teh loop.  Can be very CPU intensive
+    [DN]    --Slower                # slows down the loop speed
+    [PGUP]  ++Longer                # makes the line longer
+    [PGDN]  --Shorter               # makes the line shorter
+    [RIGHT] ++Fatter                # makes the line wider
+    [LEFT]  --Thinner               # makes the line thinner
+(i) [INS]   ++Deg*2                	# Doubles the degrees rotated per frame
+    [DEL]   --Deg/2                 # Halfs the degrees rotated per frame
 
+(l) [ALT-N]      ++Circles Radius   # Increases size of spheres AND cycles the spheres
+    [ALT-B]      --Circles Radius   # Decreases size of spheres AND cycles the spheres
+(p) [ALT-X]      ++Circles Opacity  # Increases density of sphere
+    [ALT-Z]      --Circles Opacity  # Increases translucency of sphere
+    
+(k) [ALT-R]      Cycle colors       # Cycles thru various color schemes
+(g) [ALT-G]      Cycle audio        # Cycles thru various sound/music themes
+(u) [ALT-U]      Cycle dataset      # Cycles though transformed datasets of base data
 
+(a) [ALT-K]      Cycle Connectors   # Connecting teh points in various ways
+(n) [ALT-V]      Cycle Polygons     # Cycling thru various polygons based on the data
+    [ALT-O]      ++poly opacity     # Increases density of polygon
+(o) [ALT-I]      --poly opacity     # Increases tramslucency of polygon
+    [ALT-J]      Jump fwd 5 deg     # Advance all diverging angles by 5 degrees
+    [CTRL-Y]     Toggle audio       # Start sound system (requires manual initiation)
+
+(a1) [ALT-CTRL-1]    Toggle show/hide line 1
+(a2) [ALT-CTRL-2]    Toggle show/hide line 2
+(a3) [ALT-CTRL-3]    Toggle show/hide line 3
+(a4) [ALT-CTRL-4]    Toggle show/hide line 4
+(a5) [ALT-CTRL-5]    Toggle show/hide line 5
+(a6) [ALT-CTRL-6]    Toggle show/hide line 6
+(q)  [ALT-CTRL 0]    Toggle show/hide all Lines
+
+	[CTRL-SFT-F1]   Shorten line 1		[CTRL-SFT-1]    Lengthen Lines 1
+	[CTRL-SFT-F2]   Shorten line 2		[CTRL-SFT-2]    Lengthen Lines 2
+	[CTRL-SFT-F3]   Shorten line 3		[CTRL-SFT-3]    Lengthen Lines 3
+	[CTRL-SFT-F4]   Shorten line 4		[CTRL-SFT-4]    Lengthen Lines 4
+	[CTRL-SFT-F5]   Shorten line 5		[CTRL-SFT-5]    Lengthen Lines 5
+	[CTRL-SFT-F6]   Shorten line 6		[CTRL-SFT-6]    Lengthen Lines 6
+	
+```

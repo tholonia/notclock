@@ -2,10 +2,7 @@
 import os
 ofn = "notclock.svg"
 ifn = "clock_1.svg.js"
-# writing to file
 outfile = open(ofn,'w')
-
-# Using readlines()
 infile = open(ifn, 'r')
 Lines = infile.readlines()
 skip = False
@@ -13,15 +10,13 @@ for line in Lines:
     if skip:
         skip = False
         continue
-
     if line.find('var _VERSION') != -1:
         args = line.split("=")
         v = int(float(args[1])*100)
         v=(v+1)/100
         print(f"Version: {v:.2f}")
         line = f"    var _VERSION = {v:.2f}\n"
-
-        # // update org
+        # update original file with new version number
         cmd = f"perl -pi -e 's/var _VERSION.*/var _VERSION = {v}/' clock_1.svg"
         os.system(cmd)
 

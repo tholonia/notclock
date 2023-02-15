@@ -237,6 +237,12 @@
                 console.log("sound_on after:"+sound_on)
            }
             //? ────────────────────────────────────────────────
+            // if (lastkey['Alt'] && lastkey['KeyH']) { //? KeyH seems to be dead
+            if (lastkey['Alt'] && lastkey['KeyU']) {
+                current_set = (current_set+1) % num_of_sets
+                console.log("Using dataset "+current_set+"/"+num_of_sets)
+            }
+            //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyK']) {
                 current_path = (current_path+1) % num_of_paths
                 console.log("Using path "+current_path, num_of_paths)
