@@ -25,7 +25,7 @@ class Edge {
 }
 // >> test
 //! ┌───────────────────────────────────────────────
-//! │ The main class that create the x/y coords then calls drawTree
+//! │ The main class that creates the x/y coords then calls drawTree
 //! └───────────────────────────────────────────────
 class Tree {
     constructor(gens, lineLength, x, y, angle, rotation) {
@@ -135,6 +135,9 @@ class Tree {
 }
 
 
+//! ┌───────────────────────────────────────────────
+//! │ sort associative array by key
+//! └───────────────────────────────────────────────
 function sortByKey(array, key) {
     return array.sort(function(a, b) {
         var x = a[key]; var y = b[key];
@@ -143,11 +146,56 @@ function sortByKey(array, key) {
 }
 
 //! ┌───────────────────────────────────────────────
+//! │ parse query string into associatve array
+//! └───────────────────────────────────────────────
+function parseQuery(queryString) {
+    var query = {};
+    var pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
+    for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i].split('=');
+        query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+    }
+    return query;
+}
+
+//! ┌───────────────────────────────────────────────
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
-
 function drawTree(branch_angle, rotation) {
     //console.log(branch_angle, rotation)
+
+    //% █████████████████████████ PRESETS ███████████████████████
+    //? read a preset query string and set all params
+    cycle_preset = randint(0,num_of_presets)
+    var qsary = parseQuery(preqs[randint(0,cycle_preset)])
+
+    // jstr(qsary)
+    //@ ARGS
+    for (const key in qsary) {
+        switch(key) {
+            // case 'up':  loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
+            case 'de': deg_adj         = parseFloat(qsary[key]); break;
+            case 'aN': circle_radius   = parseFloat(qsary[key]); break;
+            case 'aR': cycle_colors    = qsary[key]; break;
+            case 'a1': show_0          = qsary[key]; break;
+            case 'a2': show_1          = qsary[key]; break;
+            case 'a3': show_2          = qsary[key]; break;
+            case 'a4': show_3          = qsary[key]; break;
+            case 'a5': show_4          = qsary[key]; break;
+            case 'a6': show_5          = qsary[key]; break;
+            case 'a0': show_all_lines  = qsary[key]; break;
+            case 'aV': cycle_poly      = qsary[key]; break;
+            case 'aO': poly_opacity    = parseFloat(qsary[key]); break;
+            case 'aG': cycle_audio     = qsary[key]; break;
+            case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
+            case 'aK': cycle_path      = qsary[key]; break;
+            case 'aU': cycle_dataset   = qsary[key]; break;
+            // case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
+        }
+    }
+    //% ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+
     tree_counter++;
 
 
@@ -165,12 +213,12 @@ function drawTree(branch_angle, rotation) {
     tot_cycletime = tt['tot_cycletime']
     tot_images = tt['tot_images']
 
-    if (rnd_colors == 2) {
+    if (cycle_colors == 2) {
         for (let i = 0; i < 7; i++) {
             colors2[0][i] = generateRandomColor()
         }
     }
-    if (rnd_colors == 1) {
+    if (cycle_colors == 1) {
         for (let i = 0; i < 7; i++) {
             colors2[0][i] = generateColor(cycle_in_range(tree_counter + (i * 45), 0, 360, 0))
         }
@@ -183,75 +231,95 @@ function drawTree(branch_angle, rotation) {
     //! ┌───────────────────────────────────────────────
     //! │ build the query string
     //! └───────────────────────────────────────────────
+    //@ ARGS
     function makeQs(qs) {
         // let qs = "https://tholonia.com/Images/SVG/notclock.svg"
         // let qs = "file:///home/jw/store/src/music/clock_1.svg"
-        qs = qs + "?c=" + loop_delay
-        qs = qs + "&i=" + deg_adj
-        qs = qs + "&l=" + circle_radius
-        qs = qs + "&k=" + rnd_colors
-        if (show_all == 0) {
-            qs = qs + "&q=" + show_all;
+        qs = qs + "?"
+        qs = qs + "up=" + loop_delay
+        qs = qs + "&de=" + deg_adj
+        qs = qs + "&aN=" + circle_radius
+        qs = qs + "&aR=" + cycle_colors
+        if (show_all_lines == 0) {
+            qs = qs + "&a0=" + show_all_lines;
         } else {
-            qs = qs + "&q=" + show_all
-            qs = qs + "&a1=" + show_0
-            qs = qs + "&a2=" + show_1
-            qs = qs + "&a3=" + show_2
-            qs = qs + "&a4=" + show_3
-            qs = qs + "&a5=" + show_4
-            qs = qs + "&a6=" + show_5
+            qs = qs + "&ca0=" + show_all_lines
+            qs = qs + "&ca1=" + show_0
+            qs = qs + "&ca2=" + show_1
+            qs = qs + "&ca3=" + show_2
+            qs = qs + "&ca4=" + show_3
+            qs = qs + "&ca5=" + show_4
+            qs = qs + "&ca6=" + show_5
         }
-        qs = qs + "&n=" + which_poly
-        qs = qs + "&o=" + poly_opacity
-        qs = qs + "&g=" + cycle_audio
-        qs = qs + "&p=" + circle_opacity
-        qs = qs + "&a=" + current_path
-        qs = qs + "&u=" + current_set
+        qs = qs + "&aV=" + cycle_poly
+        qs = qs + "&aO=" + poly_opacity
+        qs = qs + "&aG=" + cycle_audio
+        qs = qs + "&aX=" + circle_opacity
+        qs = qs + "&aK=" + cycle_path
+        qs = qs + "&aU=" + cycle_dataset
+        qs = qs + "&aA=" + cycle_preset
         return(qs)
     }
 
+//? CTRL CHARACTERS
+//  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z  <- all
+//          E F                                          <- USED BY BRAVE
+// A  B         G   I   K       O     R     U V   X   Z  <- USED BY THIS APP 
+//%     C D       H   J   L M N   P     S T         Y    <- AVAILABLE
+
+
+
     rnum=0;
-    writ('    [HOME]  Toggle BG Color (B/W)',   '');
-    writ('(c) [UP]    ++Faster',                '(' + loop_delay / 1000 + 's)');
-    writ('    [DN]    --Slower',                '(' + loop_delay / 1000 + 's)');
-    writ('    [PGUP]  ++Longer',                '(' + linelength_adj + ')');
-    writ('    [PGDN]  --Shorter',               '(' + linelength_adj + ')');
-    writ('    [RIGHT] ++Fatter',                '');
-    writ('    [LEFT]  --Thinner',               '');
-    writ('(i) [INS]   ++Deg*2',                 '(' + deg_adj % 360 + ')');
-    writ('    [DEL]   --Deg/2',                 '(' + deg_adj % 360 + ')');
-    writ('',                                    '');
-    writ('(l) [ALT-N]      ++Circles Radius',   '(' + circle_radius + ')');
-    writ('    [ALT-B]      --Circles Radius',   '(' + circle_radius + ')');
-    writ('(p) [ALT-X]      ++Circles Opacity',  '(' + circle_opacity + ')');
-    writ('    [ALT-Z]      --Circles Opacity',  '(' + circle_opacity + ')');
-    
-    writ('(k) [ALT-R]      Cycle colors',       '');
-    writ('(g) [ALT-G]      Cycle audio',        '(' + cycle_audio + ')');
-    writ('(u) [ALT-U]      Cycle dataset',      '(' + current_set + ')');
-    
-    writ('(a) [ALT-K]      Cycle Connectors',   '(' + current_path + ')');
-    writ('(n) [ALT-V]      Cycle Polygons',     '(' + which_poly + ')');
-    writ('    [ALT-O]      ++poly opacity',     '(' + poly_opacity + ')');
-    writ('(o) [ALT-I]      --poly opacity',     '(' + poly_opacity + ')');
-    writ('    [ALT-J]      Jump fwd 5 deg',     '');
-    writ('    [CTRL-Y]     Toggle audio',       '(' + sound_initialized + ')');
+    fs = 18 //? these are pixel sizes
+    fss = 14
+    writ('(NOTE: ^ = Ctrl, ⇧ = Shift, ⌥ = Alt)',  '');
+    // debugger;
+    //@ ARGS
+    writ('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°','');
+    writ('     HOME       Toggle BG Color (B/W)', '');
+    writ('(up) ▲ ▼        +fast/-slow',       '(' + loop_delay / 1000 + 's)');
+    writ('     ◀▶       -thinner/+wider',        '');
+    writ('     PGUP/PGDN  +long/-short',       '(' + linelength_adj + ')');
+    writ('(de) INS/DEL    +°*2/-°/2',          '(' + deg_adj % 360 + ')');
+    writ('     ^⇧(F1-F6)  lines(1-6) +longer',      '');
+    writ('     ^⇧(1-6)    lines(1-6) -shorter',     '');
     writ('','');
-    writ('(a1-a6) [ALT-CTRL 1-6]    Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')');
-    writ('(q)     [ALT-CTRL 0]      Toggle All Lines',      '(' + show_all + ')');
-    writ('        [CTRL-SFT-(F1-F6) Longer Lines 1-6','');
-    writ('        [CTRL-SFT-(1-6)   Shorter Lines 1-6','');
-    writ('-------------------------------------------------','');
-    writ('[CTRL=SFT-Z]   Show/Hide this menu',  '');
-    writ('[SPACE] Pause/Run',                   '');
-    writ('TIME PER CYCLE:',                     cycletime);
-    writ('Current Angle:',                      rotation % 360);
-
-
-    writ('QUERY STR: ', makeQs("https://tholonia.com/Images/SVG/notclock.svg"));
+    writ('(aR) ⌥R     Cycle colors',       '(' + cycle_colors + '/'+num_of_colors+')');
+    writ('(aG) ⌥G     Cycle audio',        '(' + cycle_audio  + '/'+num_of_audios+')');
+    writ('(aU) ⌥U     Cycle dataset',      '(' + cycle_dataset+ '/'+num_of_datasets+')');
+    writ('(aK) ⌥K     Cycle paths',        '(' + cycle_path   + '/'+num_of_paths+')');
+    writ('(aV) ⌥V     Cycle Polygons',     '(' + cycle_poly   + '/'+num_of_polys+')');
+    writ('(aA) ⌥A     Cycle Presets',      '(' + cycle_preset + '/'+num_of_presets+')');
+    writ('','');
+    writ('(aN) ⌥N/⌥B  Circle radius  +/-',   '(' +circle_radius+')');
+    writ('(aX) ⌥X/⌥Z  Cicles opacity +/-',   '(' +circle_opacity+')');
+    writ('(aO) ⌥O/⌥I  Poly opacity   +/-',   '(' + poly_opacity + ')');
+    writ('','');
+    writ('     ⌥J     Jump fwd 5 deg',     '');
+    writ('','');
+    writ('(ca1-ca6)  ^⌥(1-6)   Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')');
+    writ('(a0)       ^⌥0       Toggle All Lines',      '(' + show_all_lines + ')');
+    writ('','');
+    writ('','');
+    writ('','');
+    writ('','');
+    writ('','');
+    writ('','');
+    writ('','');
+    writ('','');
+    writ('','');
+    writ('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°','');
+    writ('^↑Z   Show/Hide this menu',  '');
+    writ('^Y       Toggle audio',       '(' + sound_initialized + ')');
+    writ('SPACE Pause/Run',                   '');
+    writ('','');
+    writ('Query Strings', '');
+    writSmall(makeQs("https://tholonia.com/Images/SVG/notclock.svg"),'');
     if (_PRIVATE_MODE) {
-        writ('QUERY STR: ', makeQs("file:///home/jw/store/src/music/clock_1.svg"));
+        writSmall(makeQs("file:///home/jw/store/src/music/clock_1.svg"),'');
     }
+    writ('','');
+    writ('TIME PER CYCLE: '+cycletime+'/ Current Angle: '+rotation % 360, '');
     writ('v.'+_VERSION+ " https://github.com/tholonia/notclock",                          '');
     //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
     //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
@@ -277,24 +345,24 @@ function drawTree(branch_angle, rotation) {
     adata_right = [] //? these hold the final data used to creates lines
     adata_left = []
 
-    //? any current_path > 0 runs concurrently with "lines"
-    if (current_path == 0) {dataform ="line"}  //? nomal lines are the default
-    if (current_path >0 ) {dataform ="buildpath"} //? 'dataform is a flag for later processing
+    //? any cycle_path > 0 runs concurrently with "lines"
+    if (cycle_path == 0) {dataform ="line"}  //? nomal lines are the default
+    if (cycle_path >0 ) {dataform ="buildpath"} //? 'dataform is a flag for later processing
 
     //? this is the default using standrd x/y data
-    if (current_set == 0) {
+    if (cycle_dataset == 0) {
         draw_edges.forEach(element => {
             adata_right.push({'x':element.node_1.x, 'y':element.node_1.y})
             adata_left.push({'x':element.node_2.x, 'y':element.node_2.y})
         })
     }
     //? these are ugly and broken
-    if (current_set == 1) {
+    if (cycle_dataset == 1) {
         //? "bez"
         adata_right = BezierCurve(fullary_right);
         adata_left = BezierCurve(fullary_left);
     }
-    if (current_set == 2) {
+    if (cycle_dataset == 2) {
         //? "bezSrtx"
         adata_right = BezierCurve(fullary_right);
         adata_left = BezierCurve(fullary_left);
@@ -488,7 +556,7 @@ function drawTree(branch_angle, rotation) {
 
         var poly_arr = false
 
-        if (which_poly == 1) {
+        if (cycle_poly == 1) {
             // console.log("Usng polugon 1")
 
             poly_arr = [
@@ -503,7 +571,7 @@ function drawTree(branch_angle, rotation) {
                 ],
             ];
         }
-        if (which_poly == 2) {
+        if (cycle_poly == 2) {
             // console.log("Usng polugon 2")
             poly_arr =
                     [
@@ -518,7 +586,7 @@ function drawTree(branch_angle, rotation) {
                         ],
                     ];
         }
-        if (which_poly == 3) {
+        if (cycle_poly == 3) {
             // console.log("Usng polugon 3")
             poly_arr =
                     [
@@ -533,7 +601,7 @@ function drawTree(branch_angle, rotation) {
                         ],
                     ];
         }
-        if (which_poly == 4) {
+        if (cycle_poly == 4) {
             // console.log("Usng polugon 4")
             var petal = [
 
@@ -562,7 +630,7 @@ function drawTree(branch_angle, rotation) {
             poly_arr = parr
         }
 
-        if (which_poly > 0) {
+        if (cycle_poly > 0) {
             let poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             poly.setAttribute("points", poly_arr);
             poly.setAttribute("fill", colors2[0][order + gens].toString());
@@ -588,7 +656,7 @@ function drawTree(branch_angle, rotation) {
         newLine.setAttribute("opacity", this_opacity);
 
         // what line sto show/hide
-        if (show_all == 1) {
+        if (show_all_lines == 1) {
             if (show_0 == 1 && order == 0) {
                 svg.appendChild(newLine);
             }
@@ -1008,13 +1076,19 @@ function wText(args) {
 function writ(s1,s2) {
     wTextLeft({'str': s1 +" "+s2, 'row': rnum, 'col': 0});rnum++;
 }
+function writSmall(s1,s2) {
+    wTextLeftSmall({'str': s1 +" "+s2, 'row': rnum, 'col': 0});rnum++;
+}
 //! ┌───────────────────────────────────────────────
 //! │ write text to left side of screen
 //! └───────────────────────────────────────────────
 function wTextLeft(args) {
+    let fs = normal_fontsize
+    let spacing = normal_spacing
+
     if (showtext == true) {
         xpos = (args['col'] * 400) - 800
-        ypos = (args['row'] * 27) - 450
+        ypos = (args['row'] * spacing) - 450
         var svg = document.getElementById("svg");
         let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.id = "id-wtP1";
@@ -1022,8 +1096,49 @@ function wTextLeft(args) {
         text.setAttribute("classname", "wt", );
         text.setAttribute("x", xpos);
         text.setAttribute("y", ypos);
-        text.setAttribute("fill", "grey");
-        text.setAttribute("font-size", "18px");
+        if (bg_color == "black") {
+            text.setAttribute("fill", "white");
+        } else {
+            text.setAttribute("fill", "black");    
+        }
+        text.setAttribute("font-size", fs);
+        text.setAttribute("font-family", "monospace, monospace");
+        text.setAttribute("font-weight", "600");
+        //text.setAttribute("stroke", args['stroke']);
+        //text.setAttribute("style", args['style']);
+        //text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+
+        let textNode = document.createTextNode(args['str']);
+        text.appendChild(textNode);
+        svg.appendChild(text);
+
+        return (document.getElementById('id-wtP1'));
+    }
+}
+//! ┌───────────────────────────────────────────────
+//! │ write text to left side of screen, btu small font... 
+//! │ the kwargs is fucked in javascript, it's easier to just write an entire function
+//! └───────────────────────────────────────────────
+function wTextLeftSmall(args) {
+    let fs = small_fontsize
+    let spacing = normal_spacing
+
+    if (showtext == true) {
+        xpos = (args['col'] * 400) - 800
+        ypos = (args['row'] * spacing) - 450
+        var svg = document.getElementById("svg");
+        let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.id = "id-wtP1";
+        text.setAttribute("style", "white-space: pre;")
+        text.setAttribute("classname", "wt", );
+        text.setAttribute("x", xpos);
+        text.setAttribute("y", ypos);
+        if (bg_color == "black") {
+            text.setAttribute("fill", "white");
+        } else {
+            text.setAttribute("fill", "black");    
+        }
+        text.setAttribute("font-size", fs);
         text.setAttribute("font-family", "monospace, monospace");
         text.setAttribute("font-weight", "600");
         //text.setAttribute("stroke", args['stroke']);
@@ -1456,7 +1571,7 @@ function buildpath(xfr) {
             }
             path[k]=x
         }    
-        jstr(path)
+        // jstr(path)
         return path
     }
     //? CUBIC CURVE v2 - mosty curvy
@@ -1556,22 +1671,22 @@ function buildpath(xfr) {
     }
  
 
-    if (current_path == 1) {
+    if (cycle_path == 1) {
         path_r = makepath_CS2(1); path_l = makepath_CS2(-1); //? works
     }
-    if (current_path == 2) {
+    if (cycle_path == 2) {
         path_r = makepath_CS(1); path_l = makepath_CS(-1);  //? works
     }
-    if (current_path == 3) {
+    if (cycle_path == 3) {
         path_r = makepath_QT(1); path_l = makepath_QT(-1);  //? works
     }
-    if (current_path == 4) {
+    if (cycle_path == 4) {
         path_r = makepath_LA(1); path_l = makepath_LA(-1);  //? works
     }
-    if (current_path == 5) {
+    if (cycle_path == 5) {
         path_r = makepath_CS3(1); path_l = makepath_CS3(-1);  //? works
     }
-    if (current_path == 6) {
+    if (cycle_path == 6) {
         path_r = makepath_CS4(1); path_l = makepath_CS4(-1);  //? works
     }
 

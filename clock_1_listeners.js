@@ -147,8 +147,8 @@
             }
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyR']) {
-                rnd_colors= (rnd_colors + 1) % 3
-                console.log("Random Colors: "+rnd_colors)
+                cycle_colors= (cycle_colors + 1) % 3
+                console.log("Random Colors: "+cycle_colors)
             }
             //? ════════════════════════════════════════════════ CIRCLE RADIUS
             if (lastkey['Alt'] && lastkey['KeyN']) {
@@ -178,9 +178,14 @@
 
 
             //? ────────────────────────────────────────────────
+            if (lastkey['Alt'] && lastkey['KeyA']) {
+                cycle_preset = (cycle_preset+1) % num_of_presets 
+                console.log("Cycle Presets: "+cycle_preset)
+            }
+            //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyV']) {
-                which_poly = (which_poly+1) % num_of_polys 
-                console.log("Show polys: "+which_poly)
+                cycle_poly = (cycle_poly+1) % num_of_polys 
+                console.log("Show polys: "+cycle_poly)
             }
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyJ']) {
@@ -189,7 +194,7 @@
             }
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit0']) {
-                    show_all = (show_all + 1) % 2
+                    show_all_lines = (show_all_lines + 1) % 2
                     console.log("toggle all")
             }
             //? ────────────────────────────────────────────────
@@ -239,13 +244,13 @@
             //? ────────────────────────────────────────────────
             // if (lastkey['Alt'] && lastkey['KeyH']) { //? KeyH seems to be dead
             if (lastkey['Alt'] && lastkey['KeyU']) {
-                current_set = (current_set+1) % num_of_sets
-                console.log("Using dataset "+current_set+"/"+num_of_sets)
+                cycle_dataset = (cycle_dataset+1) % num_of_datasets
+                console.log("Using dataset "+cycle_dataset+"/"+num_of_sets)
             }
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyK']) {
-                current_path = (current_path+1) % num_of_paths
-                console.log("Using path "+current_path, num_of_paths)
+                cycle_path = (cycle_path+1) % num_of_paths
+                console.log("Using path "+cycle_path, num_of_paths)
             }
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyG']) {
