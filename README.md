@@ -53,45 +53,61 @@ Some screenshots
 <img src="images/clock_polyballs.png"/>
 
 ### Key Commands
+In the table below, the key command are symbolized as:
+
+⌥ = ALT
+^ = CTRL
+⇧-SHIFT
+
+The characters in brackets [] represent the HTML query string variable name that can used used for that feature.  For example, if you use the URL `notclock.svg?up=1000&de=7.5`, the app with start with the a loop-delay of 100ms and a degree increment of 7.5 degrees.
+
 **HOME**   Toggle BG Color (B/W)   # *changes background color*
-**UP** (c)    ++Faster              *Speeds up the loop.  Can be very CPU intensive*
-**DN**         --Slower              *slows down the loop speed*
-**PGUP**   ++Longer             *Makes all the lines longer*
-**PGDN**    --Shorter              *Makes all the lines shorter*
-**RIGHT** ++Fatter                *Makes all the lines wider*
-**LEFT**     --Thinner             *Makes all the lines thinner*
-**INS** (i)   ++Deg\*2               *Doubles the degrees rotated per frame*
-**DEL**       --Deg/2                 *Half's the degrees rotated per frame*
+**UP** `[up]`    ++Faster             *Speeds up the loop.  Can be very CPU intensive*
+**DN**                --Slower              *slows down the loop speed*
+**PGUP**           ++Longer            *Makes all the lines longer*
+**PGDN**           --Shorter             *Makes all the lines shorter*
+**RIGHT**          ++Fatter             *Makes all the lines wider*
+**LEFT**             --Thinner            *Makes all the lines thinner*
+**INS** (i)            ++Deg\*2           *Doubles the degrees rotated per frame*
+**DEL**                --Deg/2              *Half's the degrees rotated per frame*
 
-**ALT-N** (l)   ++Circles Radius      *Increases size of spheres AND cycles the spheres*
-**ALT-B**        --Circles Radius        *Decreases size of spheres AND cycles the spheres*
-**ALT-X** (p)  ++Circles Opacity     *Increases density of sphere*
-**ALT-Z**        --Circles Opacity       *Increases translucency of sphere*
-**ALT-R** (k)      Cycle colors          *Cycles thru various color schemes*
-**ALT-G** (g)      Cycle audio           *Cycles thru various sound/music themes*
-**ALT-U** (u)      Cycle dataset         *Cycles though transformed datasets of base data* ^*^
+**⌥ N** `[aN]`   ++Circles Radius      *Increases size of circles*
+**⌥ B** `[aB]`    --Circles Radius        *Decreases size of circles*
+**⌥ M** `[aD]`      Cycle circles         *Cycles though circle themes* 
+**⌥ X** `[aX]`  ++Circles Opacity     *Increases density of sphere*
+**⌥ Z** `[aZ]`   --Circles Opacity       *Increases translucency of circle*
+**⌥ R** `[aR]`      Cycle colors          *Cycles thru various color themes*
+**⌥ G** `[aG]`      Cycle audio           *Cycles thru various sound/music themes*
+**⌥ U** `[aU]`      Cycle dataset         *Cycles though transformed datasets* <sup>(see note 1)</sup>
+**⌥ A** `[aA]`      Cycle presets          *Cycles preset configs* <sup>(see note 2)</sup>
+**⌥ C** `[aC]`      Cycle vars              *Cycles various variables through a continuous loop* <sup>(see note 3)</sup>
 
-**ALT-K** (a)      Cycle Connectors   *Connecting the points in various ways*
-**ALT-V** (n)      Cycle Polygons      *Cycling thru various polygons based on the data*
-**ALT-O**      ++poly opacity             *Increases density of polygon*
-**ALT-I** (o)    --poly opacity             *Increases translucency of polygon*
-**ALT-J**            Jump fwd 5 deg       *Advance all diverging angles by 5 degrees*
-**CTRL-Y**        Toggle audio           *Start sound system (requires manual initiation)*
+**⌥ K** `[aK]`      Cycle Connectors/Paths   *Connecting the points in various ways*
+**⌥ V** `[aV]`      Cycle Polygons           *Cycling thru various polygons based on the data*
+**⌥ O** `[aO]`    ++poly opacity            *Increases density of polygon*
+**⌥ I** `[aI]`       --poly opacity             *Increases translucency of polygon*
+**⌥ J**                      Jump fwd 5 deg     *Advance all diverging angles by 5 degrees*
+**^ Y**                       Toggle audio           *Start sound system (requires manual initiation)*
 
-(a1) **ALT-CTRL-1**    *Toggle show/hide line 1*
-(a2) **ALT-CTRL-2**    *Toggle show/hide line 2*
-(a3) **ALT-CTRL-3**    *Toggle show/hide line 3*
-(a4) **ALT-CTRL-4**    *Toggle show/hide line 4*
-(a5) **ALT-CTRL-5**    *Toggle show/hide line 5*
-(a6) **ALT-CTRL-6**    *Toggle show/hide line 6*
+**^⌥  1** `[ca1]`   *Toggle show/hide line 1*
+**^⌥  2** `[ca2]`   *Toggle show/hide line 2*
+**^⌥  3** `[ca3]`   *Toggle show/hide line 3*
+**^⌥  4** `[ca4]`   *Toggle show/hide line 4*
+**^⌥  5** `[ca5]`   *Toggle show/hide line 5*
+**^⌥  6** `[ca6]`  *Toggle show/hide line 6*
 
-(q) **ALT-CTRL 0**    *Toggle show/hide all Lines*
+**^⌥ 0**  `[ca0]` *Toggle show/hide all Lines*
 
-**CTRL-SFT-F1**   *Shorten line 1*		**CTRL-SFT-1**    *Lengthen Lines 1*
-**CTRL-SFT-F2**   Shorten line 2		**CTRL-SFT-2**    *Lengthen Lines 2*
-**CTRL-SFT-F3**   *Shorten line 3*		**CTRL-SFT-3**    *Lengthen Lines 3*
-**CTRL-SFT-F4**   *Shorten line 4*		**CTRL-SFT-4**    *Lengthen Lines 4*
-**CTRL-SFT-F5**   *Shorten line 5*		**CTRL-SFT-5**    *Lengthen Lines 5*
-**CTRL-SFT-F6**   *Shorten line 6*		**CTRL-SFT-6**    *Lengthen Lines 6*
+**^⇧ F1**   *Shorten line 1*		**^⇧ 1**    *Lengthen Lines 1*
+**^⇧ F2**   *Shorten line 2*		**^⇧ 2**    *Lengthen Lines 2*
+**^⇧ F3**   *Shorten line 3*		**^⇧ 3**    *Lengthen Lines 3*
+**^⇧ F4**   *Shorten line 4*		**^⇧ 4**    *Lengthen Lines 4*
+**^⇧ F5**   *Shorten line 5*		**^⇧ 5**    *Lengthen Lines 5*
+**^⇧ F6**   *Shorten line 6*		**^⇧ 6**    *Lengthen Lines 6*
 
-^*^ 
+Note 1:
+
+Note 2:
+
+Note 3: 
+

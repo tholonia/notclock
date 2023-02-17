@@ -222,7 +222,7 @@ function writeMenu() {
     writGrid(['✅',_,'^ = Ctrl'])
     menu_fontweight="600";menu_fontclr="red"
     writGrid(['✅','NOTE:']);rnum++;
-    //? the above are all written on teh same line, but separated to gove different colors
+    //? the above are all written on the same line, as they have to "rnum++' at the end.
     // writGrid(['✅']);rnum++;
     // writGrid(['✅','NOTE: ^ = Ctrl, ⇧ = Shift, ⌥ = Alt']);rnum++;
     writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
@@ -231,6 +231,7 @@ function writeMenu() {
     writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
     writGrid([_,'◀▶','-thinner|+wider']);rnum++;
     writGrid([_,'PGUP/PGDN','+long|-short','(' + linelength_adj + ')']);rnum++;
+    writGrid([_,'INS/DEL','+Finer|Courser','(' + deg_adj + ')']);rnum++;
     writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer']);rnum++;
     writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
     writGrid([_]);rnum++;
@@ -327,6 +328,41 @@ function makeQs(qs) {
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
 function drawTree(branch_angle, rotation) {
+
+        branch_angle = branch_angle%360;
+        
+
+        // if (cycle_vars == 1) {
+            // circle_radius = cycle_in_range(Math.round(branch_angle),0,30)
+            circle_radius = cycle_in_range(Math.round(branch_angle),0,7 ,0)
+            circle_opacity = cycle_in_range(Math.round(branch_angle),0,100,0)/100
+            //[13,11, 7,5, 3, 2, 1]
+            pensize[0] = cycle_in_range(Math.round(branch_angle),0,13,0)
+            pensize[1] = cycle_in_range(Math.round(branch_angle),0,11,0)
+            pensize[2] = cycle_in_range(Math.round(branch_angle),0,6,0)
+            pensize[3] = cycle_in_range(Math.round(branch_angle),0,5,0)
+            pensize[4] = cycle_in_range(Math.round(branch_angle),0,5,0)
+            pensize[5] = cycle_in_range(Math.round(branch_angle),0,5,0)
+            pre_maxlengths[0] = cycle_in_range(Math.round(branch_angle),0,130,0)
+            pre_maxlengths[1] = cycle_in_range(Math.round(branch_angle),0,70,0)
+            pre_maxlengths[2] = cycle_in_range(Math.round(branch_angle),0,60,0)
+            pre_maxlengths[3] = cycle_in_range(Math.round(branch_angle),0,50,0)
+            pre_maxlengths[4] = cycle_in_range(Math.round(branch_angle),0,40,0)
+            pre_maxlengths[5] = cycle_in_range(Math.round(branch_angle),0,30,0)
+
+            setTimeout(function () {cycle_circles = (cycle_circles + 1) % num_of_circles}, 1000)
+            setTimeout(function () {cycle_path = (cycle_path + 1) % num_of_paths}, 2000)
+            setTimeout(function () {cycle_poly = (cycle_path + 1) % num_of_polys}, 3000)
+            setTimeout(function () {cycle_dataset = (cycle_dataset + 1) % num_of_datasets}, 4000)
+            setTimeout(function () {cycle_path = (cycle_path + 1) % num_of_paths}, 5000)
+            setTimeout(function () {cycle_colors= (cycle_colors + 1) % num_of_colors}, 6000)
+
+
+        // }
+
+
+
+
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
     if (preset_changed == true) {
@@ -552,9 +588,6 @@ function drawTree(branch_angle, rotation) {
    
         //% █████████████ ADJUSTMENTS █████████████
 
-        if (cycle_vars == 1) {
-            circle_radius = cycle_in_range(Math.round(branch_angle),0,30)
-        }
 
         var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycles throug the circle-types
 
