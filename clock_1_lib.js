@@ -38,7 +38,7 @@ class Tree {
         //@            angle = _r
         //@ **************************************************
         //? all trees have a base node
-
+        // call_log("Tree")
         this.base_node = new Node(x, y);
         var srange = normalize([-540, mloc.y, 540], [0, 6]);
         var genApply = Math.ceil(srange[1]);
@@ -158,46 +158,207 @@ function parseQuery(queryString) {
     return query;
 }
 
+function writGrid(args) {
+
+    let mCols = menuCols
+    let fclrs = ['grey','yellow','white','green','white'] 
+    let fwght = ['300','600','500','400','300'] 
+
+
+    for (let i=0;i<args.length; i++) {
+        if (args[0] != '✅') {       //? if first arg is '✅', use overrides
+            menu_fontclr = fclrs[i]
+            menu_fontweight=fwght[i]
+        } else {
+            mCols = menuAltCols
+        }
+        wTL({'str': args[i], 'row': rnum, 'col': mCols[i],});
+        // console.log("mCols:",mCols[i],i)
+    }
+    // rnum++;
+}
+function wTL(args) {
+    // row,col
+    let fs = menu_fontsize
+    let spacing = menu_spacing
+
+    // if (showtext == true) {
+        xpos = (args['col'] * 1) - 800
+        // log("xpos:"+xpos+' - '+args['col'])
+        ypos = (args['row'] * 20) - 450
+        var svg = document.getElementById("svg");
+        let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.id = "id-wtP1";
+        text.setAttribute("style", "white-space: pre;")
+        text.setAttribute("classname", "wt", );
+        text.setAttribute("x", xpos);
+        text.setAttribute("y", ypos);
+        if (bg_color == "black") {
+            text.setAttribute("fill", menu_fontclr);
+        } else {
+            text.setAttribute("fill", menu_fontclr);    
+        }
+        text.setAttribute("font-size", fs);
+        text.setAttribute("font-family", "monospace, monospace");
+        text.setAttribute("font-weight", menu_fontweight);
+        //text.setAttribute("stroke", args['stroke']);
+        //text.setAttribute("style", args['style']);
+        //text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+
+        let textNode = document.createTextNode(args['str']);
+        text.appendChild(textNode);
+        svg.appendChild(text);
+
+        return (document.getElementById('id-wtP1'));
+    // }
+}
+function writeMenu() {
+    menu_fontweight="600";menu_fontclr="#00ffff"
+    writGrid(['✅',_,_,_,'⌥ = Alt']);
+    menu_fontweight="600";menu_fontclr="#00ff00"
+    writGrid(['✅',_,_,'⇧ = Shift']);
+    menu_fontweight="600";menu_fontclr="#ff00ff"
+    writGrid(['✅',_,'^ = Ctrl'])
+    menu_fontweight="600";menu_fontclr="red"
+    writGrid(['✅','NOTE:']);rnum++;
+    //? the above are all written on teh same line, but separated to gove different colors
+    // writGrid(['✅']);rnum++;
+    // writGrid(['✅','NOTE: ^ = Ctrl, ⇧ = Shift, ⌥ = Alt']);rnum++;
+    writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
+    menu_fontweight="300"
+    writGrid([_,'HOME','Toggle BG (B/W)']);rnum++;
+    writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
+    writGrid([_,'◀▶','-thinner|+wider']);rnum++;
+    writGrid([_,'PGUP/PGDN','+long|-short','(' + linelength_adj + ')']);rnum++;
+    writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer']);rnum++;
+    writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
+    writGrid([_]);rnum++;
+
+    writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+')']);rnum++;
+    writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+')']);rnum++;
+    writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+')']);rnum++;
+    writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+')']);rnum++;
+    writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+')']);rnum++;
+    writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
+    writGrid([_]);rnum++;
+    writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius+')']);rnum++;
+    writGrid(['aX','⌥ (X|Z)','Cicles opacity +/-',   '(' +circle_opacity+')']);rnum++;
+    writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
+
+    writGrid([_,'⌥ J','Jump fwd 5°']);rnum++;
+    writGrid([_]);rnum++;
+    writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
+    writGrid(['a0','^⌥ 0','Toggle All Lines','(' + show_all_lines + ')']);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_,'^⇧Z','Show/Hide this menu']);rnum++;
+    writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
+    writGrid([_,'SPACE','Pause/Run']);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_]);rnum++;
+    writGrid([_]);rnum++;
+    writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
+    writGrid([_]);rnum++;
+    writGrid(['Query String']);rnum++;
+
+    let qs = makeQs(href).match(/.{1,140}/g);
+    for (i=0;i<qs.length;i++) {
+        writGrid([qs[i]]);rnum++;
+    }
+    writGrid([_]);rnum++;
+    writGrid(['TIME PER CYCLE: '+cycletime+'/ Current Angle: '+branch_angle % 360]);rnum++;
+    writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
+    //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
+    //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
+    rnum = 0;
+    //? report mouse x/y position on teh screen
+    writGrid([_,_,_,_,"x="+point.x+" y="+point.y])
+
+}
+//! ┌───────────────────────────────────────────────
+//! │ build the query string
+//! └───────────────────────────────────────────────
+function makeQs(qs) {
+    // let qs = "https://tholonia.com/Images/SVG/notclock.svg"
+    // let qs = "file:///home/jw/store/src/music/clock_1.svg"
+    // log("Makeqs: "+loop_delay)
+    qs = qs + "?"
+    qs = qs + "up=" + loop_delay
+    qs = qs + "&de=" + deg_adj
+    qs = qs + "&aN=" + circle_radius
+    qs = qs + "&aR=" + cycle_colors
+    if (show_all_lines == 0) {qs = qs + "&a0=" + show_all_lines;}
+    if (show_0 == 0) {qs = qs + "&ca0=" + show_0;}
+    if (show_1 == 0) {qs = qs + "&ca1=" + show_1;}
+    if (show_2 == 0) {qs = qs + "&ca2=" + show_2;}
+    if (show_3 == 0) {qs = qs + "&ca3=" + show_3;}
+    if (show_4 == 0) {qs = qs + "&ca4=" + show_4;}
+    if (show_5 == 0) {qs = qs + "&ca5=" + show_5;}
+    qs = qs + "&aV=" + cycle_poly
+    qs = qs + "&aO=" + poly_opacity
+    qs = qs + "&aG=" + cycle_audio
+    qs = qs + "&aX=" + circle_opacity
+    qs = qs + "&aK=" + cycle_path
+    qs = qs + "&aU=" + cycle_dataset
+    qs = qs + "&aA=" + cycle_preset
+    return(qs)
+}
+
+
+
 //! ┌───────────────────────────────────────────────
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
 function drawTree(branch_angle, rotation) {
-    //console.log(branch_angle, rotation)
+    // call_log("drawtree")
+    // console.log(tree_counter)
 
-    //% █████████████████████████ PRESETS ███████████████████████
-    //? read a preset query string and set all params
-    cycle_preset = randint(0,num_of_presets)
-    var qsary = parseQuery(preqs[randint(0,cycle_preset)])
 
-    // jstr(qsary)
-    //@ ARGS
-    for (const key in qsary) {
-        switch(key) {
-            // case 'up':  loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
-            case 'de': deg_adj         = parseFloat(qsary[key]); break;
-            case 'aN': circle_radius   = parseFloat(qsary[key]); break;
-            case 'aR': cycle_colors    = qsary[key]; break;
-            case 'a1': show_0          = qsary[key]; break;
-            case 'a2': show_1          = qsary[key]; break;
-            case 'a3': show_2          = qsary[key]; break;
-            case 'a4': show_3          = qsary[key]; break;
-            case 'a5': show_4          = qsary[key]; break;
-            case 'a6': show_5          = qsary[key]; break;
-            case 'a0': show_all_lines  = qsary[key]; break;
-            case 'aV': cycle_poly      = qsary[key]; break;
-            case 'aO': poly_opacity    = parseFloat(qsary[key]); break;
-            case 'aG': cycle_audio     = qsary[key]; break;
-            case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
-            case 'aK': cycle_path      = qsary[key]; break;
-            case 'aU': cycle_dataset   = qsary[key]; break;
-            // case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
+    //% █████████████████████████ LOAD PRESETS ███████████████████████
+    if (preset_changed == true) {
+        //? read a preset query string and set all params
+        //? linear cycles of presets
+        // cycle_preset = (cycle_preset + 1)% num_of_presets
+        // if (rolling_presets) {
+        //     cycle_preset = tree_counter% num_of_presets
+        // }
+        //? random selection of presents
+        // randint(0,num_of_presets)
+        // var qsary = parseQuery(preqs[randint(0,cycle_preset)])
+        var qsary = parseQuery(preqs[cycle_preset])
+
+        for (const key in qsary) {
+            switch(key) {
+                // case 'up':  loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
+                case 'de': deg_adj         = parseFloat(qsary[key]); break;  //? keep control manual
+                case 'aN': circle_radius   = parseFloat(qsary[key]); break;
+                case 'aR': cycle_colors    = qsary[key]; break;
+                case 'a1': show_0          = qsary[key]; break;
+                case 'a2': show_1          = qsary[key]; break;
+                case 'a3': show_2          = qsary[key]; break;
+                case 'a4': show_3          = qsary[key]; break;
+                case 'a5': show_4          = qsary[key]; break;
+                case 'a6': show_5          = qsary[key]; break;
+                case 'a0': show_all_lines  = qsary[key]; break;
+                case 'aV': cycle_poly      = qsary[key]; break;
+                case 'aO': poly_opacity    = parseFloat(qsary[key]); break;
+                case 'aG': cycle_audio     = qsary[key]; break;
+                case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
+                case 'aK': cycle_path      = qsary[key]; break;
+                case 'aU': cycle_dataset   = qsary[key]; break;
+                // case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
+            }
         }
+        preset_changed = false
+        console.log("Preset changed: "+preset_changed)
+
     }
     //% ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-
-
-    tree_counter++;
-
 
     //FIXME: for SOME reason, these vals need to be flipped to work :/
     let _a = branch_angle
@@ -228,103 +389,15 @@ function drawTree(branch_angle, rotation) {
     //% let noteseed = (54+tree_counter+ rotation)%108+108
 
 
-    //! ┌───────────────────────────────────────────────
-    //! │ build the query string
-    //! └───────────────────────────────────────────────
-    //@ ARGS
-    function makeQs(qs) {
-        // let qs = "https://tholonia.com/Images/SVG/notclock.svg"
-        // let qs = "file:///home/jw/store/src/music/clock_1.svg"
-        qs = qs + "?"
-        qs = qs + "up=" + loop_delay
-        qs = qs + "&de=" + deg_adj
-        qs = qs + "&aN=" + circle_radius
-        qs = qs + "&aR=" + cycle_colors
-        if (show_all_lines == 0) {
-            qs = qs + "&a0=" + show_all_lines;
-        } else {
-            qs = qs + "&ca0=" + show_all_lines
-            qs = qs + "&ca1=" + show_0
-            qs = qs + "&ca2=" + show_1
-            qs = qs + "&ca3=" + show_2
-            qs = qs + "&ca4=" + show_3
-            qs = qs + "&ca5=" + show_4
-            qs = qs + "&ca6=" + show_5
-        }
-        qs = qs + "&aV=" + cycle_poly
-        qs = qs + "&aO=" + poly_opacity
-        qs = qs + "&aG=" + cycle_audio
-        qs = qs + "&aX=" + circle_opacity
-        qs = qs + "&aK=" + cycle_path
-        qs = qs + "&aU=" + cycle_dataset
-        qs = qs + "&aA=" + cycle_preset
-        return(qs)
-    }
+    //? ALT CHARACTERS
+    //  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z  <- all
+    //          E F                                          <- USED BY BRAVE
+    // A  B         G   I   K       O     R     U V   X   Z  <- USED BY THIS APP 
+    //%     C D       H   J   L M N   P     S T         Y    <- AVAILABLE
 
-//? CTRL CHARACTERS
-//  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z  <- all
-//          E F                                          <- USED BY BRAVE
-// A  B         G   I   K       O     R     U V   X   Z  <- USED BY THIS APP 
-//%     C D       H   J   L M N   P     S T         Y    <- AVAILABLE
+    _ = ''
 
-
-
-    rnum=0;
-    fs = 18 //? these are pixel sizes
-    fss = 14
-    writ('(NOTE: ^ = Ctrl, ⇧ = Shift, ⌥ = Alt)',  '');
-    // debugger;
-    //@ ARGS
-    writ('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°','');
-    writ('     HOME       Toggle BG Color (B/W)', '');
-    writ('(up) ▲ ▼        +fast/-slow',       '(' + loop_delay / 1000 + 's)');
-    writ('     ◀▶       -thinner/+wider',        '');
-    writ('     PGUP/PGDN  +long/-short',       '(' + linelength_adj + ')');
-    writ('(de) INS/DEL    +°*2/-°/2',          '(' + deg_adj % 360 + ')');
-    writ('     ^⇧(F1-F6)  lines(1-6) +longer',      '');
-    writ('     ^⇧(1-6)    lines(1-6) -shorter',     '');
-    writ('','');
-    writ('(aR) ⌥R     Cycle colors',       '(' + cycle_colors + '/'+num_of_colors+')');
-    writ('(aG) ⌥G     Cycle audio',        '(' + cycle_audio  + '/'+num_of_audios+')');
-    writ('(aU) ⌥U     Cycle dataset',      '(' + cycle_dataset+ '/'+num_of_datasets+')');
-    writ('(aK) ⌥K     Cycle paths',        '(' + cycle_path   + '/'+num_of_paths+')');
-    writ('(aV) ⌥V     Cycle Polygons',     '(' + cycle_poly   + '/'+num_of_polys+')');
-    writ('(aA) ⌥A     Cycle Presets',      '(' + cycle_preset + '/'+num_of_presets+')');
-    writ('','');
-    writ('(aN) ⌥N/⌥B  Circle radius  +/-',   '(' +circle_radius+')');
-    writ('(aX) ⌥X/⌥Z  Cicles opacity +/-',   '(' +circle_opacity+')');
-    writ('(aO) ⌥O/⌥I  Poly opacity   +/-',   '(' + poly_opacity + ')');
-    writ('','');
-    writ('     ⌥J     Jump fwd 5 deg',     '');
-    writ('','');
-    writ('(ca1-ca6)  ^⌥(1-6)   Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')');
-    writ('(a0)       ^⌥0       Toggle All Lines',      '(' + show_all_lines + ')');
-    writ('','');
-    writ('','');
-    writ('','');
-    writ('','');
-    writ('','');
-    writ('','');
-    writ('','');
-    writ('','');
-    writ('','');
-    writ('°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°','');
-    writ('^↑Z   Show/Hide this menu',  '');
-    writ('^Y       Toggle audio',       '(' + sound_initialized + ')');
-    writ('SPACE Pause/Run',                   '');
-    writ('','');
-    writ('Query Strings', '');
-    writSmall(makeQs("https://tholonia.com/Images/SVG/notclock.svg"),'');
-    if (_PRIVATE_MODE) {
-        writSmall(makeQs("file:///home/jw/store/src/music/clock_1.svg"),'');
-    }
-    writ('','');
-    writ('TIME PER CYCLE: '+cycletime+'/ Current Angle: '+rotation % 360, '');
-    writ('v.'+_VERSION+ " https://github.com/tholonia/notclock",                          '');
-    //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
-    //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
-
-
+    writeMenu()
     var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
 
     var draw_edges = getTreeEdges(draw_tree);
@@ -410,26 +483,24 @@ function drawTree(branch_angle, rotation) {
             stop.setAttribute('stop-color', stops[i].color);
             gradient.appendChild(stop);
         }
-
-        gradient.id = 'Gradient';
+//@ XYZ
+        gradient.id = 'datasetGradient';
         gradient.setAttribute('cx', '0.5');
         gradient.setAttribute('cy', '0.3');  //? light is slightly above horizon
         gradient.setAttribute('r', '1');
         defs.appendChild(gradient);
-        newPath_l.setAttribute('fill', 'url(#Gradient)');
-        newPath_r.setAttribute('fill', 'url(#Gradient)');
-
+        newPath_l.setAttribute('fill', 'url(#datasetGradient)');
         newPath_r.setAttribute('d', ""+path_r[gen]);
         newPath_r.setAttribute("fill-opacity", "0");
         newPath_r.setAttribute("stroke-width", path_width);
-        newPath_r.setAttribute('stroke', 'url(#Gradient)');
+        newPath_r.setAttribute('stroke', 'url(#datasetGradient)');
         svg.appendChild(defs);
         svg.appendChild(newPath_r);
 
         newPath_l.setAttribute('d', ""+path_l[gen]);
         newPath_l.setAttribute("fill-opacity", "0");
         newPath_l.setAttribute("stroke-width", path_width);
-        newPath_l.setAttribute('stroke', 'url(#Gradient)');
+        newPath_l.setAttribute('stroke', 'url(#datasetGradient)');
         svg.appendChild(defs);
         svg.appendChild(newPath_l);
     }
@@ -449,8 +520,6 @@ function drawTree(branch_angle, rotation) {
 
         let order = lOrder[gen] //? get the actual gen value from the gens, which goes uo to 126
 
-        //? report mouse x/y position on teh screen
-        wText({'str':"x="+point.x+",y="+point.y, 'row':2,'col':3})
 
         //@ ████████████████████████████████████████████████
         //@ ███████████████████ CIRCLES ████████████████████
@@ -548,99 +617,186 @@ function drawTree(branch_angle, rotation) {
             }
         }
 
-        //@ ████████████████████████████████████████████████
+            //@ ████████████████████████████████████████████████
 
-        //? ████████████████████████████████████████████████
-        //? ███████████████████ POLYS ██████████████████████
-        //? ████████████████████████████████████████████████
+            //? ████████████████████████████████████████████████
+            //? ███████████████████ POLYS ██████████████████████
+            //? ████████████████████████████████████████████████
 
-        var poly_arr = false
+            var poly_arr = false
 
-        if (cycle_poly == 1) {
-            // console.log("Usng polugon 1")
+            if (cycle_poly == 1) {
+                // console.log("Usng polugon 1")
 
-            poly_arr = [
-                [nx2, ny2],
-                [
-                    (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                    (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
-                ],
-                [
-                    (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                    (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
-                ],
+                poly_arr = [
+                    [nx2, ny2],
+                    [
+                        (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                        (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
+                    ],
+                    [
+                        (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                        (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
+                    ],
+                ];
+            }
+            if (cycle_poly == 2) {
+                // console.log("Usng polugon 2")
+                poly_arr =
+                        [
+                            [nx2, ny2],
+                            [
+                                (nx1 - 10) * Math.cos(rotation) - (nx2 + 10) * Math.sin(rotation),
+                                (ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
+                            ],
+                            [
+                                (nx1 + 10) * Math.cos(rotation) + (nx2 - 10) * Math.sin(rotation),
+                                (ny1 - 10) * Math.cos(rotation) - (ny2 - 10) * Math.sin(rotation),
+                            ],
+                        ];
+            }
+            if (cycle_poly == 3) {
+                // console.log("Usng polugon 3")
+                poly_arr =
+                        [
+                            [nx2, ny2],
+                            [
+                                nx2 - nx2 * Math.cos(rotation),
+                                ny2 + ny2 * Math.sin(rotation),
+                            ],
+                            [
+                                nx2 + nx2 * Math.cos(rotation),
+                                ny2 + ny2 * Math.sin(rotation),
+                            ],
+                        ];
+            }
+            if (cycle_poly == 4) {
+                // console.log("Usng polugon 4")
+                var petal = [
+
+                    [0, 0]
+
+                            , [nx1 % 10, -ny1 % 10]
+                            , [-nx1 % 10, ny1 % 10]
+                            , [ny1 % 10, -nx1 % 10]
+                            , [-ny1 % 10, nx1 % 10]
+                ]
+                poly_arr = []
+                for (let i = 0; i < petal.length; i++) {
+                    xp = petal[i][0] * 10
+                    yp = petal[i][1] * 10
+                    poly_arr.push({
+                        'x': xp + nx2,
+                        'y': yp + ny2
+                    })
+                }
+               poly_arr = BezierCurve(poly_arr);
+
+                var parr = []
+                for (let i = 0; i < poly_arr.length; i++) {
+                    parr.push([poly_arr[i].x, poly_arr[i].y])
+                }
+                poly_arr = parr
+            }
+
+            if (cycle_poly > 0) {
+
+
+            //? prepare the gradiants fpr poly and stroke stroke for the PATHS
+            var svgns = 'http://www.w3.org/2000/svg';
+            var defs = document.createElementNS(svgns, 'defs');
+            var fillGradient = document.createElementNS(svgns, 'linearGradient');
+            var strokeGradient = document.createElementNS(svgns, 'linearGradient');
+            //? stop #1
+            // let pct = Math.round(point.x * 0.0637755102).toString()+"%"
+            // log(pct)
+
+            // let limiter = Math.round(1 / (Math.abs((loop_delay / 500))))
+            tc = Math.round(rotation) //@ reversed
+            // if (tree_counter % limiter == 0) {
+                // tree_counter = (poly_clr_idx +1)%360
+                // log(poly_clr_idx)
+                idx1 = tc%360
+                idx2 = tc*90%360
+                idx3 = tc*112%360
+
+                let c1 = colors2[1][idx1]
+                let c2 = colors2[1][idx2]
+                let c3 = colors2[1][idx3]
+            // console.log(c1,c2,c3,idx1,idx2,idx3)
+
+                // idx4 = tc%360
+                // idx5 = tc+33%360
+                // idx6 = tc+66%360
+            // }
+
+            // log(idx1+':'+idx2+':'+idx3+':'+idx4+':'+idx5+':'+idx6)
+            var fillGradient_stops = [
+                // {"color":  colors2[0][order + gens],"offset": "100%"},
+                {"color":  c1,"offset":  "33%"},
+                {"color":  c2,"offset": "63%"},
+                {"color":  c3,"offset":  "100%"},
             ];
-        }
-        if (cycle_poly == 2) {
-            // console.log("Usng polugon 2")
-            poly_arr =
-                    [
-                        [nx2, ny2],
-                        [
-                            (nx1 - 10) * Math.cos(rotation) - (nx2 + 10) * Math.sin(rotation),
-                            (ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
-                        ],
-                        [
-                            (nx1 + 10) * Math.cos(rotation) + (nx2 - 10) * Math.sin(rotation),
-                            (ny1 - 10) * Math.cos(rotation) - (ny2 - 10) * Math.sin(rotation),
-                        ],
-                    ];
-        }
-        if (cycle_poly == 3) {
-            // console.log("Usng polugon 3")
-            poly_arr =
-                    [
-                        [nx2, ny2],
-                        [
-                            nx2 - nx2 * Math.cos(rotation),
-                            ny2 + ny2 * Math.sin(rotation),
-                        ],
-                        [
-                            nx2 + nx2 * Math.cos(rotation),
-                            ny2 + ny2 * Math.sin(rotation),
-                        ],
-                    ];
-        }
-        if (cycle_poly == 4) {
-            // console.log("Usng polugon 4")
-            var petal = [
-
-                [0, 0]
-
-                        , [nx1 % 10, -ny1 % 10]
-                        , [-nx1 % 10, ny1 % 10]
-                        , [ny1 % 10, -nx1 % 10]
-                        , [-ny1 % 10, nx1 % 10]
-            ]
-            poly_arr = []
-            for (let i = 0; i < petal.length; i++) {
-                xp = petal[i][0] * 10
-                yp = petal[i][1] * 10
-                poly_arr.push({
-                    'x': xp + nx2,
-                    'y': yp + ny2
-                })
+            for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
+                var stop = document.createElementNS(svgns, 'stop');
+                stop.setAttribute('offset', fillGradient_stops[i].offset);
+                stop.setAttribute('stop-color', fillGradient_stops[i].color);
+                fillGradient.appendChild(stop);
             }
-           poly_arr = BezierCurve(poly_arr);
+            //? stop #2
 
-            var parr = []
-            for (let i = 0; i < poly_arr.length; i++) {
-                parr.push([poly_arr[i].x, poly_arr[i].y])
+                idx4 = tc%360
+                idx5 = tc+270%360
+                idx6 = tc+248%360
+
+
+                let c4 = colors2[1][idx4]
+                let c5 = colors2[1][idx5]
+                let c6 = colors2[1][idx6]
+            var strokeGradient_stops = [
+                // {"color": generateRandomColor() ,"offset": "0%"},
+                // {"color": colors2[0][order + gens],"offset": "100%"}
+                {"color": "black" ,"offset": "33%"},
+                {"color": "white","offset": "63%"},
+                {"color": "black","offset": "100%"}
+            ];
+            for (var i = 0, length = strokeGradient_stops.length; i < length; i++) {
+                var stop = document.createElementNS(svgns, 'stop');
+                stop.setAttribute('offset', strokeGradient_stops[i].offset);
+                stop.setAttribute('stop-color', strokeGradient_stops[i].color);
+                strokeGradient.appendChild(stop);
             }
-            poly_arr = parr
-        }
 
-        if (cycle_poly > 0) {
+            fillGradient.id = 'fillGradient';
+            fillGradient.setAttribute('x1', '0%');
+            fillGradient.setAttribute('x2', '0%');
+            fillGradient.setAttribute('y1', '0%');
+            fillGradient.setAttribute('y2', '100%');
+
+            strokeGradient.id = 'strokeGradient';
+            strokeGradient.setAttribute('x1', '0%');
+            strokeGradient.setAttribute('x2', '0%');
+            strokeGradient.setAttribute('y1', '0%');
+            strokeGradient.setAttribute('y2', '100%');
+
+            defs.appendChild(fillGradient);
+            defs.appendChild(strokeGradient);
+
             let poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             poly.setAttribute("points", poly_arr);
-            poly.setAttribute("fill", colors2[0][order + gens].toString());
-            poly.setAttribute("stroke", "black");
+            // poly.setAttribute("fill", colors2[0][order + gens].toString());
+            poly.setAttribute('fill', 'url(#fillGradient)');
+            poly.setAttribute('stroke', 'url(#strokeGradient)');
             poly.setAttribute("opacity", poly_opacity);
             //poly.setAttribute("fill", generateRandomColor());
             //poly.setAttribute("stroke", generateRandomColor());
             poly.setAttribute("stroke-width", '1');
             poly.setAttribute("stroke-linecap", "round");
-            svg.appendChild(poly);
+
+        svg.appendChild(defs);
+        svg.appendChild(poly);
+
+            //@ XYZ
         }
         //? ████████████████████████████████████████████████
 
@@ -896,6 +1052,9 @@ function jstr(obj) {
 function log(txt) {
     console.log(txt)
 }
+function call_log(txt) {
+    console.log("\t\t"+txt)
+}
 
 //! ┌───────────────────────────────────────────────
 //! │ Create Bezier curve form a list of values
@@ -1017,141 +1176,9 @@ function getLevel(p) {
     }
     return (0)
 }
-//! ┌───────────────────────────────────────────────
-//! │ write text to screen as row/col location
-//! └───────────────────────────────────────────────
-function writeText(args) {
-    //? args is array of keys/values
-    var svg = document.getElementById("svg");
-    let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.id = args['idname'];
 
-    text.setAttribute("x", args['x']);
-    text.setAttribute("y", args['y']);
-    text.setAttribute("style", args['style']);
-    text.setAttribute("fill", args['fill']);
-    text.setAttribute("font-size", args['font-size']);
-    text.setAttribute("font-family", args['font-family']);
-    text.setAttribute("stroke", args['stroke']);
 
-    let textNode = document.createTextNode(args['text']);
-    text.appendChild(textNode);
-    svg.appendChild(text);
 
-    return (document.getElementById(args['idname']));
-}
-//! ┌───────────────────────────────────────────────
-//! │ write text to screen as row/col location
-//! │ same as 'writeText', btu with default values already applied
-//! └───────────────────────────────────────────────
-function wText(args) {
-    //? only needs 'x', 'y', 'str' keys
-    if (showtext == true) {
-        xpos = (args['col'] * 400) - 800
-        ypos = (args['row'] * 30) + 300
-        var svg = document.getElementById("svg");
-        let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.id = "id-wtP1";
-        text.setAttribute("style", "");
-        text.setAttribute("classname", "wt", );
-        text.setAttribute("x", xpos);
-        text.setAttribute("y", ypos);
-        text.setAttribute("fill", "grey");
-        text.setAttribute("font-size", "20px");
-        text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
-        text.setAttribute("font-weight", "600");
-        //text.setAttribute("style", args['style']);
-        //text.setAttribute("stroke", args['stroke']);
-
-        let textNode = document.createTextNode(args['str']);
-        text.appendChild(textNode);
-        svg.appendChild(text);
-
-        return (document.getElementById('id-wtP1'));
-    }
-}
-//! ┌───────────────────────────────────────────────
-//! │ convenience function for wTextLeft()
-//! └───────────────────────────────────────────────
-function writ(s1,s2) {
-    wTextLeft({'str': s1 +" "+s2, 'row': rnum, 'col': 0});rnum++;
-}
-function writSmall(s1,s2) {
-    wTextLeftSmall({'str': s1 +" "+s2, 'row': rnum, 'col': 0});rnum++;
-}
-//! ┌───────────────────────────────────────────────
-//! │ write text to left side of screen
-//! └───────────────────────────────────────────────
-function wTextLeft(args) {
-    let fs = normal_fontsize
-    let spacing = normal_spacing
-
-    if (showtext == true) {
-        xpos = (args['col'] * 400) - 800
-        ypos = (args['row'] * spacing) - 450
-        var svg = document.getElementById("svg");
-        let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.id = "id-wtP1";
-        text.setAttribute("style", "white-space: pre;")
-        text.setAttribute("classname", "wt", );
-        text.setAttribute("x", xpos);
-        text.setAttribute("y", ypos);
-        if (bg_color == "black") {
-            text.setAttribute("fill", "white");
-        } else {
-            text.setAttribute("fill", "black");    
-        }
-        text.setAttribute("font-size", fs);
-        text.setAttribute("font-family", "monospace, monospace");
-        text.setAttribute("font-weight", "600");
-        //text.setAttribute("stroke", args['stroke']);
-        //text.setAttribute("style", args['style']);
-        //text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
-
-        let textNode = document.createTextNode(args['str']);
-        text.appendChild(textNode);
-        svg.appendChild(text);
-
-        return (document.getElementById('id-wtP1'));
-    }
-}
-//! ┌───────────────────────────────────────────────
-//! │ write text to left side of screen, btu small font... 
-//! │ the kwargs is fucked in javascript, it's easier to just write an entire function
-//! └───────────────────────────────────────────────
-function wTextLeftSmall(args) {
-    let fs = small_fontsize
-    let spacing = normal_spacing
-
-    if (showtext == true) {
-        xpos = (args['col'] * 400) - 800
-        ypos = (args['row'] * spacing) - 450
-        var svg = document.getElementById("svg");
-        let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.id = "id-wtP1";
-        text.setAttribute("style", "white-space: pre;")
-        text.setAttribute("classname", "wt", );
-        text.setAttribute("x", xpos);
-        text.setAttribute("y", ypos);
-        if (bg_color == "black") {
-            text.setAttribute("fill", "white");
-        } else {
-            text.setAttribute("fill", "black");    
-        }
-        text.setAttribute("font-size", fs);
-        text.setAttribute("font-family", "monospace, monospace");
-        text.setAttribute("font-weight", "600");
-        //text.setAttribute("stroke", args['stroke']);
-        //text.setAttribute("style", args['style']);
-        //text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
-
-        let textNode = document.createTextNode(args['str']);
-        text.appendChild(textNode);
-        svg.appendChild(text);
-
-        return (document.getElementById('id-wtP1'));
-    }
-}
 //! ┌───────────────────────────────────────────────
 //! │ return string of time data
 //! └───────────────────────────────────────────────

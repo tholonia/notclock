@@ -179,8 +179,10 @@
 
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyA']) {
+                preset_changed = true
                 cycle_preset = (cycle_preset+1) % num_of_presets 
                 console.log("Cycle Presets: "+cycle_preset)
+                console.log("Preset changed: "+preset_changed)
             }
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyV']) {
@@ -189,7 +191,7 @@
             }
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyJ']) {
-                branch_angle = branch_angle + degjump // number of polys
+                branch_angle = branch_angle + degjump 
                 console.log("degjump")
             }
             //? ────────────────────────────────────────────────
@@ -261,13 +263,14 @@
             if (lastkey['Alt'] && lastkey['KeyO']) {
                 poly_opacity = (parseInt((poly_opacity*100) + 3)/100)
                 if (poly_opacity >1) {poly_opacity = 1}
-                console.log("poly_Opacity+: "+poly_opacity)
+                console.log("Poly opacity+: "+poly_opacity)
             }
             //? ────────────────────────────────────────────────
             if (lastkey['Alt'] && lastkey['KeyI']) {
+                console.log("Prev Poly opacity-: "+poly_opacity)
                 poly_opacity = (parseInt((poly_opacity*100) - 1)/100)
                 if (poly_opacity < 0) {poly_opacity = 0}
-                console.log("poly_Opacity-: "+poly_opacity)
+                console.log("New Poly opacity-: "+poly_opacity)
             }
         });
         eleSvg.addEventListener('keyup', function (event) {

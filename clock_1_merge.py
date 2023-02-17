@@ -20,8 +20,8 @@ for line in Lines:
         cmd = f"perl -pi -e 's/var _VERSION.*/var _VERSION = {v}/' clock_1.svg"
         os.system(cmd)
 
-    if line.find('var _PRIVATE_MODE') != -1:
-        line = "    var _PRIVATE_MODE = false\n"
+    if line.find('var _DEV_MODE') != -1:
+        line = "    var _DEV_MODE = false\n"
 
     if line.find('%PRAGMA') != -1:
         args = line.split(":")
