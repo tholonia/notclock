@@ -30,6 +30,7 @@ class Edge {
 class Tree {
     constructor(gens, lineLength, x, y, angle, rotation) {
         branch_counter++
+        //? applying this here creates mangled trees
         //@ **************************************************
         //@            let _a = angle
         //@            let _r = rotation
@@ -234,12 +235,14 @@ function writeMenu() {
     writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
     writGrid([_]);rnum++;
 
+    writGrid(['aD','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+')']);rnum++;
     writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+')']);rnum++;
     writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+')']);rnum++;
     writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+')']);rnum++;
     writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+')']);rnum++;
     writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+')']);rnum++;
     writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
+    writGrid(['aC','⌥ C','Cycle Vars','(' + cycle_vars+')']);rnum++;
     writGrid([_]);rnum++;
     writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius+')']);rnum++;
     writGrid(['aX','⌥ (X|Z)','Cicles opacity +/-',   '(' +circle_opacity+')']);rnum++;
@@ -266,6 +269,7 @@ function writeMenu() {
     writGrid([_]);rnum++;
     writGrid(['Query String']);rnum++;
 
+    //@ ARGS
     let qs = makeQs(href).match(/.{1,140}/g);
     for (i=0;i<qs.length;i++) {
         writGrid([qs[i]]);rnum++;
@@ -306,6 +310,9 @@ function makeQs(qs) {
     qs = qs + "&aK=" + cycle_path
     qs = qs + "&aU=" + cycle_dataset
     qs = qs + "&aA=" + cycle_preset
+    qs = qs + "&aC=" + cycle_vars
+    qs = qs + "&aM=" + cycle_circles
+    //@ ARGS
     return(qs)
 }
 
@@ -315,9 +322,6 @@ function makeQs(qs) {
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
 function drawTree(branch_angle, rotation) {
-    // call_log("drawtree")
-    // console.log(tree_counter)
-
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
     if (preset_changed == true) {
@@ -331,7 +335,7 @@ function drawTree(branch_angle, rotation) {
         // randint(0,num_of_presets)
         // var qsary = parseQuery(preqs[randint(0,cycle_preset)])
         var qsary = parseQuery(preqs[cycle_preset])
-
+        //@ ARGS
         for (const key in qsary) {
             switch(key) {
                 // case 'up':  loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
@@ -351,6 +355,8 @@ function drawTree(branch_angle, rotation) {
                 case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
                 case 'aK': cycle_path      = qsary[key]; break;
                 case 'aU': cycle_dataset   = qsary[key]; break;
+                case 'aC': cycle_vars     = qsary[key]; break;
+                case 'aM': cycle_circles    = qsary[key]; break;
                 // case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
             }
         }
@@ -359,12 +365,6 @@ function drawTree(branch_angle, rotation) {
 
     }
     //% ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-
-    //FIXME: for SOME reason, these vals need to be flipped to work :/
-    let _a = branch_angle
-    let _r = rotation
-    rotation = _a
-    branch_angle = _r
 
     clearCanvas()
 
@@ -391,14 +391,31 @@ function drawTree(branch_angle, rotation) {
 
     //? ALT CHARACTERS
     //  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z  <- all
-    //          E F                                          <- USED BY BRAVE
-    // A  B         G   I   K       O     R     U V   X   Z  <- USED BY THIS APP 
-    //%     C D       H   J   L M N   P     S T         Y    <- AVAILABLE
+    //        D E F   H                                      <- USED BY BRAVE
+    // A  B         G   I J K   M   O     R     U V   X   Z  <- USED BY THIS APP 
+    //%     C                 L   N   P     S T         Y    <- AVAILABLE
 
-    _ = ''
+    // KeyD only works once... using KeyJ is OK
+    // KeyH seems to not reapond at all
 
     writeMenu()
-    var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
+
+
+    /*
+    this part is very confusing...  we need to swap 'rotation' and 'branch_angle' otherwise we get a line all rotating inteh same directions around their centers, 
+    i.e., there is no symetrical balance, only rotational uniformity.  
+
+    This swapping could also be accomplished but reversing the declared names in the function, i.e., 'function drawTree(rotation, branch_angle)', as this also keeps 'branch_angle' 
+    values assigned to 'branch_angle' variable. 
+
+    HOWEVER, 
+
+    */
+    //? this call has the arguments in the order they are called in 'Tree'
+    // var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
+    //? but we need to use THIS swapped args to get symetrical results
+    // console.log("branch_angle:",branch_angle)
+    var draw_tree = new Tree(gens, this_length, start_x, start_y, rotation, branch_angle);
 
     var draw_edges = getTreeEdges(draw_tree);
     var svg = document.getElementById("svg");
@@ -461,7 +478,7 @@ function drawTree(branch_angle, rotation) {
         var newPath_r = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         var newPath_l = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-        //@ DEBUG Doesn't exactlyy do what I want
+        //@ DEBUG Doesn't exactly do what I want
         let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
         // path_width = cycle_in_range(tree_counter, 2,10)
         // if (tree_counter % limiter == 0) {
@@ -529,12 +546,15 @@ function drawTree(branch_angle, rotation) {
         var totcirc = 3
    
         //% █████████████ ADJUSTMENTS █████████████
+
+        if (cycle_vars == 1) {
+            circle_radius = cycle_in_range(Math.round(branch_angle),0,30)
+        }
+
         var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycles throug the circle-types
 
-        if (circle_radius > 0) { //? we have a circle
-            //? cyces through the total number of circles patterns available, i.e., 0,1,2...
-            //? Need to use cycles_radius and not cr_rad otherwise it breaks the continuity of the MOD cycle
-            if ((circle_radius + 1) % totcirc == 0) { 
+        // if (cycle_circles > 0) { //? we have a circle
+            if (cycle_circles == 1) { 
 
                 //? prepare teh gradian for the circle
                 //@ DEBUG prob better to move defs into the global scope
@@ -581,7 +601,7 @@ function drawTree(branch_angle, rotation) {
             }
 
 
-            if ((circle_radius + 1) % totcirc == 1) {
+            if (cycle_circles == 2) {
                 let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 
                 circle.setAttribute("id", "circles");
@@ -598,7 +618,7 @@ function drawTree(branch_angle, rotation) {
 
                 svg.appendChild(circle);
             }
-            if ((circle_radius + 1) % totcirc == 2) {
+            if (cycle_circles == 3) {
                 let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 
                 circle.setAttribute("id", "circles");
@@ -615,7 +635,7 @@ function drawTree(branch_angle, rotation) {
 
                 svg.appendChild(circle);
             }
-        }
+        // }
 
             //@ ████████████████████████████████████████████████
 
