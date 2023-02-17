@@ -263,7 +263,12 @@ function writeMenu() {
     writGrid([_]);rnum++;
     writGrid([_]);rnum++;
     writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
+    if (loop_delay < 4) {
+        menu_fontweight="600";menu_fontclr="RED";
+        writGrid(['✅','WARNING',"Too fast: Expect unpredictable results and/or browser crash (eventually)."]);rnum++;
+    } else {
+        writGrid([_]);rnum++;
+    }
     writGrid([_]);rnum++;
     writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
     writGrid([_]);rnum++;
