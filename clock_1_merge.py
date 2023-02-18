@@ -1,7 +1,7 @@
 #!/bin/python
 import os
 ofn = "notclock.svg"
-ifn = "clock_1.svg.js"
+ifn = "clock_1.svg"
 outfile = open(ofn,'w')
 infile = open(ifn, 'r')
 Lines = infile.readlines()

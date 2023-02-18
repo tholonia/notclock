@@ -159,6 +159,9 @@ function parseQuery(queryString) {
     return query;
 }
 
+//! ┌───────────────────────────────────────────────
+//! │ interface to wTL
+//! └───────────────────────────────────────────────
 function writGrid(args) {
 
     let mCols = menuCols
@@ -178,17 +181,20 @@ function writGrid(args) {
     }
     // rnum++;
 }
+//! ┌───────────────────────────────────────────────
+//! │ wtite text from left->right in grod format
+//! └───────────────────────────────────────────────
 function wTL(args) {
     // row,col
     let fs = menu_fontsize
     let spacing = menu_spacing
 
     // if (showtext == true) {
-        xpos = (args['col'] * 1) - 800
+        xpos = (args['col'] * 1) - 960  //? viewbox is x=1920 y=1024 w. 0,0 as dead center, leftmost col is -960
         // log("xpos:"+xpos+' - '+args['col'])
-        ypos = (args['row'] * 20) - 450
+        ypos = (args['row'] * 20) - 450 //? topmost col is -960
         var svg = document.getElementById("svg");
-        let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        let text = document.createElementNS(svgns, 'text');
         text.id = "id-wtP1";
         text.setAttribute("style", "white-space: pre;")
         text.setAttribute("classname", "wt", );
@@ -213,82 +219,83 @@ function wTL(args) {
         return (document.getElementById('id-wtP1'));
     // }
 }
+//! ┌───────────────────────────────────────────────
+//! │ all the menu and screen text is written here
+//! └───────────────────────────────────────────────
 function writeMenu() {
-    menu_fontweight="600";menu_fontclr="#00ffff"
-    writGrid(['✅',_,_,_,'⌥ = Alt']);
-    menu_fontweight="600";menu_fontclr="#00ff00"
-    writGrid(['✅',_,_,'⇧ = Shift']);
-    menu_fontweight="600";menu_fontclr="#ff00ff"
-    writGrid(['✅',_,'^ = Ctrl'])
-    menu_fontweight="600";menu_fontclr="red"
-    writGrid(['✅','NOTE:']);rnum++;
-    //? the above are all written on the same line, as they have to "rnum++' at the end.
-    // writGrid(['✅']);rnum++;
-    // writGrid(['✅','NOTE: ^ = Ctrl, ⇧ = Shift, ⌥ = Alt']);rnum++;
-    writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
-    menu_fontweight="300"
-    writGrid([_,'HOME','Toggle BG (B/W)']);rnum++;
-    writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
-    writGrid([_,'◀▶','-thinner|+wider']);rnum++;
-    writGrid([_,'PGUP/PGDN','+long|-short','(' + linelength_adj + ')']);rnum++;
-    writGrid([_,'INS/DEL','+Finer|Courser','(' + deg_adj + ')']);rnum++;
-    writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer']);rnum++;
-    writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
-    writGrid([_]);rnum++;
-
-    writGrid(['aD','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+')']);rnum++;
-    writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+')']);rnum++;
-    writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+')']);rnum++;
-    writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+')']);rnum++;
-    writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+')']);rnum++;
-    writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+')']);rnum++;
-    writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
-    writGrid(['aC','⌥ C','Cycle Vars','(' + cycle_vars+')']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius+')']);rnum++;
-    writGrid(['aX','⌥ (X|Z)','Cicles opacity +/-',   '(' +circle_opacity+')']);rnum++;
-    writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
-
-    writGrid([_,'⌥ J','Jump fwd 5°']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
-    writGrid(['a0','^⌥ 0','Toggle All Lines','(' + show_all_lines + ')']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_,'^⇧Z','Show/Hide this menu']);rnum++;
-    writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
-    writGrid([_,'SPACE','Pause/Run']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    if (loop_delay < 4) {
-        menu_fontweight="600";menu_fontclr="RED";
-        writGrid(['✅','WARNING',"Too fast: Expect unpredictable results and/or browser crash (eventually)."]);rnum++;
-    } else {
+    if (showtext == 0) {return}
+    if (fullscreen == 0) {
+        menu_fontweight="600";menu_fontclr="#00ffff"; writGrid(['✅',_,_,_,'⌥ = Alt']);
+        menu_fontweight="600";menu_fontclr="#00ff00"; writGrid(['✅',_,_,'⇧ = Shift']);
+        menu_fontweight="600";menu_fontclr="#ff00ff"; writGrid(['✅',_,'^ = Ctrl'])
+        menu_fontweight="600";menu_fontclr="red"; writGrid(['✅','NOTE:']);rnum++;
+        //? the above are all written on the same line, as they have to "rnum++' at the end.
+        writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
+        menu_fontweight="300"
+        writGrid([_,'HOME','Toggle BG (B/W)']);rnum++;
+        writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
+        writGrid([_,'◀▶','-thinner|+wider']);rnum++;
+        writGrid([_,'PGUP/PGDN','+zoom in|-zoom out','(' + linelength_adj + ')']);rnum++;
+        writGrid([_,'INS/DEL','+Finer|Courser','(' + deg_adj + ')']);rnum++;
+        writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer']);rnum++;
+        writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
         writGrid([_]);rnum++;
-    }
-    writGrid([_]);rnum++;
-    writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid(['Query String']);rnum++;
 
-    //@ ARGS
-    let qs = makeQs(href).match(/.{1,140}/g);
-    for (i=0;i<qs.length;i++) {
-        writGrid([qs[i]]);rnum++;
-    }
-    writGrid([_]);rnum++;
-    writGrid(['TIME PER CYCLE: '+cycletime+'/ Current Angle: '+branch_angle % 360]);rnum++;
-    writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
-    //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
-    //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
-    rnum = 0;
-    //? report mouse x/y position on teh screen
-    writGrid([_,_,_,_,"x="+point.x+" y="+point.y])
+        writGrid(['aD','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+')']);rnum++;
+        writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+')']);rnum++;
+        writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+')']);rnum++;
+        writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+')']);rnum++;
+        writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+')']);rnum++;
+        writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+')']);rnum++;
+        writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
+        writGrid(['aC','⌥ C','Cycle Vars','(' + cycle_vars+')']);rnum++;
+        writGrid([_]);rnum++;
+        writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius+')']);rnum++;
+        writGrid(['aX','⌥ (X|Z)','Cicles opacity +/-',   '(' +circle_opacity+')']);rnum++;
+        writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
+        writGrid(['aS','⌥ (S|W)','Merge Count   +/-',   '(' + merge_count + ')']);rnum++;
 
+        writGrid([_,'⌥ J','Jump fwd 5°']);rnum++;
+        writGrid([_]);rnum++;
+        writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
+        writGrid(['a0','^⌥ 0','Toggle All Lines','(' + show_all_lines + ')']);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_,'^⇧Z','Show/Hide this menu']);rnum++;
+        writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
+        writGrid([_,'SPACE','Pause/Run']);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        if (loop_delay < 4) {
+            menu_fontweight="600";menu_fontclr="RED";
+            writGrid(['✅','WARNING',"Too fast: Expect unpredictable results and/or browser crash (eventually)."]);rnum++;
+        } else {
+            writGrid([_]);rnum++;
+        }
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid(['Query String']);rnum++;
+
+        //@ ARGS
+        let qs = makeQs(href).match(/.{1,140}/g);
+        for (i=0;i<qs.length;i++) {
+            writGrid(['                                                                                                                                                                                                                                                                                    ']);
+            writGrid([qs[i]]);rnum++;
+        }
+        let ba = (branch_angle % 360).toFixed(2)
+        writGrid([_]);rnum++;
+        writGrid(['TIME PER CYCLE: '+cycletime+'/ Current Angle: '+ba]);rnum++;
+        writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
+        //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
+        //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
+        rnum = 0;
+        //? report mouse x/y position on teh screen
+        writGrid([_,_,_,_,"x="+point.x+" y="+point.y])
+    }
 }
 //! ┌───────────────────────────────────────────────
 //! │ build the query string
@@ -318,6 +325,7 @@ function makeQs(qs) {
     qs = qs + "&aA=" + cycle_preset
     qs = qs + "&aC=" + cycle_vars
     qs = qs + "&aM=" + cycle_circles
+    qs = qs + "&aS=" + merge_count
     //@ ARGS
     return(qs)
 }
@@ -328,11 +336,10 @@ function makeQs(qs) {
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
 function drawTree(branch_angle, rotation) {
-
         branch_angle = branch_angle%360;
-        
+        rotation = rotation%360;
 
-        // if (cycle_vars == 1) {
+        if (cycle_vars == 1) {
             // circle_radius = cycle_in_range(Math.round(branch_angle),0,30)
             circle_radius = cycle_in_range(Math.round(branch_angle),0,7 ,0)
             circle_opacity = cycle_in_range(Math.round(branch_angle),0,100,0)/100
@@ -343,6 +350,7 @@ function drawTree(branch_angle, rotation) {
             pensize[3] = cycle_in_range(Math.round(branch_angle),0,5,0)
             pensize[4] = cycle_in_range(Math.round(branch_angle),0,5,0)
             pensize[5] = cycle_in_range(Math.round(branch_angle),0,5,0)
+
             pre_maxlengths[0] = cycle_in_range(Math.round(branch_angle),0,130,0)
             pre_maxlengths[1] = cycle_in_range(Math.round(branch_angle),0,70,0)
             pre_maxlengths[2] = cycle_in_range(Math.round(branch_angle),0,60,0)
@@ -354,15 +362,8 @@ function drawTree(branch_angle, rotation) {
             setTimeout(function () {cycle_path = (cycle_path + 1) % num_of_paths}, 2000)
             setTimeout(function () {cycle_poly = (cycle_path + 1) % num_of_polys}, 3000)
             setTimeout(function () {cycle_dataset = (cycle_dataset + 1) % num_of_datasets}, 4000)
-            setTimeout(function () {cycle_path = (cycle_path + 1) % num_of_paths}, 5000)
             setTimeout(function () {cycle_colors= (cycle_colors + 1) % num_of_colors}, 6000)
-
-
-        // }
-
-
-
-
+        }
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
     if (preset_changed == true) {
@@ -398,6 +399,8 @@ function drawTree(branch_angle, rotation) {
                 case 'aU': cycle_dataset   = qsary[key]; break;
                 case 'aC': cycle_vars     = qsary[key]; break;
                 case 'aM': cycle_circles    = qsary[key]; break;
+                case 'aS': merge_counts    = qsary[key]; break;
+                case 'FS': fullscreen    = qsary[key]; break;
                 // case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
             }
         }
@@ -407,7 +410,61 @@ function drawTree(branch_angle, rotation) {
     }
     //% ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-    clearCanvas()
+if (snapshot == 1) {
+    snapshot = 0
+    var svgElement = document.getElementById('svg');
+    let {width, height} = svgElement.getBBox(); 
+    let clonedSvgElement = svgElement.cloneNode(true);
+    // true for deep clone
+    let outerHTML = clonedSvgElement.outerHTML,
+    blob = new Blob([outerHTML],{type:'image/svg+xml;charset=utf-8'});
+    let URL = window.URL || window.webkitURL || window;
+    let blobURL = URL.createObjectURL(blob);
+    let image = new Image();
+    jstr(blobURL)
+
+    body = document.getElementById('body')
+    canvas = document.createElementNS("http://www.w3.org/1999/xhtml","canvas")
+    body.appendChild(canvas)
+
+
+    //@ XXX
+    image.onload = () => {
+       const ctx = canvas.getContext('2d');
+       canvas.widht = width;       
+       canvas.height = height;
+       let context = canvas.getContext('2d');
+       context.drawImage(image, 0, 0, width, height );
+    };
+    image.src = blobURL;
+    let png = canvas.toDataURL(); // default png
+    jstr(png)
+
+    var download = function(href, name){
+        var div = document.createElementNS("http://www.w3.org/1999/xhtml","div")
+        var link = document.createElementNS("http://www.w3.org/1999/xhtml","a")
+        link.download = name;
+        link.style.opacity = "0";
+        div.append(link);
+        link.href = href;
+        link.click();
+        link.remove();
+    }
+    download(png, "image.png");
+
+}
+
+
+    if (merge_count == 0) {
+        clearCanvas()        
+    } else {
+        if (tree_counter%merge_count == 0) {
+            clearCanvas()
+        }
+    }
+
+
+
 
     //? rebuild timing data based on changes in specs
     tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
@@ -429,29 +486,13 @@ function drawTree(branch_angle, rotation) {
     //% █████████████ ADJUSTMENTS █████████████
     //% let noteseed = (54+tree_counter+ rotation)%108+108
 
-
-    //? ALT CHARACTERS
-    //  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z  <- all
-    //        D E F   H                                      <- USED BY BRAVE
-    // A  B         G   I J K   M   O     R     U V   X   Z  <- USED BY THIS APP 
-    //%     C                 L   N   P     S T         Y    <- AVAILABLE
-
-    // KeyD only works once... using KeyJ is OK
-    // KeyH seems to not reapond at all
-
     writeMenu()
 
+    //@ this part is very confusing...  we need to swap 'rotation' and 'branch_angle' otherwise we get lines all 
+    //@ rotating in the same directions around their centers, i.e., there is no symetrical balance, only rotational uniformity.  
+    //@ This swapping could also be accomplished but reversing the declared names in the function, i.e., 
+    //@ 'function drawTree(rotation, branch_angle)', as this also keeps 'branch_angle' values assigned to 'branch_angle' variable. 
 
-    /*
-    this part is very confusing...  we need to swap 'rotation' and 'branch_angle' otherwise we get a line all rotating inteh same directions around their centers, 
-    i.e., there is no symetrical balance, only rotational uniformity.  
-
-    This swapping could also be accomplished but reversing the declared names in the function, i.e., 'function drawTree(rotation, branch_angle)', as this also keeps 'branch_angle' 
-    values assigned to 'branch_angle' variable. 
-
-    HOWEVER, 
-
-    */
     //? this call has the arguments in the order they are called in 'Tree'
     // var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
     //? but we need to use THIS swapped args to get symetrical results
@@ -516,8 +557,8 @@ function drawTree(branch_angle, rotation) {
         xfullary_left = [{'g':7,'x':0,'y':0}]
 
 
-        var newPath_r = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        var newPath_l = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        var newPath_r = document.createElementNS(svgns, 'path');
+        var newPath_l = document.createElementNS(svgns, 'path');
 
         //@ DEBUG Doesn't exactly do what I want
         let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
@@ -530,8 +571,7 @@ function drawTree(branch_angle, rotation) {
 
         //? prepare the gradiant stroke for the PATHS
 
-        var svgns = 'http://www.w3.org/2000/svg';
-        var defs = document.createElementNS(svgns, 'defs');
+        var DATdefs = document.createElementNS(svgns, 'defs');
         var gradient = document.createElementNS(svgns, 'radialGradient');
         var stops = [{"color": "white","offset": "0%"},{"color": "#000000","offset": "100%"}];
 
@@ -541,25 +581,24 @@ function drawTree(branch_angle, rotation) {
             stop.setAttribute('stop-color', stops[i].color);
             gradient.appendChild(stop);
         }
-//@ XYZ
         gradient.id = 'datasetGradient';
         gradient.setAttribute('cx', '0.5');
         gradient.setAttribute('cy', '0.3');  //? light is slightly above horizon
         gradient.setAttribute('r', '1');
-        defs.appendChild(gradient);
+        DATdefs.appendChild(gradient);
         newPath_l.setAttribute('fill', 'url(#datasetGradient)');
         newPath_r.setAttribute('d', ""+path_r[gen]);
         newPath_r.setAttribute("fill-opacity", "0");
         newPath_r.setAttribute("stroke-width", path_width);
         newPath_r.setAttribute('stroke', 'url(#datasetGradient)');
-        svg.appendChild(defs);
+        svg.appendChild(DATdefs);
         svg.appendChild(newPath_r);
 
         newPath_l.setAttribute('d', ""+path_l[gen]);
         newPath_l.setAttribute("fill-opacity", "0");
         newPath_l.setAttribute("stroke-width", path_width);
         newPath_l.setAttribute('stroke', 'url(#datasetGradient)');
-        svg.appendChild(defs);
+        svg.appendChild(DATdefs);
         svg.appendChild(newPath_l);
     }
 
@@ -570,7 +609,7 @@ function drawTree(branch_angle, rotation) {
         ny2 = adata_left[idx].y
 
         //? create LINE instance
-        var newLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        var newLine = document.createElementNS(svgns, 'line');
         newLine.setAttribute('x1', nx1.toString());
         newLine.setAttribute('y1', ny1.toString());
         newLine.setAttribute('x2', nx2.toString());
@@ -591,232 +630,228 @@ function drawTree(branch_angle, rotation) {
 
         var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycles throug the circle-types
 
-        // if (cycle_circles > 0) { //? we have a circle
-            if (cycle_circles == 1) { 
+        if (cycle_circles == 1) { 
 
-                //? prepare teh gradian for the circle
-                //@ DEBUG prob better to move defs into the global scope
-                var svgns = 'http://www.w3.org/2000/svg';
-                var defs = document.createElementNS(svgns, 'defs');
-                var gradient = document.createElementNS(svgns, 'radialGradient');
-                var circle = document.createElementNS(svgns, 'circle');
+            //? prepare teh gradient for the circle
+            //@ DEBUG prob better to move defs into the global scope
+            var CIRdefs = document.createElementNS(svgns, 'defs');
+            var gradient = document.createElementNS(svgns, 'radialGradient');
+            var circle = document.createElementNS(svgns, 'circle');
 
-                var stops = [
-                    {
-                        //        "color":  colors2[0][order].toString(),
-                        "color": "white",
-                        "offset": "0%"
-                    },
-                    {
-                        "color": "#000000",
-                        "offset": "100%"
-                    }
-                ];
-
-                for (var i = 0, length = stops.length; i < length; i++) {
-                    var stop = document.createElementNS(svgns, 'stop');
-                    stop.setAttribute('offset', stops[i].offset);
-                    stop.setAttribute('stop-color', stops[i].color);
-                    gradient.appendChild(stop);
+            var stops = [
+                {
+                    //        "color":  colors2[0][order].toString(),
+                    "color": "white",
+                    "offset": "0%"
+                },
+                {
+                    "color": "#000000",
+                    "offset": "100%"
                 }
-
-                gradient.id = 'Gradient';
-                gradient.setAttribute('cx', '0.3');
-                gradient.setAttribute('cy', '0.3');
-                gradient.setAttribute('r', '1');
-                defs.appendChild(gradient);
-                circle.setAttribute('fill', 'url(#Gradient)');
-
-
-                circle.setAttribute("id", "circles");
-                circle.setAttribute("cx", nx2.toString());
-                circle.setAttribute("cy", ny2.toString());
-                circle.setAttribute("r", cr_rad);
-                circle.setAttribute("opacity", circle_opacity);
-
-                svg.appendChild(defs);
-                svg.appendChild(circle);
-            }
-
-
-            if (cycle_circles == 2) {
-                let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-
-                circle.setAttribute("id", "circles");
-                circle.setAttribute("cx", nx2.toString());
-                circle.setAttribute("cy", ny2.toString());
-                circle.setAttribute("r", cr_rad);
-                circle.setAttribute("fill", colors2[0][order].toString());
-                circle.setAttribute("stroke", "darkgrey");
-                circle.setAttribute("opacity", circle_opacity);
-                circle.setAttribute("stroke-width", '1');
-                circle.setAttribute("stroke-linecap", "round");
-                //circle.setAttribute("fill", generateRandomColor());
-                //circle.setAttribute("stroke", generateRandomColor());
-
-                svg.appendChild(circle);
-            }
-            if (cycle_circles == 3) {
-                let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-
-                circle.setAttribute("id", "circles");
-                circle.setAttribute("cx", nx2.toString());
-                circle.setAttribute("cy", ny2.toString());
-                circle.setAttribute("r", cr_rad);
-                circle.setAttribute("stroke", "darkgrey");
-                circle.setAttribute("opacity", circle_opacity);
-                circle.setAttribute("stroke-width", '1');
-                circle.setAttribute("stroke-linecap", "round");
-                circle.setAttribute("fill", generateRandomColor());
-                //circle.setAttribute("fill", colors2[0][order].toString());
-                //circle.setAttribute("stroke", generateRandomColor());
-
-                svg.appendChild(circle);
-            }
-        // }
-
-            //@ ████████████████████████████████████████████████
-
-            //? ████████████████████████████████████████████████
-            //? ███████████████████ POLYS ██████████████████████
-            //? ████████████████████████████████████████████████
-
-            var poly_arr = false
-
-            if (cycle_poly == 1) {
-                // console.log("Usng polugon 1")
-
-                poly_arr = [
-                    [nx2, ny2],
-                    [
-                        (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                        (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
-                    ],
-                    [
-                        (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                        (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
-                    ],
-                ];
-            }
-            if (cycle_poly == 2) {
-                // console.log("Usng polugon 2")
-                poly_arr =
-                        [
-                            [nx2, ny2],
-                            [
-                                (nx1 - 10) * Math.cos(rotation) - (nx2 + 10) * Math.sin(rotation),
-                                (ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
-                            ],
-                            [
-                                (nx1 + 10) * Math.cos(rotation) + (nx2 - 10) * Math.sin(rotation),
-                                (ny1 - 10) * Math.cos(rotation) - (ny2 - 10) * Math.sin(rotation),
-                            ],
-                        ];
-            }
-            if (cycle_poly == 3) {
-                // console.log("Usng polugon 3")
-                poly_arr =
-                        [
-                            [nx2, ny2],
-                            [
-                                nx2 - nx2 * Math.cos(rotation),
-                                ny2 + ny2 * Math.sin(rotation),
-                            ],
-                            [
-                                nx2 + nx2 * Math.cos(rotation),
-                                ny2 + ny2 * Math.sin(rotation),
-                            ],
-                        ];
-            }
-            if (cycle_poly == 4) {
-                // console.log("Usng polugon 4")
-                var petal = [
-
-                    [0, 0]
-
-                            , [nx1 % 10, -ny1 % 10]
-                            , [-nx1 % 10, ny1 % 10]
-                            , [ny1 % 10, -nx1 % 10]
-                            , [-ny1 % 10, nx1 % 10]
-                ]
-                poly_arr = []
-                for (let i = 0; i < petal.length; i++) {
-                    xp = petal[i][0] * 10
-                    yp = petal[i][1] * 10
-                    poly_arr.push({
-                        'x': xp + nx2,
-                        'y': yp + ny2
-                    })
-                }
-               poly_arr = BezierCurve(poly_arr);
-
-                var parr = []
-                for (let i = 0; i < poly_arr.length; i++) {
-                    parr.push([poly_arr[i].x, poly_arr[i].y])
-                }
-                poly_arr = parr
-            }
-
-            if (cycle_poly > 0) {
-
-
-            //? prepare the gradiants fpr poly and stroke stroke for the PATHS
-            var svgns = 'http://www.w3.org/2000/svg';
-            var defs = document.createElementNS(svgns, 'defs');
-            var fillGradient = document.createElementNS(svgns, 'linearGradient');
-            var strokeGradient = document.createElementNS(svgns, 'linearGradient');
-            //? stop #1
-            // let pct = Math.round(point.x * 0.0637755102).toString()+"%"
-            // log(pct)
-
-            // let limiter = Math.round(1 / (Math.abs((loop_delay / 500))))
-            tc = Math.round(rotation) //@ reversed
-            // if (tree_counter % limiter == 0) {
-                // tree_counter = (poly_clr_idx +1)%360
-                // log(poly_clr_idx)
-                idx1 = tc%360
-                idx2 = tc*90%360
-                idx3 = tc*112%360
-
-                let c1 = colors2[1][idx1]
-                let c2 = colors2[1][idx2]
-                let c3 = colors2[1][idx3]
-            // console.log(c1,c2,c3,idx1,idx2,idx3)
-
-                // idx4 = tc%360
-                // idx5 = tc+33%360
-                // idx6 = tc+66%360
-            // }
-
-            // log(idx1+':'+idx2+':'+idx3+':'+idx4+':'+idx5+':'+idx6)
-            var fillGradient_stops = [
-                // {"color":  colors2[0][order + gens],"offset": "100%"},
-                {"color":  c1,"offset":  "33%"},
-                {"color":  c2,"offset": "63%"},
-                {"color":  c3,"offset":  "100%"},
             ];
+
+            for (var i = 0, length = stops.length; i < length; i++) {
+                var stop = document.createElementNS(svgns, 'stop');
+                stop.setAttribute('offset', stops[i].offset);
+                stop.setAttribute('stop-color', stops[i].color);
+                gradient.appendChild(stop);
+            }
+
+            gradient.id = 'Gradient';
+            gradient.setAttribute('cx', '0.3');
+            gradient.setAttribute('cy', '0.3');
+            gradient.setAttribute('r', '1');
+            CIRdefs.appendChild(gradient);
+            circle.setAttribute('fill', 'url(#Gradient)');
+
+
+            circle.setAttribute("id", "circles");
+            circle.setAttribute("cx", nx2.toString());
+            circle.setAttribute("cy", ny2.toString());
+            circle.setAttribute("r", cr_rad);
+            circle.setAttribute("opacity", circle_opacity);
+
+            svg.appendChild(CIRdefs);
+            svg.appendChild(circle);
+        }
+
+
+        if (cycle_circles == 2) {
+            let circle = document.createElementNS(svgns, 'circle');
+
+            circle.setAttribute("id", "circles");
+            circle.setAttribute("cx", nx2.toString());
+            circle.setAttribute("cy", ny2.toString());
+            circle.setAttribute("r", cr_rad);
+            circle.setAttribute("fill", colors2[0][order].toString());
+            circle.setAttribute("stroke", "darkgrey");
+            circle.setAttribute("opacity", circle_opacity);
+            circle.setAttribute("stroke-width", '1');
+            circle.setAttribute("stroke-linecap", "round");
+            //circle.setAttribute("fill", generateRandomColor());
+            //circle.setAttribute("stroke", generateRandomColor());
+
+            svg.appendChild(circle);
+        }
+        if (cycle_circles == 3) {
+            let circle = document.createElementNS(svgns, 'circle');
+
+            circle.setAttribute("id", "circles");
+            circle.setAttribute("cx", nx2.toString());
+            circle.setAttribute("cy", ny2.toString());
+            circle.setAttribute("r", cr_rad);
+            circle.setAttribute("stroke", "darkgrey");
+            circle.setAttribute("opacity", circle_opacity);
+            circle.setAttribute("stroke-width", '1');
+            circle.setAttribute("stroke-linecap", "round");
+            circle.setAttribute("fill", generateRandomColor());
+            //circle.setAttribute("fill", colors2[0][order].toString());
+            //circle.setAttribute("stroke", generateRandomColor());
+
+            svg.appendChild(circle);
+        }
+
+        //? ████████████████████████████████████████████████
+        //? ███████████████████ POLYS ██████████████████████
+        //? ████████████████████████████████████████████████
+
+        var poly_arr = false
+        //? ────────────────────────────────────────────────
+        if (cycle_poly == 1) {
+            poly_arr = [
+                [nx2, ny2],
+                [
+                    (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                    (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
+                ],
+                [
+                    (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                    (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
+                ],
+            ];
+        }
+        //? ────────────────────────────────────────────────
+        if (cycle_poly == 2) {  
+            poly_arr =
+                    [
+                        [nx2, ny2],
+                        [
+                            nx1 ,
+                            cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                        ],
+                        [
+                            nx1,
+                            cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                        ],
+                    ];
+        }
+        //? ────────────────────────────────────────────────
+        if (cycle_poly == 3) {
+            poly_arr =
+                    [
+                        [nx2, ny2],
+                        [
+                            nx2 - nx2 * Math.cos(rotation),
+                            ny2 + ny2 * Math.sin(rotation),
+                        ],
+                        [
+                            nx2 + nx2 * Math.cos(rotation),
+                            ny2 + ny2 * Math.sin(rotation),
+                        ],
+                    ];
+        }
+        //? ────────────────────────────────────────────────
+        if (cycle_poly == 4) {
+            // console.log("Usng polugon 4")
+            var petal = [
+                [0, 0]
+                , [nx1 % 10, -ny1 % 10]
+                , [-nx1 % 10, ny1 % 10]
+                , [ny1 % 10, -nx1 % 10]
+                , [-ny1 % 10, nx1 % 10]
+            ]
+            poly_arr = []
+            for (let i = 0; i < petal.length; i++) {
+                xp = petal[i][0] * 10
+                yp = petal[i][1] * 10
+                poly_arr.push({
+                    'x': xp + nx2,
+                    'y': yp + ny2
+                })
+            }
+           poly_arr = BezierCurve(poly_arr);
+
+            var parr = []
+            for (let i = 0; i < poly_arr.length; i++) {
+                parr.push([poly_arr[i].x, poly_arr[i].y])
+            }
+            poly_arr = parr
+        }
+        //? ════════════════════════════════════════════════
+
+        if (cycle_poly > 0) {  
+
+            //? ┌───────────────────────────────────────────────
+            //? │ we have a poly, now prepare the gradients for poly and stroke for the PATHS
+            //? └───────────────────────────────────────────────
+            //? !!!!!When 'defs' is defined globally, the refresh rate drops by about 80%!!!!!!
+            var LGdefs = document.createElementNS(svgns, 'defs');
+            var fillGradient = document.createElementNS(svgns, 'linearGradient');
+            //? stops for fillGradient
+
+            //? pick 3 colors...
+            tidx = tree_counter%360 //@ is actually branch_angle
+            tidx1 = tidx%360
+            tidx2 = (tidx+120)%360
+            tidx3 = (tidx+240)%360
+
+            //? ... from the colors2 array
+            let c1 = colors2[1][tidx1]
+            let c2 = colors2[1][tidx2]
+            let c3 = colors2[1][tidx3]
+
+            // let c1 = "red"
+            // let c2 = "green"
+            // let c3 = "blue"
+
+            xpidx1 = parseInt((xpidx1+1)%1)  //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
+            xpidx2 = parseInt((xpidx2+1)%50)
+            xpidx3 = parseInt((xpidx3+1)%100)
+
+            var fillGradient_stops = [
+                {"color":  c1,"offset":  xpidx1.toString()+"%"},  //? where along the line do these colors end
+                {"color":  c2,"offset":  xpidx2.toString()+"%"},
+                {"color":  c3,"offset":  xpidx3.toString()+"%"},
+            ];
+
             for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
                 stop.setAttribute('offset', fillGradient_stops[i].offset);
                 stop.setAttribute('stop-color', fillGradient_stops[i].color);
                 fillGradient.appendChild(stop);
             }
-            //? stop #2
 
-                idx4 = tc%360
-                idx5 = tc+270%360
-                idx6 = tc+248%360
+            var STdefs = document.createElementNS(svgns, 'defs');
+
+            var strokeGradient = document.createElementNS(svgns, 'linearGradient');
+
+            //? stops for strokeGradient
+            tidx4 = tidx1+180
+            tidx5 = tidx2+180
+            tidx6 = tidx3+180
 
 
-                let c4 = colors2[1][idx4]
-                let c5 = colors2[1][idx5]
-                let c6 = colors2[1][idx6]
+            // let c4 = colors2[1][tidx4]
+            // let c5 = colors2[1][tidx5]
+            // let c6 = colors2[1][tidx6]
+            let c4 = "black"
+            let c5 = "black"
+            let c6 = "black"
+
             var strokeGradient_stops = [
-                // {"color": generateRandomColor() ,"offset": "0%"},
-                // {"color": colors2[0][order + gens],"offset": "100%"}
-                {"color": "black" ,"offset": "33%"},
-                {"color": "white","offset": "63%"},
-                {"color": "black","offset": "100%"}
+                {"color": c4 ,"offset": "33%"},
+                {"color": c5 ,"offset": "66%"},
+                // {"color": c6 ,"offset": "99%"}
             ];
             for (var i = 0, length = strokeGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
@@ -837,10 +872,10 @@ function drawTree(branch_angle, rotation) {
             strokeGradient.setAttribute('y1', '0%');
             strokeGradient.setAttribute('y2', '100%');
 
-            defs.appendChild(fillGradient);
-            defs.appendChild(strokeGradient);
+            LGdefs.appendChild(fillGradient);
+            STdefs.appendChild(strokeGradient);
 
-            let poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            let poly = document.createElementNS(svgns, 'polygon');
             poly.setAttribute("points", poly_arr);
             // poly.setAttribute("fill", colors2[0][order + gens].toString());
             poly.setAttribute('fill', 'url(#fillGradient)');
@@ -851,10 +886,9 @@ function drawTree(branch_angle, rotation) {
             poly.setAttribute("stroke-width", '1');
             poly.setAttribute("stroke-linecap", "round");
 
-        svg.appendChild(defs);
-        svg.appendChild(poly);
-
-            //@ XYZ
+            svg.appendChild(LGdefs);
+            svg.appendChild(STdefs);
+            svg.appendChild(poly);
         }
         //? ████████████████████████████████████████████████
 
@@ -1777,3 +1811,7 @@ function buildpath(xfr) {
 
     return [path_r, path_l]        
 }
+
+
+
+

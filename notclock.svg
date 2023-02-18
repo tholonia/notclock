@@ -3,9 +3,7 @@
 <svg
     id="svg"
     class="svg"
-    viewBox="-500 -500 1000 1000"
-    width="99%"
-    height="99%"
+    viewBox="-960 -512 1920 1024"
     fill="black"
     style="background-color: black;"
     xmlns="http://www.w3.org/2000/svg"
@@ -16,6 +14,16 @@
     align="center"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+
+// <!-- !DOCTYPE html -->
+// <!-- html -->
+// <!-- head></head -->
+// <!-- body id="body" -->
+// <!-- canvas id="canvas" xmlns="http://www.w3.org/1999/xhtml"-->
+
+//    viewBox="-500 -500 1000 1000"
+    // width="99%"
+    // height="99%"
     // * stroke="white"
     // * onclick="initSound()"
 
@@ -72,6 +80,14 @@
             <stop offset="10%" stop-color="gold" />
             <stop offset="95%" stop-color="red" />
         </radialGradient>
+        // <linearGradient id="fillGradient">
+        //     <stop offset="10%" stop-color="gold" />
+        //     <stop offset="95%" stop-color="red" />
+        // </linearGradient>
+        // <linearGradient id="strokeGradient">
+        //     <stop offset="10%" stop-color="gold" />
+        //     <stop offset="95%" stop-color="red" />
+        // </linearGradient>
     </defs>
 
 
@@ -114,6 +130,7 @@ class Edge {
 class Tree {
     constructor(gens, lineLength, x, y, angle, rotation) {
         branch_counter++
+        //? applying this here creates mangled trees
         //@ **************************************************
         //@            let _a = angle
         //@            let _r = rotation
@@ -242,6 +259,9 @@ function parseQuery(queryString) {
     return query;
 }
 
+//! ┌───────────────────────────────────────────────
+//! │ interface to wTL
+//! └───────────────────────────────────────────────
 function writGrid(args) {
 
     let mCols = menuCols
@@ -261,17 +281,20 @@ function writGrid(args) {
     }
     // rnum++;
 }
+//! ┌───────────────────────────────────────────────
+//! │ wtite text from left->right in grod format
+//! └───────────────────────────────────────────────
 function wTL(args) {
     // row,col
     let fs = menu_fontsize
     let spacing = menu_spacing
 
     // if (showtext == true) {
-        xpos = (args['col'] * 1) - 800
+        xpos = (args['col'] * 1) - 960  //? viewbox is x=1920 y=1024 w. 0,0 as dead center, leftmost col is -960
         // log("xpos:"+xpos+' - '+args['col'])
-        ypos = (args['row'] * 20) - 450
+        ypos = (args['row'] * 20) - 450 //? topmost col is -960
         var svg = document.getElementById("svg");
-        let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        let text = document.createElementNS(svgns, 'text');
         text.id = "id-wtP1";
         text.setAttribute("style", "white-space: pre;")
         text.setAttribute("classname", "wt", );
@@ -296,73 +319,83 @@ function wTL(args) {
         return (document.getElementById('id-wtP1'));
     // }
 }
+//! ┌───────────────────────────────────────────────
+//! │ all the menu and screen text is written here
+//! └───────────────────────────────────────────────
 function writeMenu() {
-    menu_fontweight="600";menu_fontclr="#00ffff"
-    writGrid(['✅',_,_,_,'⌥ = Alt']);
-    menu_fontweight="600";menu_fontclr="#00ff00"
-    writGrid(['✅',_,_,'⇧ = Shift']);
-    menu_fontweight="600";menu_fontclr="#ff00ff"
-    writGrid(['✅',_,'^ = Ctrl'])
-    menu_fontweight="600";menu_fontclr="red"
-    writGrid(['✅','NOTE:']);rnum++;
-    //? the above are all written on teh same line, but separated to gove different colors
-    // writGrid(['✅']);rnum++;
-    // writGrid(['✅','NOTE: ^ = Ctrl, ⇧ = Shift, ⌥ = Alt']);rnum++;
-    writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
-    menu_fontweight="300"
-    writGrid([_,'HOME','Toggle BG (B/W)']);rnum++;
-    writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
-    writGrid([_,'◀▶','-thinner|+wider']);rnum++;
-    writGrid([_,'PGUP/PGDN','+long|-short','(' + linelength_adj + ')']);rnum++;
-    writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer']);rnum++;
-    writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
-    writGrid([_]);rnum++;
+    if (showtext == 0) {return}
+    if (fullscreen == 0) {
+        menu_fontweight="600";menu_fontclr="#00ffff"; writGrid(['✅',_,_,_,'⌥ = Alt']);
+        menu_fontweight="600";menu_fontclr="#00ff00"; writGrid(['✅',_,_,'⇧ = Shift']);
+        menu_fontweight="600";menu_fontclr="#ff00ff"; writGrid(['✅',_,'^ = Ctrl'])
+        menu_fontweight="600";menu_fontclr="red"; writGrid(['✅','NOTE:']);rnum++;
+        //? the above are all written on the same line, as they have to "rnum++' at the end.
+        writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
+        menu_fontweight="300"
+        writGrid([_,'HOME','Toggle BG (B/W)']);rnum++;
+        writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
+        writGrid([_,'◀▶','-thinner|+wider']);rnum++;
+        writGrid([_,'PGUP/PGDN','+zoom in|-zoom out','(' + linelength_adj + ')']);rnum++;
+        writGrid([_,'INS/DEL','+Finer|Courser','(' + deg_adj + ')']);rnum++;
+        writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer']);rnum++;
+        writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
+        writGrid([_]);rnum++;
 
-    writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+')']);rnum++;
-    writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+')']);rnum++;
-    writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+')']);rnum++;
-    writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+')']);rnum++;
-    writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+')']);rnum++;
-    writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius+')']);rnum++;
-    writGrid(['aX','⌥ (X|Z)','Cicles opacity +/-',   '(' +circle_opacity+')']);rnum++;
-    writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
+        writGrid(['aD','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+')']);rnum++;
+        writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+')']);rnum++;
+        writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+')']);rnum++;
+        writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+')']);rnum++;
+        writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+')']);rnum++;
+        writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+')']);rnum++;
+        writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
+        writGrid(['aC','⌥ C','Cycle Vars','(' + cycle_vars+')']);rnum++;
+        writGrid([_]);rnum++;
+        writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius+')']);rnum++;
+        writGrid(['aX','⌥ (X|Z)','Cicles opacity +/-',   '(' +circle_opacity+')']);rnum++;
+        writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
+        writGrid(['aS','⌥ (S|W)','Merge Count   +/-',   '(' + merge_count + ')']);rnum++;
 
-    writGrid([_,'⌥ J','Jump fwd 5°']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
-    writGrid(['a0','^⌥ 0','Toggle All Lines','(' + show_all_lines + ')']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_,'^⇧Z','Show/Hide this menu']);rnum++;
-    writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
-    writGrid([_,'SPACE','Pause/Run']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid([_]);rnum++;
-    writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
-    writGrid([_]);rnum++;
-    writGrid(['Query String']);rnum++;
+        writGrid([_,'⌥ J','Jump fwd 5°']);rnum++;
+        writGrid([_]);rnum++;
+        writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
+        writGrid(['a0','^⌥ 0','Toggle All Lines','(' + show_all_lines + ')']);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_,'^⇧Z','Show/Hide this menu']);rnum++;
+        writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
+        writGrid([_,'SPACE','Pause/Run']);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        if (loop_delay < 4) {
+            menu_fontweight="600";menu_fontclr="RED";
+            writGrid(['✅','WARNING',"Too fast: Expect unpredictable results and/or browser crash (eventually)."]);rnum++;
+        } else {
+            writGrid([_]);rnum++;
+        }
+        writGrid([_]);rnum++;
+        writGrid([_]);rnum++;
+        writGrid(['Query String']);rnum++;
 
-    let qs = makeQs(href).match(/.{1,140}/g);
-    for (i=0;i<qs.length;i++) {
-        writGrid([qs[i]]);rnum++;
+        //@ ARGS
+        let qs = makeQs(href).match(/.{1,140}/g);
+        for (i=0;i<qs.length;i++) {
+            writGrid(['                                                                                                                                                                                                                                                                                    ']);
+            writGrid([qs[i]]);rnum++;
+        }
+        let ba = (branch_angle % 360).toFixed(2)
+        writGrid([_]);rnum++;
+        writGrid(['TIME PER CYCLE: '+cycletime+'/ Current Angle: '+ba]);rnum++;
+        writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
+        //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
+        //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
+        rnum = 0;
+        //? report mouse x/y position on teh screen
+        writGrid([_,_,_,_,"x="+point.x+" y="+point.y])
     }
-    writGrid([_]);rnum++;
-    writGrid(['TIME PER CYCLE: '+cycletime+'/ Current Angle: '+branch_angle % 360]);rnum++;
-    writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
-    //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
-    //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
-    rnum = 0;
-    //? report mouse x/y position on teh screen
-    writGrid([_,_,_,_,"x="+point.x+" y="+point.y])
-
 }
 //! ┌───────────────────────────────────────────────
 //! │ build the query string
@@ -390,6 +423,10 @@ function makeQs(qs) {
     qs = qs + "&aK=" + cycle_path
     qs = qs + "&aU=" + cycle_dataset
     qs = qs + "&aA=" + cycle_preset
+    qs = qs + "&aC=" + cycle_vars
+    qs = qs + "&aM=" + cycle_circles
+    qs = qs + "&aS=" + merge_count
+    //@ ARGS
     return(qs)
 }
 
@@ -399,9 +436,34 @@ function makeQs(qs) {
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
 function drawTree(branch_angle, rotation) {
-    // call_log("drawtree")
-    // console.log(tree_counter)
+        branch_angle = branch_angle%360;
+        rotation = rotation%360;
 
+        if (cycle_vars == 1) {
+            // circle_radius = cycle_in_range(Math.round(branch_angle),0,30)
+            circle_radius = cycle_in_range(Math.round(branch_angle),0,7 ,0)
+            circle_opacity = cycle_in_range(Math.round(branch_angle),0,100,0)/100
+            //[13,11, 7,5, 3, 2, 1]
+            pensize[0] = cycle_in_range(Math.round(branch_angle),0,13,0)
+            pensize[1] = cycle_in_range(Math.round(branch_angle),0,11,0)
+            pensize[2] = cycle_in_range(Math.round(branch_angle),0,6,0)
+            pensize[3] = cycle_in_range(Math.round(branch_angle),0,5,0)
+            pensize[4] = cycle_in_range(Math.round(branch_angle),0,5,0)
+            pensize[5] = cycle_in_range(Math.round(branch_angle),0,5,0)
+
+            pre_maxlengths[0] = cycle_in_range(Math.round(branch_angle),0,130,0)
+            pre_maxlengths[1] = cycle_in_range(Math.round(branch_angle),0,70,0)
+            pre_maxlengths[2] = cycle_in_range(Math.round(branch_angle),0,60,0)
+            pre_maxlengths[3] = cycle_in_range(Math.round(branch_angle),0,50,0)
+            pre_maxlengths[4] = cycle_in_range(Math.round(branch_angle),0,40,0)
+            pre_maxlengths[5] = cycle_in_range(Math.round(branch_angle),0,30,0)
+
+            setTimeout(function () {cycle_circles = (cycle_circles + 1) % num_of_circles}, 1000)
+            setTimeout(function () {cycle_path = (cycle_path + 1) % num_of_paths}, 2000)
+            setTimeout(function () {cycle_poly = (cycle_path + 1) % num_of_polys}, 3000)
+            setTimeout(function () {cycle_dataset = (cycle_dataset + 1) % num_of_datasets}, 4000)
+            setTimeout(function () {cycle_colors= (cycle_colors + 1) % num_of_colors}, 6000)
+        }
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
     if (preset_changed == true) {
@@ -415,7 +477,7 @@ function drawTree(branch_angle, rotation) {
         // randint(0,num_of_presets)
         // var qsary = parseQuery(preqs[randint(0,cycle_preset)])
         var qsary = parseQuery(preqs[cycle_preset])
-
+        //@ ARGS
         for (const key in qsary) {
             switch(key) {
                 // case 'up':  loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
@@ -435,6 +497,10 @@ function drawTree(branch_angle, rotation) {
                 case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
                 case 'aK': cycle_path      = qsary[key]; break;
                 case 'aU': cycle_dataset   = qsary[key]; break;
+                case 'aC': cycle_vars     = qsary[key]; break;
+                case 'aM': cycle_circles    = qsary[key]; break;
+                case 'aS': merge_counts    = qsary[key]; break;
+                case 'FS': fullscreen    = qsary[key]; break;
                 // case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
             }
         }
@@ -444,13 +510,61 @@ function drawTree(branch_angle, rotation) {
     }
     //% ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-    //FIXME: for SOME reason, these vals need to be flipped to work :/
-    let _a = branch_angle
-    let _r = rotation
-    rotation = _a
-    branch_angle = _r
+if (snapshot == 1) {
+    snapshot = 0
+    var svgElement = document.getElementById('svg');
+    let {width, height} = svgElement.getBBox(); 
+    let clonedSvgElement = svgElement.cloneNode(true);
+    // true for deep clone
+    let outerHTML = clonedSvgElement.outerHTML,
+    blob = new Blob([outerHTML],{type:'image/svg+xml;charset=utf-8'});
+    let URL = window.URL || window.webkitURL || window;
+    let blobURL = URL.createObjectURL(blob);
+    let image = new Image();
+    jstr(blobURL)
 
-    clearCanvas()
+    body = document.getElementById('body')
+    canvas = document.createElementNS("http://www.w3.org/1999/xhtml","canvas")
+    body.appendChild(canvas)
+
+
+    //@ XXX
+    image.onload = () => {
+       const ctx = canvas.getContext('2d');
+       canvas.widht = width;       
+       canvas.height = height;
+       let context = canvas.getContext('2d');
+       context.drawImage(image, 0, 0, width, height );
+    };
+    image.src = blobURL;
+    let png = canvas.toDataURL(); // default png
+    jstr(png)
+
+    var download = function(href, name){
+        var div = document.createElementNS("http://www.w3.org/1999/xhtml","div")
+        var link = document.createElementNS("http://www.w3.org/1999/xhtml","a")
+        link.download = name;
+        link.style.opacity = "0";
+        div.append(link);
+        link.href = href;
+        link.click();
+        link.remove();
+    }
+    download(png, "image.png");
+
+}
+
+
+    if (merge_count == 0) {
+        clearCanvas()        
+    } else {
+        if (tree_counter%merge_count == 0) {
+            clearCanvas()
+        }
+    }
+
+
+
 
     //? rebuild timing data based on changes in specs
     tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
@@ -472,17 +586,18 @@ function drawTree(branch_angle, rotation) {
     //% █████████████ ADJUSTMENTS █████████████
     //% let noteseed = (54+tree_counter+ rotation)%108+108
 
-
-    //? ALT CHARACTERS
-    //  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z  <- all
-    //          E F                                          <- USED BY BRAVE
-    // A  B         G   I   K       O     R     U V   X   Z  <- USED BY THIS APP 
-    //%     C D       H   J   L M N   P     S T         Y    <- AVAILABLE
-
-    _ = ''
-
     writeMenu()
-    var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
+
+    //@ this part is very confusing...  we need to swap 'rotation' and 'branch_angle' otherwise we get lines all 
+    //@ rotating in the same directions around their centers, i.e., there is no symetrical balance, only rotational uniformity.  
+    //@ This swapping could also be accomplished but reversing the declared names in the function, i.e., 
+    //@ 'function drawTree(rotation, branch_angle)', as this also keeps 'branch_angle' values assigned to 'branch_angle' variable. 
+
+    //? this call has the arguments in the order they are called in 'Tree'
+    // var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
+    //? but we need to use THIS swapped args to get symetrical results
+    // console.log("branch_angle:",branch_angle)
+    var draw_tree = new Tree(gens, this_length, start_x, start_y, rotation, branch_angle);
 
     var draw_edges = getTreeEdges(draw_tree);
     var svg = document.getElementById("svg");
@@ -542,10 +657,10 @@ function drawTree(branch_angle, rotation) {
         xfullary_left = [{'g':7,'x':0,'y':0}]
 
 
-        var newPath_r = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        var newPath_l = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        var newPath_r = document.createElementNS(svgns, 'path');
+        var newPath_l = document.createElementNS(svgns, 'path');
 
-        //@ DEBUG Doesn't exactlyy do what I want
+        //@ DEBUG Doesn't exactly do what I want
         let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
         // path_width = cycle_in_range(tree_counter, 2,10)
         // if (tree_counter % limiter == 0) {
@@ -556,8 +671,7 @@ function drawTree(branch_angle, rotation) {
 
         //? prepare the gradiant stroke for the PATHS
 
-        var svgns = 'http://www.w3.org/2000/svg';
-        var defs = document.createElementNS(svgns, 'defs');
+        var DATdefs = document.createElementNS(svgns, 'defs');
         var gradient = document.createElementNS(svgns, 'radialGradient');
         var stops = [{"color": "white","offset": "0%"},{"color": "#000000","offset": "100%"}];
 
@@ -567,25 +681,24 @@ function drawTree(branch_angle, rotation) {
             stop.setAttribute('stop-color', stops[i].color);
             gradient.appendChild(stop);
         }
-//@ XYZ
         gradient.id = 'datasetGradient';
         gradient.setAttribute('cx', '0.5');
         gradient.setAttribute('cy', '0.3');  //? light is slightly above horizon
         gradient.setAttribute('r', '1');
-        defs.appendChild(gradient);
+        DATdefs.appendChild(gradient);
         newPath_l.setAttribute('fill', 'url(#datasetGradient)');
         newPath_r.setAttribute('d', ""+path_r[gen]);
         newPath_r.setAttribute("fill-opacity", "0");
         newPath_r.setAttribute("stroke-width", path_width);
         newPath_r.setAttribute('stroke', 'url(#datasetGradient)');
-        svg.appendChild(defs);
+        svg.appendChild(DATdefs);
         svg.appendChild(newPath_r);
 
         newPath_l.setAttribute('d', ""+path_l[gen]);
         newPath_l.setAttribute("fill-opacity", "0");
         newPath_l.setAttribute("stroke-width", path_width);
         newPath_l.setAttribute('stroke', 'url(#datasetGradient)');
-        svg.appendChild(defs);
+        svg.appendChild(DATdefs);
         svg.appendChild(newPath_l);
     }
 
@@ -596,7 +709,7 @@ function drawTree(branch_angle, rotation) {
         ny2 = adata_left[idx].y
 
         //? create LINE instance
-        var newLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        var newLine = document.createElementNS(svgns, 'line');
         newLine.setAttribute('x1', nx1.toString());
         newLine.setAttribute('y1', ny1.toString());
         newLine.setAttribute('x2', nx2.toString());
@@ -613,236 +726,232 @@ function drawTree(branch_angle, rotation) {
         var totcirc = 3
    
         //% █████████████ ADJUSTMENTS █████████████
+
+
         var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycles throug the circle-types
 
-        if (circle_radius > 0) { //? we have a circle
-            //? cyces through the total number of circles patterns available, i.e., 0,1,2...
-            //? Need to use cycles_radius and not cr_rad otherwise it breaks the continuity of the MOD cycle
-            if ((circle_radius + 1) % totcirc == 0) { 
+        if (cycle_circles == 1) { 
 
-                //? prepare teh gradian for the circle
-                //@ DEBUG prob better to move defs into the global scope
-                var svgns = 'http://www.w3.org/2000/svg';
-                var defs = document.createElementNS(svgns, 'defs');
-                var gradient = document.createElementNS(svgns, 'radialGradient');
-                var circle = document.createElementNS(svgns, 'circle');
+            //? prepare teh gradient for the circle
+            //@ DEBUG prob better to move defs into the global scope
+            var CIRdefs = document.createElementNS(svgns, 'defs');
+            var gradient = document.createElementNS(svgns, 'radialGradient');
+            var circle = document.createElementNS(svgns, 'circle');
 
-                var stops = [
-                    {
-                        //        "color":  colors2[0][order].toString(),
-                        "color": "white",
-                        "offset": "0%"
-                    },
-                    {
-                        "color": "#000000",
-                        "offset": "100%"
-                    }
-                ];
-
-                for (var i = 0, length = stops.length; i < length; i++) {
-                    var stop = document.createElementNS(svgns, 'stop');
-                    stop.setAttribute('offset', stops[i].offset);
-                    stop.setAttribute('stop-color', stops[i].color);
-                    gradient.appendChild(stop);
+            var stops = [
+                {
+                    //        "color":  colors2[0][order].toString(),
+                    "color": "white",
+                    "offset": "0%"
+                },
+                {
+                    "color": "#000000",
+                    "offset": "100%"
                 }
+            ];
 
-                gradient.id = 'Gradient';
-                gradient.setAttribute('cx', '0.3');
-                gradient.setAttribute('cy', '0.3');
-                gradient.setAttribute('r', '1');
-                defs.appendChild(gradient);
-                circle.setAttribute('fill', 'url(#Gradient)');
-
-
-                circle.setAttribute("id", "circles");
-                circle.setAttribute("cx", nx2.toString());
-                circle.setAttribute("cy", ny2.toString());
-                circle.setAttribute("r", cr_rad);
-                circle.setAttribute("opacity", circle_opacity);
-
-                svg.appendChild(defs);
-                svg.appendChild(circle);
+            for (var i = 0, length = stops.length; i < length; i++) {
+                var stop = document.createElementNS(svgns, 'stop');
+                stop.setAttribute('offset', stops[i].offset);
+                stop.setAttribute('stop-color', stops[i].color);
+                gradient.appendChild(stop);
             }
 
+            gradient.id = 'Gradient';
+            gradient.setAttribute('cx', '0.3');
+            gradient.setAttribute('cy', '0.3');
+            gradient.setAttribute('r', '1');
+            CIRdefs.appendChild(gradient);
+            circle.setAttribute('fill', 'url(#Gradient)');
 
-            if ((circle_radius + 1) % totcirc == 1) {
-                let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 
-                circle.setAttribute("id", "circles");
-                circle.setAttribute("cx", nx2.toString());
-                circle.setAttribute("cy", ny2.toString());
-                circle.setAttribute("r", cr_rad);
-                circle.setAttribute("fill", colors2[0][order].toString());
-                circle.setAttribute("stroke", "darkgrey");
-                circle.setAttribute("opacity", circle_opacity);
-                circle.setAttribute("stroke-width", '1');
-                circle.setAttribute("stroke-linecap", "round");
-                //circle.setAttribute("fill", generateRandomColor());
-                //circle.setAttribute("stroke", generateRandomColor());
+            circle.setAttribute("id", "circles");
+            circle.setAttribute("cx", nx2.toString());
+            circle.setAttribute("cy", ny2.toString());
+            circle.setAttribute("r", cr_rad);
+            circle.setAttribute("opacity", circle_opacity);
 
-                svg.appendChild(circle);
-            }
-            if ((circle_radius + 1) % totcirc == 2) {
-                let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-
-                circle.setAttribute("id", "circles");
-                circle.setAttribute("cx", nx2.toString());
-                circle.setAttribute("cy", ny2.toString());
-                circle.setAttribute("r", cr_rad);
-                circle.setAttribute("stroke", "darkgrey");
-                circle.setAttribute("opacity", circle_opacity);
-                circle.setAttribute("stroke-width", '1');
-                circle.setAttribute("stroke-linecap", "round");
-                circle.setAttribute("fill", generateRandomColor());
-                //circle.setAttribute("fill", colors2[0][order].toString());
-                //circle.setAttribute("stroke", generateRandomColor());
-
-                svg.appendChild(circle);
-            }
+            svg.appendChild(CIRdefs);
+            svg.appendChild(circle);
         }
 
-            //@ ████████████████████████████████████████████████
 
-            //? ████████████████████████████████████████████████
-            //? ███████████████████ POLYS ██████████████████████
-            //? ████████████████████████████████████████████████
+        if (cycle_circles == 2) {
+            let circle = document.createElementNS(svgns, 'circle');
 
-            var poly_arr = false
+            circle.setAttribute("id", "circles");
+            circle.setAttribute("cx", nx2.toString());
+            circle.setAttribute("cy", ny2.toString());
+            circle.setAttribute("r", cr_rad);
+            circle.setAttribute("fill", colors2[0][order].toString());
+            circle.setAttribute("stroke", "darkgrey");
+            circle.setAttribute("opacity", circle_opacity);
+            circle.setAttribute("stroke-width", '1');
+            circle.setAttribute("stroke-linecap", "round");
+            //circle.setAttribute("fill", generateRandomColor());
+            //circle.setAttribute("stroke", generateRandomColor());
 
-            if (cycle_poly == 1) {
-                // console.log("Usng polugon 1")
+            svg.appendChild(circle);
+        }
+        if (cycle_circles == 3) {
+            let circle = document.createElementNS(svgns, 'circle');
 
-                poly_arr = [
-                    [nx2, ny2],
-                    [
-                        (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                        (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
-                    ],
-                    [
-                        (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                        (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
-                    ],
-                ];
-            }
-            if (cycle_poly == 2) {
-                // console.log("Usng polugon 2")
-                poly_arr =
-                        [
-                            [nx2, ny2],
-                            [
-                                (nx1 - 10) * Math.cos(rotation) - (nx2 + 10) * Math.sin(rotation),
-                                (ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
-                            ],
-                            [
-                                (nx1 + 10) * Math.cos(rotation) + (nx2 - 10) * Math.sin(rotation),
-                                (ny1 - 10) * Math.cos(rotation) - (ny2 - 10) * Math.sin(rotation),
-                            ],
-                        ];
-            }
-            if (cycle_poly == 3) {
-                // console.log("Usng polugon 3")
-                poly_arr =
-                        [
-                            [nx2, ny2],
-                            [
-                                nx2 - nx2 * Math.cos(rotation),
-                                ny2 + ny2 * Math.sin(rotation),
-                            ],
-                            [
-                                nx2 + nx2 * Math.cos(rotation),
-                                ny2 + ny2 * Math.sin(rotation),
-                            ],
-                        ];
-            }
-            if (cycle_poly == 4) {
-                // console.log("Usng polugon 4")
-                var petal = [
+            circle.setAttribute("id", "circles");
+            circle.setAttribute("cx", nx2.toString());
+            circle.setAttribute("cy", ny2.toString());
+            circle.setAttribute("r", cr_rad);
+            circle.setAttribute("stroke", "darkgrey");
+            circle.setAttribute("opacity", circle_opacity);
+            circle.setAttribute("stroke-width", '1');
+            circle.setAttribute("stroke-linecap", "round");
+            circle.setAttribute("fill", generateRandomColor());
+            //circle.setAttribute("fill", colors2[0][order].toString());
+            //circle.setAttribute("stroke", generateRandomColor());
 
-                    [0, 0]
+            svg.appendChild(circle);
+        }
 
-                            , [nx1 % 10, -ny1 % 10]
-                            , [-nx1 % 10, ny1 % 10]
-                            , [ny1 % 10, -nx1 % 10]
-                            , [-ny1 % 10, nx1 % 10]
-                ]
-                poly_arr = []
-                for (let i = 0; i < petal.length; i++) {
-                    xp = petal[i][0] * 10
-                    yp = petal[i][1] * 10
-                    poly_arr.push({
-                        'x': xp + nx2,
-                        'y': yp + ny2
-                    })
-                }
-               poly_arr = BezierCurve(poly_arr);
+        //? ████████████████████████████████████████████████
+        //? ███████████████████ POLYS ██████████████████████
+        //? ████████████████████████████████████████████████
 
-                var parr = []
-                for (let i = 0; i < poly_arr.length; i++) {
-                    parr.push([poly_arr[i].x, poly_arr[i].y])
-                }
-                poly_arr = parr
-            }
-
-            if (cycle_poly > 0) {
-
-
-            //? prepare the gradiants fpr poly and stroke stroke for the PATHS
-            var svgns = 'http://www.w3.org/2000/svg';
-            var defs = document.createElementNS(svgns, 'defs');
-            var fillGradient = document.createElementNS(svgns, 'linearGradient');
-            var strokeGradient = document.createElementNS(svgns, 'linearGradient');
-            //? stop #1
-            // let pct = Math.round(point.x * 0.0637755102).toString()+"%"
-            // log(pct)
-
-            // let limiter = Math.round(1 / (Math.abs((loop_delay / 500))))
-            tc = Math.round(rotation) //@ reversed
-            // if (tree_counter % limiter == 0) {
-                // tree_counter = (poly_clr_idx +1)%360
-                // log(poly_clr_idx)
-                idx1 = tc%360
-                idx2 = tc*90%360
-                idx3 = tc*112%360
-
-                let c1 = colors2[1][idx1]
-                let c2 = colors2[1][idx2]
-                let c3 = colors2[1][idx3]
-            // console.log(c1,c2,c3,idx1,idx2,idx3)
-
-                // idx4 = tc%360
-                // idx5 = tc+33%360
-                // idx6 = tc+66%360
-            // }
-
-            // log(idx1+':'+idx2+':'+idx3+':'+idx4+':'+idx5+':'+idx6)
-            var fillGradient_stops = [
-                // {"color":  colors2[0][order + gens],"offset": "100%"},
-                {"color":  c1,"offset":  "33%"},
-                {"color":  c2,"offset": "63%"},
-                {"color":  c3,"offset":  "100%"},
+        var poly_arr = false
+        //? ────────────────────────────────────────────────
+        if (cycle_poly == 1) {
+            poly_arr = [
+                [nx2, ny2],
+                [
+                    (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                    (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
+                ],
+                [
+                    (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                    (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
+                ],
             ];
+        }
+        //? ────────────────────────────────────────────────
+        if (cycle_poly == 2) {  
+            poly_arr =
+                    [
+                        [nx2, ny2],
+                        [
+                            nx1 ,
+                            cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                        ],
+                        [
+                            nx1,
+                            cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                        ],
+                    ];
+        }
+        //? ────────────────────────────────────────────────
+        if (cycle_poly == 3) {
+            poly_arr =
+                    [
+                        [nx2, ny2],
+                        [
+                            nx2 - nx2 * Math.cos(rotation),
+                            ny2 + ny2 * Math.sin(rotation),
+                        ],
+                        [
+                            nx2 + nx2 * Math.cos(rotation),
+                            ny2 + ny2 * Math.sin(rotation),
+                        ],
+                    ];
+        }
+        //? ────────────────────────────────────────────────
+        if (cycle_poly == 4) {
+            // console.log("Usng polugon 4")
+            var petal = [
+                [0, 0]
+                , [nx1 % 10, -ny1 % 10]
+                , [-nx1 % 10, ny1 % 10]
+                , [ny1 % 10, -nx1 % 10]
+                , [-ny1 % 10, nx1 % 10]
+            ]
+            poly_arr = []
+            for (let i = 0; i < petal.length; i++) {
+                xp = petal[i][0] * 10
+                yp = petal[i][1] * 10
+                poly_arr.push({
+                    'x': xp + nx2,
+                    'y': yp + ny2
+                })
+            }
+           poly_arr = BezierCurve(poly_arr);
+
+            var parr = []
+            for (let i = 0; i < poly_arr.length; i++) {
+                parr.push([poly_arr[i].x, poly_arr[i].y])
+            }
+            poly_arr = parr
+        }
+        //? ════════════════════════════════════════════════
+
+        if (cycle_poly > 0) {  
+
+            //? ┌───────────────────────────────────────────────
+            //? │ we have a poly, now prepare the gradients for poly and stroke for the PATHS
+            //? └───────────────────────────────────────────────
+            //? !!!!!When 'defs' is defined globally, the refresh rate drops by about 80%!!!!!!
+            var LGdefs = document.createElementNS(svgns, 'defs');
+            var fillGradient = document.createElementNS(svgns, 'linearGradient');
+            //? stops for fillGradient
+
+            //? pick 3 colors...
+            tidx = tree_counter%360 //@ is actually branch_angle
+            tidx1 = tidx%360
+            tidx2 = (tidx+120)%360
+            tidx3 = (tidx+240)%360
+
+            //? ... from the colors2 array
+            let c1 = colors2[1][tidx1]
+            let c2 = colors2[1][tidx2]
+            let c3 = colors2[1][tidx3]
+
+            // let c1 = "red"
+            // let c2 = "green"
+            // let c3 = "blue"
+
+            xpidx1 = parseInt((xpidx1+1)%1)  //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
+            xpidx2 = parseInt((xpidx2+1)%50)
+            xpidx3 = parseInt((xpidx3+1)%100)
+
+            var fillGradient_stops = [
+                {"color":  c1,"offset":  xpidx1.toString()+"%"},  //? where along the line do these colors end
+                {"color":  c2,"offset":  xpidx2.toString()+"%"},
+                {"color":  c3,"offset":  xpidx3.toString()+"%"},
+            ];
+
             for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
                 stop.setAttribute('offset', fillGradient_stops[i].offset);
                 stop.setAttribute('stop-color', fillGradient_stops[i].color);
                 fillGradient.appendChild(stop);
             }
-            //? stop #2
 
-                idx4 = tc%360
-                idx5 = tc+270%360
-                idx6 = tc+248%360
+            var STdefs = document.createElementNS(svgns, 'defs');
+
+            var strokeGradient = document.createElementNS(svgns, 'linearGradient');
+
+            //? stops for strokeGradient
+            tidx4 = tidx1+180
+            tidx5 = tidx2+180
+            tidx6 = tidx3+180
 
 
-                let c4 = colors2[1][idx4]
-                let c5 = colors2[1][idx5]
-                let c6 = colors2[1][idx6]
+            // let c4 = colors2[1][tidx4]
+            // let c5 = colors2[1][tidx5]
+            // let c6 = colors2[1][tidx6]
+            let c4 = "black"
+            let c5 = "black"
+            let c6 = "black"
+
             var strokeGradient_stops = [
-                // {"color": generateRandomColor() ,"offset": "0%"},
-                // {"color": colors2[0][order + gens],"offset": "100%"}
-                {"color": "black" ,"offset": "33%"},
-                {"color": "white","offset": "63%"},
-                {"color": "black","offset": "100%"}
+                {"color": c4 ,"offset": "33%"},
+                {"color": c5 ,"offset": "66%"},
+                // {"color": c6 ,"offset": "99%"}
             ];
             for (var i = 0, length = strokeGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
@@ -863,10 +972,10 @@ function drawTree(branch_angle, rotation) {
             strokeGradient.setAttribute('y1', '0%');
             strokeGradient.setAttribute('y2', '100%');
 
-            defs.appendChild(fillGradient);
-            defs.appendChild(strokeGradient);
+            LGdefs.appendChild(fillGradient);
+            STdefs.appendChild(strokeGradient);
 
-            let poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            let poly = document.createElementNS(svgns, 'polygon');
             poly.setAttribute("points", poly_arr);
             // poly.setAttribute("fill", colors2[0][order + gens].toString());
             poly.setAttribute('fill', 'url(#fillGradient)');
@@ -877,10 +986,9 @@ function drawTree(branch_angle, rotation) {
             poly.setAttribute("stroke-width", '1');
             poly.setAttribute("stroke-linecap", "round");
 
-        svg.appendChild(defs);
-        svg.appendChild(poly);
-
-            //@ XYZ
+            svg.appendChild(LGdefs);
+            svg.appendChild(STdefs);
+            svg.appendChild(poly);
         }
         //? ████████████████████████████████████████████████
 
@@ -1803,6 +1911,10 @@ function buildpath(xfr) {
 
     return [path_r, path_l]        
 }
+
+
+
+
             //@ %PRAGMA:insert:clock_1_lib.js
             //? when used as an object, allow attributes to be changed by params passed in the query string
             var paramList = [];
@@ -1849,7 +1961,7 @@ function buildpath(xfr) {
             const f5 = "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";
             const g5 = "SUQzAwAAAAAAalRYWFgAAABgAAAARW5jb2RlZCBieQBNb3ppbGxhLzUuMCAoV2luZG93czsgVTsgV2luZG93cyBOVCA1LjE7IGVuLVVTOyBydjoxLjkpIEdlY2tvLzIwMDgwNTI5MDYgRmlyZWZveC8zLjD/+5AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABJbmZvAAAADwAAABoAACwTAAkJCRMTExMdHR0dJycnJzExMTE7Ozs7RERETk5OTlhYWFhiYmJibGxsbHZ2dnaAgICJiYmJk5OTk52dnZ2np6ensbGxsbu7u7vExMTOzs7O2NjY2OLi4uLs7Ozs9vb29v///wAAADlMQU1FMy45OXIBqgAAAAAAAAAAFIAkAsxGAACAAAAsE6ThEi8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/+5AEAAESIGm/6CEd8lANZ90EJr5JDbMLgITXwUu2ISQhGvmYXbeC38EAALPNwAx0Mn/1zHWSjH18H///jf//jZLzH9SWBX8CzG+f97////+nz+AZ7voW7vABAiVEREAAgAAMACKPAI3XMDLMKQAAjHgW5v8/jm+v8Cv//zy/+D6+QH/AyAAHHIEBjGQ4ARjZDIAENkgYx+vkv/fIAP/////xGW0doggQBAiIs8mmYq2cIm7PT0AkAABCiBMzYDcxqCbPz84x/L99j//9//Vfz/xOtBbujJ5Tk7InSCyYDuvK3y+X///t9e7K9flN7+fUicQjCR52FTrGimQzE0+hCADOOzQh0aQQ89G3tRn5Cey5z5GyN//9G/0avfS1796Zs7sqsTZxlMhKnI13vIWlT1ptZv2p+nT/7f/+G1rx9PdllMes3Io1dLlBPHE6osoEQLWVKbbTkbkiJIGqF80EhdEyhQfZcWUU2Q6ixi7DI3SVVQrVsJhGJRbE5tTSMAjQgceLHTrWEfFx47Yhh3mOHGKoFIah/oezkgNUHIHeB/D/+5IEJoADsi1Maw81NH2FqT1hhtILjLM0DeFpwXMWpoGXopDMLRC2yrGhhyHqJmvMLm8qvmWiE6mZEduUgD0h4//5mE9E931AT/LrB8JMuSQySQggUkTZuFgBgFV2nA3pQo1hUoBKwSY7SNghmp9CYFBwi6DS7SaaV7ZAIB9WrMvfSy9D6tPiDWFZi9CR6scQfxrDovc5ymjc41O0+85XFQbq7pFF8oweFNBBAKFohltY5JfBu0iusu/zAg8fhwIgQv9PrCxwc8nsroIBf5rSJrvPQ7pgSkdSym8oOMnqyCIMZX0keaENNet0JdKOMJSmVrobt+53CbpFkiw5RQ6/6lCPYpk4vNYmaeoSTB9R1OVEKbV/fpASG9//KiCLBVgV9ULH97YP0jswpiSwsThhYMzvAHGgelwjVVhlfKGAVGPsljlNZq0cBRNgI4GmM2WVQXjpykHMWF0xYxlrSCKHOzfNP9PUEdL6ueAyDZZWm5oYAEDt/44c8KFLKhV3kCbq2UgiwDACYBANJ5ukX7AIIDglLRPozDWPJTD1mMVNMJe0//uSBA8AAxw9zEN5imBj5YmZae2kC8T5Pa00U6F2Hus0xqpuSftjC1nrYE22rkurxmcQogHOXT3bMdhkUEBdHVJ2TUgGMC8oy7KJodzqoVUTgFu6Ot1OcC+xUTb8pD2v/V/6kv/dI96euAIIokJAgEKVuM19XTBXgakZJ0cAAKAkV1yNacJ8ZUQIDXXgwDJJLYiOq0RMSsdWEwystSHNWg1YzY1dfxaH6CNVewYuNeUrJRF166RiFIz/WcEqUn+5gMl3WtjMtGAzlA/fbQEgCwIiCy24Hwctk7vNmpJW4AFvGwHMFd9iL2xj/iDjd/crwxmEwpykf0nOm4MQnX84HPS/WZEuupHWkLEKJf9YRV/1zowTpPb67L6IfryoqmAzB2w26aYBdzBjm2aZLDIxk5NI3AKgrF5RCEoF8Do5BAKrmacsecGw+9Mxr1JfSGluy1IBRgyrR5vgpqv1jxAPCckYl/oi4Blq+ugBMTdD0qGQh3Zm+raK3z+1HZ6xdDcAWNM3pOiiLo3tRQ0gVItOB6l0YMttrSdxsQyVBJQqx3n3aP/7kgQMgALdPk9TbVPmXmkqbT2lnYwU+VOsNO+5hKGqdPaqb1O8pYCDgZ84bj8sSj9cVAH4ax8M1piWlNYRR/5dFulo+eAgLfzgnHf4MqjP/f/o/256qPNSr34oqQif6cBZH7a/X4tSh0ClZxNJhuFsweMEZQfRjQQSheC5E8RaN+V8ddv8t06lYTR/WpgQ4CyQ5gpYwg8lATZ/fE8JFVJvKYEuN/5kEmV/j8Ip/+O//rWjMrIFslkOUljInQz3F1uefsoqUjC0WjljjcHYQ7TzR9TCVMMhsebB3Wnuu1imq1x483Kayo3BrNPoJgagZDzdJyQCLkFz9j2TRFI6XWMwTt/7ALGP8QjVF/qdsjdEb2qqqfFZrg+1jl3n4eQBqUSsPsn/k7YJie3JJI4Lk0E+R7eLYiicJM4SwNpJlercXYDu1+rlAc6oPgp7P6bALYM7tz9MEl3+cDO7VeTRkGv8xAjyxX8iDrfpQc1Sr0RWdlVFV0aMnSrMdQmp9C+47S4Ky2Mvz85QAFgUE5OEoQaxNgrTYLgJs6mABym6PkGYU8f/+5IEDYAC+D5N609qSF9nyc1lqphL3Pktjb2rAX6fJnW4KiDk73Bmk3np5ZFzHMg8/lRuFEDK35LCWkM12RUcGkeCL7dMJ0b/UozDkm7fyKMAirf1v1/ST9ba1KcwzJ6YLHz74WMuk3Yg6BwQ7ZrxBLD2WpazK0m2Z4Q1maCv5lrqUjvWaSHgjWTd5KsMI+agOT86eB5Ff+sFuf+NYO4zQWvrOBcU+lQJHb+Rh3/zf/c+QKrURVNGLPZsB0id/dxncCs/dCP/TCICAgDXrG6I3NBkz8K3OlAoU6T9SEBB0RJkrU9HqkACqHFmjODLiCEaZPjkxMMQFpm+4TQy67KRCESdaPUTQsD39Q0H/9QrK/Wyv+yT72XQVZIvoDmXmmlLXj3zvdqaaAoGBDekcFlgS/JM+jfOE3cAFIeDr2lyczDFpV7CH5i4DTXuojLEhNwDtB/KKIkIaf96AXMq62qECBxs3SgEZN+pcCuWf9ARhfL+rI//Xz/pQogkUWlzAfuFibnvd9e7YTxaV6yNsL7fhwY23Z2WKCR4BKBM2kErTFmd//uSBA4AAvQ+1OsNO+xiKYotYgpti+UlOe00c8GBIWp09op20MeGQ2SRRQTMgqLKnqxqLQNwRn/OgNsuNpm7IiwDmoOYt3GgKqn8dAen+FAK+vq325lrUYy5k0wia8Dg1Ki2GkjJmSwSERQt1EoL7ch2X7dhcsQS/fQfUqJoLzdqUycFldSMdcLMFXqLAjEogGAef7TINiNvXSMA6z06COC0KW7yAC0CEVzP0CqCj/o/X9aKfstcrq6IZnlz3RZ6vNKHqZNQh+9QqxAUELlxrdbg2WUWGXRhe9Zh4IMB7546NijfySzp8V45b7AUN0FlYgVuZiyHcBli8/7BJCzrfGoW6TrfrJwZ3/uMj9sfhg0P+3q/dT1XWxG1yV2yLsYvpwEZmEkGHLddjux2nbo24CjNByPsghlsgMMaBDiEwy/EZLTNF06/6eOlicEwzHvrcWAMy/XgVT3vlRIqen5qEKQXVytA3BSSYv9RiGVH/j/v/MfNIQpti0BkhRFOBAyKkg8Ylav//+lyMSINz8pDXWBsooYGC45SlWOYTaT1b9yYYv/7kgQNAALjS1BjDTvuYEWJ7GGSV4xgtSdN4kjBjhYkpcy1MN53YZFt1GyjhmFtP0NZMcIMGX+YBJzWhbUZBLGyl9ah/EyP+roAULP+CX/t6fz9zDTHpRHZptWat3TS7M56DqyIcqo2EwKB+gRuLhyxvH7VveNG8q+PQGKycbHjc8VxztsiQTCYBdIUr+txFBDvqlMCZl+gj1E0MU2QS9Y/CFzjp9bnBHRVf06x9CcRWe319GwkVWAzoVSXCgbAwTJRw8HGnFAwAQAkqQgrIhUu9n7KljOM7oJ1j/iwegrE12asz9EyADUs4cn1jWMgueLj9ZHHwjIOk/65sGyGbdqiLoPRS2SMRBjVeyxXW+rFDjnE+o2ExYE/Q2Qxcs6gXABVAc1EgohZgRCIAYarCLwTycuQtKWU972GEy0E0AihWMxF6sa0WXidoEdpN1M5iSSk2Woasa/naWuS3ArTpI5PYugPCLfUTylZSHmYUz/usHn/j8Q/Kv7A4MuGNEEMpCoVPDmoBlIeCJxSToqqTiBpFVf6I9b3tIapkmo7bcFpD6P/+5IECgAC5EpP4y1Tbl6FmY1t7UoMNLEtrTT4gXsWZbW3xSACdZLJa2SY9ebjOMCZGwLSbq6JkPABqhKpN0pWAl0nt5Gt5fRRGAElv0gqEP82oOhza70dPp+nmLW9LvSqmJspr1OuXQrD2DFW2g+BgDPLXRbfN2GNOO7jK1FAqXnIAohD8N85Dk1s7Cae+naXZaPgF2tP0DcDcD4n6qQDfS28vjxToLrWXhCgXj/3EIf+vSEVokSVZYnLXuUMKiyXLMmQQjll59DkEAwQmRAfHciw5DX0+HLgJy3TZgAVJ+Aqhzyx+Bc870rVFb5lanZ2VVUqrXP/96nE/xoRHozWt+7OB0AWFP9ZJkJPXqW4Qx9vXMRRLX1phUEA6NlEfXTHBBM8yPtrRJHXmDVZqQCAoAM3RYfRursP7DTfMDa4DYcw4rDCaE2hrn3iWDRgfF26i6LoC8f5YPh+Qaa/o1i5P6zpJLXX5AA6UqH/UmURSZc6NKoxIMigXYcMftnU2VjhG9CUCtQqwWBp0hVNoRmVLSSpwLyrNBZM8kEQlgBCdVqf//uSBAsAAuwsT2sParRcxbl9afBIC90lLa00U4GLliSxx80gavFWpIkmmwfDA+2wQ3ycPg4UfswaQEYWF4vOcFkzAG+eP/kiCwZ6uoaRAm/pBFjz/yaQRVtav/aOMBAHx7DKFLsKg3WswAbBZAGhhS7e0w4W3oWc7DWGoUYI2hOsUpOqJwWoDEzlPjG5oJluBWBLNM+xiIwKwN5guIfbqrD52f8ukg2rUsiwgG/6kxuGv+iONKaZ8h92QUCrLSJ49OBysDhRyVqSjAQFAsZrcDbMFZfBDqJWStawjnigFi8y/d2YypppPj+/bhqPyhYPCb+s1DGDnOeVskA3DRu+XA89PqQCN/rE1f/YeFFH7q/1oa+5laYpaPMCcGZ5p6Hbeo6QkjFY1hBADAgD6RLj+tfbdplmHFBjCRNB6DAKiONcvB5PjiHwKdm3c1Iwm4OAJ6MV+UjgN7hSK762G6HKEv68nSQZ79Y/iCT/XQHT/zMbb/7ypMWLA4fYKOPEjqyy5hiFzr2Wf///6AYzAYAJI2Y6Sh62aIpKhh1uVE3MUzEt0P/7kgQMAALhLEx7L2pQWelaTT2qf8uJNS2tNHPJfKUo9YiKd3BFoD9T+9rskv/mVypUzMGe8/60RHgzmvvQBb798Og9UqJnqWJsCT/8WH/OEEj/8gxSi4YLDxODAjAgMCYThpw4WuFVzaC2HJPVxFgXUKwcR7EhYGAes7Ayh1vUZDYKt68UeXSpZESFm31Q0hKofkUmlRTP7rLxwgq/l0EYb+gHws/wzEMenbp/+iPrXVEZehnsiaHNkxpg2aEO3eCWDaChHLqQ7cDiLtUhK2sva27dSwzD3bvSZWN0KakpHhYvb/5yrGoANQUxNvKzEMIHO/ZNQWh/5UN/+Zhfv+J+3brGocb9///01qdXrvGmZkplkZx6fCYkJX5gnNll2EsnaupZKDQFhVqN1kysrGgSNR6BmUv409/uxG/Danv7q1F78cNQ9hvuwlYg0ydJNSDjGgPg7UtN2k0Rft1i0Cgf+Q//lEaDf//76VQ6W2MrJZnWWPY07PO7AiuSaGo4DgCsYiXDwe3JhVZt32ZmCgUbjlAodX9DdYipk0AbdMRCTwH/+5IEEgACnizJy2trMFRFiY1lLUkKJLErrSGswVwWJ/WGNSY1/7IC6GZ/MrgnaHtkmC8ntrUMUAVG/pCUGzf0im/p9K2n1H3lYEcFo0Ov3gktt6A6gYnwlIiChPM3l0AN5Nv0z8hyAYgCtCcQNk5kbEKi00A48EnCpv7GZ4DSIv+kC0o/zcdf82BnP/1AtiX+gQXf/GtiIAQ0HjoZBYKBw6FEDhVqQ2gJkCAsmqCAoLZQOXW+UQYxdT3BjYX/NOqWYCf57CYH1RnFyJQEWbfsLMN5GvJqJiFQ+1Qsxhl79Y7AKL/qGGb/Mx5N/7ZrSVOjoPCjzbgBtVQ3IHYconSwCE9xIzjt5EICTDagsoogGDg6AsdmpgKAznpeQg9UMC0Pn6Q0j6DpCH+himf9qyTBZLrXWsyBxgdP9Q3Hv8aCtn//hZKCDzgwbMsBsPWH2PdVBICIjIxYgCCM6fD8P07FDNJVhboZEsumImJeiqckIJkaMkOuLv0nUyepg/hwFiaGbk1Yk/+TRIf5kBPv/WMX9dRNJR3/rvrMgrQEIZewYR3t//uSBCiAApgsSmtMasBTZYldae1ICmCxJu2xqsFLHuZ1hp31ZWobYCgQQNmosL7VwvhX6xHcTfROTTDaJtVen5ibBUCENEbzRmKRQGf+P5WDgFf66wlH/okDt6AWP/GFf/JxC/8uRIkhZaxVJdKAyCYZe0SBIkPnw4AoZMABC+ky8kEtjstMyIYY6QcDAG42ftpVz4eKavuuNTHgzK6mDSLUpIqOm5IkisSRX80Fr21nBrCZf6QxFf81+71ce2bmx0WIirUOApZodeTzYdweg5jtFBIpXshEbYHIYNlw6sHNfSMtvEa9eXP+CxPZ48UhcPA+P8mpBgBn+hWBJq98uDJV9Sx+Dff+gRf8oJTf//1Sieuqj9afPLCgN+fa+v6qDhAaFQ/JwKCfio4ZrXXsf9lhgIgLqCQNoIG/FgjC/x1ECMgOCVGbeqESDnHkglUXkmBLjYdPGrmzMg3/Dhb+w50f3qM3Qan1GX/k65cBJW7ugwg3ZwaCBwiuMIIT0Rre15pQ02TN8SPSbFeVAdT3NdJEWuf+aSGfCw9fmbAhg1/XRP/7kgRBAAKYMcrraWqwUSWJn2HtSQqQsSlNvakRUJ3ndPad/wbh7+kMv+iP4KV/xrb/l912/2hMjBpJ160PAwJF+tgvNvaIBBIURQBDMFNmmyuRw1TJyBVDOqEyla0YXxOvavCbXp42q0PBbTf88CjBrdu0QcH4usk63WVFRSf6jozASb/0w5pb/plL1fzyEJniM2BGs1Tp8Qy5lYdJpRcTAAbDKNF+2ixEwOQoQnzzHC0For9VUgjkcsaNCgsW+YuEQN31VAUdv5fDiXX1uO0BGHv7hVC1v6gm///M1sd2OlZD9aun8kT0OZC9ezjqFpDjGgVZoBD0M0h53GcN9J26Cs0GAzCYUc1MWGRmKSb+Np3GlF0bt//3mICEafkINJb8oRE3+MwEj/6BO/5CITTV+ncdJgnIlDc6smBUETdI68WMXocFzXJQRxqEqbyCHfmnmaQL2WO0xc6PT5wMgVJo88gkRyIcsi/3H4Vf10RWn9RHjgai+pEjBWrfrjiZ/5ZJI//+OHibOChYJEqKRqFDVxjUJGAMCpCpRFBuiJr5Q8//+5IEWYACkixL609SaFLliX1hkVIKgLEprTGogUol57T2inb7jr/eQLdT7iwSPRcer8fHME7VmhID1PrC1mvyaUQSokW/OBXlv6n/5iHhv8TdH/OEF36W4jKGiBFBwUYVCbBUYXQgMzDUKRiUDFKNMAhTHqbibQkk7YOUqC9DtOsYrI2/yoXv+KhTG5KC6v+4jhFfVOgj6fvpC837qEUn/WMV/8iko////zOxmRruTyb0quJde1mOM6gQf1VRsJkR1SOJISqFMcdRqTYVrrHHAY+XCKQlRJ1XVu8Or/5ex6xTaZtePDeCdtpORT/qEkP/ySHv31GYsAdKH9xMH/x8JP16/DixW8NBVjklBCPUHKUuYpaHiMY5WyCFtBTH4Xt6Oc0CyOBjThGy7l3ztSId/1PHU7dECb8+J0Ldt66gUxPu9YhhnLy7VrPDFCKG/3DJ/80Ev+n9a/JcWNb+vY32ER25+nKSaWyExHcXlrUE2uhE1+0Tm3jCq4UNC+pX0SbUqor3bhWU/hUeJBQnTeoxg4BFfycBBSl6E6blv9bikf/x//uSBHKAAq0sTWtPamRUJzn9PaqZyoixL609qsFTFmb0/DSauPP/SI+z8JXtWKvuEQoKAQiLkFXLDrxt7i2woBBpZYEwxow5SnDiTi+3JX0VidW2/bhwpOTgZENzRJTiPbJR4gZ8AC6DOg3SjQFXNH1q1CKfVqWoLFD+aiXmj/yYPFX//3qgMSgy5WiLCUQEXEGqLDi3HEUGtLtzcJuLTHALvhaIZsMoLfAUAxuFkYD5/g8iWUE5N/0w0BcjNJs0rA7N7YsQ4k9tahVAojf1hdX/x9Hkj/4oHIScHZSSQHaNBRhtTL0hog0DCLTUliCIOf1wnhfy69UgFzUBDZ1daLOIuDJrrxYDlJFC0W/5C4UQdPb5EGBPTMPlRO/SQBbO+qKIlf8ShDv////bvoZ9SLq4Vdb4O8mN8d01oCkZj72pMCs6CIUtiS0QRDiOcEZbEl2wNLWTJoKpPHKTrogrSX1OI4CAJLbM1F8AEpp7Ymo9P8mAZv+oWX/Okb/syhdCkAqJz7yzAUYNMvA2b2zWqdjLXaxFCIohjR1pSqtoN84W+f/7kgSIAAKjLMxTSWq0U6g5XWXqSkp0sS2maaaBSpYo9PQ1pi7Qe0ODoW/Vt7AHrxRcHxGcGdFvjQJU61IqpRBR6M1HpmYjSf9IXEn/qGU/9bnuZbY1hQqFy9bBQowInV1aVVCgaBE3NcigzlyXLZhBuEdTQMFRhtsVzCgKlBN3EQDHDrhzjYAFf+cPhCB5kfaYhb838ujEQ+qUg+7/46z3+cJHP////7/jSxnfFolNxmqC+tdJjQL+qWhNwOgUI7agEJ0y9icCPS8dJBBIdNc23jMpXGJIQAE5SPrErcvqAeCk3oxYDr/H4G6R6LLVmIosk6WtRiJDvrdEYdH/M0sbb/2JlCza1CoXFZgIG2OrcjFsWebzYBD1yaHHJmHYrtIdse6TRaiHsyquLZj3SgtvoliXL3QJ4JQQwAbgZPvhaW/iYAcTWgxZTcd4dl/5p/1G//utvnwKEJMVFBdiYQKSpWpqHDGnWiCD5QMImJ0NKoN8mY1y5vX+VFVsWwLrKl6Xy6iCyRektSZuCWFf7UgdR/brGIBiqdJ6kzMZgT13+7n/+5IEn4ACwCxKa2uCwlUFiT1h7UgKYLM/rDGpMUeTZWj4NcJE91u/bp0B9drWRZEoH5wwetdUKZCaEKCiZJDo3Xntrmcd+4oMwTVBw+HMZoQ9QoaUXburDY3iTCepfJhgFGNv9QSJ/4mg559V6Vg5v/f/rKVlSW+5U+aEJaAA2MAgiJlDArfL6pLVMRU7dIQQT8aqFmWPp0pycpEpiDqcY6mWMrKfNCWMzNQXl/rhWAQI6l06wHaR/fCYDeZ7VOAS7NSgXT23LdipvTQiRY0sg0xQ8+HKVqoNi5cgLZ6JfeIQlTT31ZQ+LpqGvSKZzgg1LpkvGJ8oPXAYU6R9iEk4NAPZ/pKDuLX73Cxb+TBFJJrtrSFt/29fWs0onjvatGlsZULEhJVWko0OKS2WU0nhhhjYBDtr3n1yNNcOhZ2hNIhxsWM/TIYPUCjATrsapGBiCnG31waA5xdZjiZKILE+/yQDMfWn62Ep221k2/lNRZX+80+8cBlMCIGHC5KUDdUgagaQITka/iARBj3dgRlrMIRCgAfk4G169A1t3r0xAb43//uSBLWAApAsyutMakRRJNn9PaptinCxJ60xqsFQk6TpgzWCtai9q1VrJU61/nggQsUvMElhvN/MRgmTz/RGE7b8kHo7v+saZipdJ40bInwsUEgSaaE0JPanYJUMF76yGVYI1Oag+T2Po7ipCKRx5HT2bb9HBMuv7vmJ/EB/Y+DACQVtn1MBNW/icJjVT8X/6Dn3f8dShzCixKCp14wDEUPxZALAUWUOQ3///0uWiWHOW6Vpis/Uuc5MZNVEwt3OE1landZ3Vo70riZH4t3NyaiFFbrTKABlCzdtSLGIDdPP84RQ0WjlvzI7fX6j/R7SI0VYX3Szxw2xwpNggYKD2IuLkEoFQT9RKExDViH2lObCJEl4NXay1lr9d/8NwGu/LfTd1nTUFEb/U4fhW/qC7X+okx4IVLa7y5/xbV/t//L/95WMZSOUdqnILR0kksaviHwfT5fXKloeMbvMAIikYuSl4IHpW5li4/SHT47kSpev/KB4dJFF0hDr+dNAUIa0v3BZOq3SKYlLOzPssTr/p/4r/p/9MlFq+yqQlDHS6GcqTP/7kgTPAAKpJslrbR0wU4TZPT2nlgqUhzmsNW9RVCUktYaKKRkfFVao8XsyMbQdRz3EwzVYEWno02wxgqhdyDl8ZKvTjWR5f+FBg2MhYt8nFoJYGr71CM/5uXbsz8yNV///qT7/X/7ekzLrssQqRwrUdT7OT7KSHG4CO9f//1hNBRhmq4MAiJNQft9XEpo06ZBQMyCWBZs8cKuyVrVO8fc+yDmdAagdDnyeRgUIR/rog5TTbsXinsxrRSMxyf9f//6q/v3q73Ws9KVGRFjDEFCsxuerkT4hh8DioHLWf//6jI9dQ0EFoGxgAPRDkHvzDVZxMxjSEK6YGktPXp5pnyXFnudizlchKaUQx/kxIMQMn2uI1/umVFq6A/enK/8sf/1+2628cY9RpIfVlHXUgSQYZDiEpxA6Bg+IgWJnT6v//rG0ixA4yqoJsSISZfyAEXJ+JO5BURYk/ZVuHuEDXaRruDVRNxTXz6+BbAKuDv7+ZXo2RFf0gX1qX0TM3PoJug6NlDA/8w+5GPZsipEnNw6AT4eNlROdBYODXlQG1JJDWPX/+5IE5IACkEdI0y0T4lOpuU09o54MmSsfrTRzwY+jo6mGlpB///6KRoYKoVTAAgjc4/kSb5+nHKhgPWkg+1KpulmoUprYzxZ8kCRR6kxBi8A2wRP8Ly362Yk7Z1YN/0//5GVUT9GLMZ64YiIEMgQkoSlnBkaBs4kWHDsopwYlw2ZLPfr//60ciWWfDgTQtIr7+kAK3Gp+u38xA8QKtRT6udQ5rkbkeF+OL8s6+m1YmTwTg09RPRDkiv/SDwdb60zy70GqUR/+L/6d+q/211vkR1OnQ0tUS1kZCoQS7FcY2w4E3aP/ZslkU0NTUIiv4DqkllrbnQqappkqSJIqinIpX+ri+sqsVq3a12bLowxKfUwfwhX/hVqDaqyCaVuV4j/n/9n/Pb1W72TM8wMxWJDjEQxzswVDuLIIlYIpbCSwmkQp//0U9JoqaWyxNQ0wIBFTa0ARKXNh1dz6UtNSAkkR6YOi7KYMyr6fdmP//Kfs5mzenz0e0XqA4H/9AVp9TWZdX6mf8t/7/6L/q5+tTLnsSe2GWRCaKjCqKQqdgMEkhkJs//uSBOwAEvImyOsvatBj6WjqYaKIC/EnI6y0UwF/JSOplopYeb///0Ux6lOFzz8qxMADCclbsQBZbI4Y5gC4Fiq1P7EKl3GStfkcoqnzGg4lpJt6kAP4Ih/3nQVMz/R8yegP/k/6M/o/+6UqVLuCuGYYcUogrBCHFEEkOxDqmKqIDNQclGI///5qsqQQTERw6SQsAiPzdv4DiDusoMCZE3LZo8/Uij+pREU4qP/MZxI6Kxc+YoibAvJfuSj9+yanX7z3/S/9/W1f///dTZWvpWYJo6lhxLwHHeBHWBNqQxsykg9Yw9//6qnW40UUPCLAaKwmigAGTvw1Dro1pKpgFwQmMZLC5PL+YyCIxrKz3SlAAlhedfsGMCdSboKOApST/q76X4r/n/319UlX/zGLyKTFKRHGZQ1gwYLUcj8YxhkSBl5F///pl/XHTqoGMFEIx2NgAQzEo2/i7EeFpMqKkMIWsMn6SktxiVRACwkWrVcIu+pwTAjb8oullO9WeyP3i/b4j/o5L/17dETkqxiGERNiFPcY2eZREoMU5FOZjR7h8P/7kgTqAALySUfrSh1gYYkY6mWiiAwBNx1NNHHBdaRj9aaKIOnGf//r9j2OkAmwIioNdYARJblPAEMMAcpZAyOT0urLpDKPlt6SheknXcA0bu3sDoiSxtXVmD7b0OVMlldRrkf4jv/+jpb/3+5Co7NLBVMrlWpzsGHJuCgPAoRSxv///o1Ukw8clKUABYgZ+37nr+pgU5Ocdlz+0r00kxhBsG4d/LeNciAhMp54VA2/qqa/dzlWlWH3/T/2/3X+r7PY6cUTqQ20cmmOrTsi5D0abKJCxCYa9zms//6rNxp72FREoaKTQrCwAI7CcoXGH0icOBe0LJqPP/Wl8xcwgFv8O/Y2o+O+pYEYW2/OC/W5ise6G2bbQ3/v//+cq/8/zyOOnbiljowfCkwCHRR1FOwyuCqEGAAQPtt//6lenaqkhRoNHikTAAhhz4EkDuNIjbL0tR+u4045Ufno1blAMxuh6KAQ5RZLolMIAjt+gS/ez3Yz6R3/P+2j/LQy/eiTttZiO+YQGCouYRCRxgqND7UURaLIw4e4BnSYgUr//z1TXqH/+5IE6gAC+EpHa0orwFkoqQ1lQnoLrSEdTKjTwXSko6mVDjinzRsOhNgwhQm0wACy78OSCHnIaW4YoNHxaG0zEnBoJVMv441/n97r8VUZi9l1LBNC3/iI59WmK57I18m/7fXsfvtY5f5tlyDMY4mLLLYrDQQMdDEdRJhhVlNhJMaij//033ZugIoCaEgDalsYCFZ84Zd1ymtsqlYWCD55QNw35hOmtEQEh97pfJQJGMn/eLC6v/0E91ukWVnsuZfrWjafv/zenWjXoxHSM7OyJeOphzsYghaKyB2cSUwAQE4LnghV//+yZ3GRo6KhtTAAmG+n5t+mls6eEuAPu27v3V1aYfRqEQmfpLsgGA1r5maixHX+sm6k2vIPR4yuir/3/L06+pvRtiMmrsZDug8dWMl0FjD2dlZxQFDV7SM0z//7dd9S5dUBkFkGN2tAEYz1NbcV+qaXjFRukObPWIaltPLpUp7mWHP5u2uuE75//q+o0T+gDJdkfGpfpcwvf+v//9l/fM06PnLItEmmZwcVQa1QwoCUActW7iQjAwFyY3////uSBO+AAylJxtNNK8BiKVjtaUOsDAkvH60sTUFvI2Oppomwo2z81SKLJiRQJFI0ABHKOmkjXZE4z/DjxzgOzIq8alu84++9rLTKynAjLfITRUCL+eJSatdlOZ5t0OVW0rzf/7+9fvf/O//prujUlqbTBac4x3ylkzEUbLlDhCPWKLOO//62h3dXMDzEYAgA0lFI0gAIAgTlx1W7W6xDsJiPlKpDTTdeafd94Pz5/8+wpCT1edHDIKQ/1xCmXWqpLf9vX///6f/+e6g9w9FSoDB7bqsQDUCCngItqOL6iG5kKcayNc7//i3YXWhqHJNOISAZY1GRIeXi8IChFgAoID3CaPIpmZuWA+y+rRE8V+txqDa/lARK/qITpJU7r95v///9vpMQxkDGKbesEIIcSbDjDt1xh0C9eEHdriOqmaZXZb/0/a6gtF5hYEUBgFw1bfWgEJIV8gcMSWSiCAa1icuYJKYf8YnJK5f5IUGavCc5t3jB0zVDImtONvsOXMDeHFkK+yyyxmPCJ48QeAjp5I4iSeSfeE63//////m0/SMTC//7kgTsgBMPS8drJR3QYsi42mVGjgv1LRusqHVBeSfjHUEbILea7LuRSKo/utBkg5Gx3e0AA48GgLARV/3SLChLLW54SI6rD41hAMG74s1/Gw7HR1f9Ov7Q/sONvsOXWPv4s1/HLLFr9nOX3bjWODxA6OIjwIGcDPPBlI7//+ZX7Uq6J+K0HysP+/GABAkUXJTlxYBvMDCCgFgwIaUiqGABE4ZgRMkR8hciaVZIWEU1cW1CJVBUJBQe48EgkFXHjp08dZaxpAiSIkkJQn/tOvsCoCJPUSCowClSLf/WMHjOecePHXjP0gcBaCzgEmAXhzH+MUGEOwXxbVhDnaldJ4gAjyLV/JaIdDR4TCUiSEQiEoiKlSxUsVKqAowcPGDxjjx08dOng0zoZliRUREmSSZYj5FsJf//1qXVUBUKTEFNRTMuOTkuM6qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqr/+5AE6gAC/R3I6Zhhol2kOS0nDCZLdEkKR+EkgVYHYlhnmGiqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqo=";
 
-            //@ ARGS
+            //? presets as query strings
             var preqs = []
             preqs.push("up=1000&de=7.5&aN=5&aR=0&ca0=0&ca1=0&ca2=0&ca3=0&ca4=0&ca5=0&aV=1&aO=0.18&aG=1&aX=1&aK=4&aU=1&aA=2?up=10&de=0.0146484375&aN=15&aR=1&a0=0&aV=1&aO=0.18&aG=1&aX=0.29&aK=4&aU=1&aA=2");
             preqs.push("?up=1000&de=7.5&aN=11&aR=0&ca0=1&ca1=1&ca2=1&ca3=1&ca4=1&ca5=1&ca6=1&aV=0&aO=1&aG=1&aX=1&aK=0&aU=1&aA=2 ");
@@ -1891,18 +2003,37 @@ function buildpath(xfr) {
             [],
             ]
 
+            // norm_0_360 = [0,1.0027855153203342,2.0055710306406684,3.008356545961003,4.011142061281337,5.013927576601671,6.016713091922006,7.01949860724234,8.022284122562674,9.025069637883009,10.027855153203342,11.030640668523677,12.033426183844012,13.036211699164346,14.03899721448468,15.041782729805014,16.044568245125348,17.04735376044568,18.050139275766018,19.05292479108635,20.055710306406684,21.058495821727018,22.061281337047355,23.064066852367688,24.066852367688025,25.069637883008358,26.07242339832869,27.075208913649025,28.07799442896936,29.080779944289695,30.08356545961003,31.08635097493036,32.089136490250695,33.09192200557103,34.09470752089136,35.0974930362117,36.100278551532035,37.10306406685237,38.1058495821727,39.108635097493035,40.11142061281337,41.1142061281337,42.116991643454035,43.11977715877437,44.12256267409471,45.12534818941504,46.128133704735376,47.13091922005571,48.13370473537605,49.136490250696376,50.139275766016716,51.14206128133704,52.14484679665738,53.147632311977716,54.15041782729805,55.15320334261838,56.15598885793872,57.15877437325905,58.16155988857939,59.164345403899716,60.16713091922006,61.16991643454038,62.17270194986072,63.17548746518106,64.17827298050139,65.18105849582172,66.18384401114206,67.1866295264624,68.18941504178272,69.19220055710306,70.1949860724234,71.19777158774373,72.20055710306407,73.20334261838441,74.20612813370474,75.20891364902508,76.2116991643454,77.21448467966574,78.21727019498607,79.22005571030641,80.22284122562674,81.22562674094708,82.2284122562674,83.23119777158774,84.23398328690807,85.23676880222841,86.23955431754874,87.24233983286908,88.24512534818942,89.24791086350974,90.25069637883009,91.25348189415043,92.25626740947075,93.25905292479108,94.26183844011142,95.26462395543176,96.2674094707521,97.27019498607241,98.27298050139275,99.27576601671309,100.27855153203343,101.28133704735377,102.28412256267409,103.28690807799443,104.28969359331477,105.2924791086351,106.29526462395543,107.29805013927576,108.3008356545961,109.30362116991644,110.30640668523677,111.3091922005571,112.31197771587745,113.31476323119777,114.3175487465181,115.32033426183844,116.32311977715878,117.32590529247912,118.32869080779943,119.33147632311977,120.33426183844011,121.33704735376045,122.33983286908077,123.3426183844011,124.34540389972145,125.34818941504179,126.35097493036211,127.35376044568244,128.35654596100278,129.35933147632312,130.36211699164343,131.36490250696377,132.3676880222841,133.37047353760445,134.3732590529248,135.3760445682451,136.37883008356545,137.3816155988858,138.38440111420613,139.38718662952647,140.3899721448468,141.39275766016712,142.39554317548746,143.3983286908078,144.40111420612814,145.40389972144848,146.40668523676882,147.40947075208913,148.41225626740948,149.41504178272982,150.41782729805016,151.42061281337047,152.4233983286908,153.42618384401115,154.4289693593315,155.4317548746518,156.43454038997214,157.43732590529248,158.44011142061282,159.44289693593313,160.44568245125348,161.44846796657382,162.45125348189416,163.45403899721447,164.4568245125348,165.45961002785515,166.4623955431755,167.46518105849583,168.46796657381614,169.47075208913648,170.47353760445682,171.47632311977716,172.47910863509748,173.48189415041782,174.48467966573816,175.4874651810585,176.49025069637884,177.49303621169915,178.4958217270195,179.49860724233983,180.50139275766017,181.5041782729805,182.50696378830085,183.50974930362116,184.5125348189415,185.51532033426184,186.51810584958216,187.52089136490252,188.52367688022284,189.5264623955432,190.52924791086352,191.53203342618383,192.5348189415042,193.5376044568245,194.54038997214482,195.5431754874652,196.5459610027855,197.54874651810587,198.55153203342618,199.5543175487465,200.55710306406687,201.55988857938718,202.56267409470755,203.56545961002786,204.56824512534817,205.57103064066854,206.57381615598885,207.57660167130916,208.57938718662953,209.58217270194984,210.5849582172702,211.58774373259052,212.59052924791087,213.5933147632312,214.59610027855152,215.59888579387186,216.6016713091922,217.60445682451254,218.60724233983288,219.6100278551532,220.61281337047353,221.61559888579387,222.6183844011142,223.62116991643452,224.6239554317549,225.6267409470752,226.62952646239555,227.6323119777159,228.6350974930362,229.63788300835657,230.64066852367688,231.64345403899722,232.64623955431756,233.64902506963787,234.65181058495824,235.65459610027855,236.65738161559887,237.66016713091923,238.66295264623955,239.66573816155991,240.66852367688023,241.67130919220054,242.6740947075209,243.67688022284122,244.67966573816153,245.6824512534819,246.6852367688022,247.68802228412258,248.6908077994429,249.6935933147632,250.69637883008357,251.6991643454039,252.70194986072423,253.70473537604457,254.70752089136488,255.71030640668525,256.71309192200556,257.7158774373259,258.71866295264624,259.7214484679666,260.72423398328687,261.72701949860726,262.72980501392755,263.73259052924794,264.7353760445682,265.73816155988857,266.7409470752089,267.74373259052925,268.7465181058496,269.74930362116993,270.7520891364902,271.7548746518106,272.7576601671309,273.76044568245123,274.7632311977716,275.7660167130919,276.76880222841226,277.7715877437326,278.77437325905294,279.7771587743733,280.7799442896936,281.7827298050139,282.78551532033424,283.7883008356546,284.7910863509749,285.79387186629526,286.7966573816156,287.79944289693594,288.8022284122563,289.80501392757657,290.80779944289696,291.81058495821725,292.81337047353765,293.81615598885793,294.81894150417827,295.8217270194986,296.82451253481895,297.8272980501393,298.83008356545963,299.8328690807799,300.8356545961003,301.8384401114206,302.84122562674094,303.8440111420613,304.8467966573816,305.84958217270196,306.8523676880223,307.8551532033426,308.857938718663,309.86072423398326,310.8635097493036,311.86629526462394,312.8690807799443,313.8718662952646,314.87465181058496,315.8774373259053,316.88022284122565,317.88300835654593,318.88579387186627,319.8885793871866,320.89136490250695,321.8941504178273,322.89693593314763,323.899721448468,324.9025069637883,325.90529247910865,326.90807799442894,327.91086350974933,328.9136490250696,329.91643454039,330.9192200557103,331.92200557103064,332.924791086351,333.9275766016713,334.93036211699166,335.933147632312,336.9359331476323,337.9387186629527,338.94150417827296,339.9442896935933,340.94707520891365,341.949860724234,342.9526462395543,343.95543175487467,344.95821727019495,345.96100278551535,346.96378830083563,347.966573816156,348.9693593314763,349.97214484679665,350.974930362117,351.97771587743733,352.9805013927577,353.983286908078,354.9860724233983,355.98885793871864,356.991643454039,357.9944289693593,358.99721448467966,360,360];
+            // norm_180_180 = [-180,-178.99721448467966,-177.99442896935932,-176.991643454039,-175.98885793871867,-174.98607242339833,-173.983286908078,-172.98050139275767,-171.97771587743733,-170.974930362117,-169.97214484679665,-168.9693593314763,-167.966573816156,-166.96378830083566,-165.96100278551532,-164.95821727019498,-163.95543175487467,-162.95264623955433,-161.949860724234,-160.94707520891365,-159.9442896935933,-158.941504178273,-157.93871866295265,-156.9359331476323,-155.93314763231197,-154.93036211699163,-153.92757660167132,-152.92479108635098,-151.92200557103064,-150.9192200557103,-149.91643454038996,-148.91364902506965,-147.9108635097493,-146.90807799442896,-145.90529247910865,-144.9025069637883,-143.89972144846797,-142.89693593314763,-141.8941504178273,-140.89136490250695,-139.88857938718664,-138.8857938718663,-137.88300835654596,-136.88022284122565,-135.8774373259053,-134.87465181058496,-133.87186629526462,-132.86908077994428,-131.86629526462394,-130.86350974930363,-129.8607242339833,-128.85793871866295,-127.85515320334261,-126.85236768802228,-125.84958217270196,-124.84679665738162,-123.84401114206128,-122.84122562674095,-121.83844011142061,-120.83565459610028,-119.83286908077994,-118.83008356545962,-117.82729805013928,-116.82451253481895,-115.82172701949861,-114.81894150417828,-113.81615598885794,-112.8133704735376,-111.81058495821728,-110.80779944289694,-109.8050139275766,-108.80222841225627,-107.79944289693593,-106.79665738161559,-105.79387186629526,-104.79108635097492,-103.7883008356546,-102.78551532033426,-101.78272980501393,-100.77994428969359,-99.77715877437326,-98.77437325905292,-97.7715877437326,-96.76880222841226,-95.76601671309193,-94.76323119777159,-93.76044568245126,-92.75766016713092,-91.75487465181058,-90.75208913649026,-89.74930362116991,-88.74651810584957,-87.74373259052925,-86.74094707520892,-85.73816155988858,-84.73537604456824,-83.7325905292479,-82.72980501392759,-81.72701949860725,-80.72423398328691,-79.72144846796657,-78.71866295264623,-77.71587743732591,-76.71309192200557,-75.71030640668523,-74.7075208913649,-73.70473537604457,-72.70194986072424,-71.6991643454039,-70.69637883008356,-69.69359331476323,-68.6908077994429,-67.68802228412255,-66.68523676880223,-65.6824512534819,-64.67966573816156,-63.67688022284122,-62.67409470752088,-61.67130919220057,-60.66852367688023,-59.66573816155989,-58.662952646239546,-57.660167130919234,-56.657381615598894,-55.65459610027855,-54.65181058495821,-53.64902506963789,-52.64623955431756,-51.64345403899722,-50.64066852367688,-49.63788300835657,-48.63509749303623,-47.63231197771589,-46.629526462395546,-45.626740947075206,-44.623955431754894,-43.62116991643455,-42.61838440111421,-41.61559888579387,-40.61281337047353,-39.61002785515319,-38.60724233983288,-37.60445682451254,-36.6016713091922,-35.59888579387186,-34.59610027855152,-33.59331476323118,-32.590529247910865,-31.587743732590525,-30.584958217270184,-29.582172701949844,-28.579387186629532,-27.57660167130919,-26.57381615598885,-25.57103064066851,-24.5682451253482,-23.565459610027858,-22.562674094707518,-21.559888579387177,-20.557103064066865,-19.554317548746525,-18.551532033426184,-17.548746518105844,-16.545961002785532,-15.543175487465192,-14.540389972144851,-13.53760445682451,-12.53481894150417,-11.532033426183858,-10.529247910863518,-9.526462395543177,-8.523676880222837,-7.520891364902525,-6.518105849582184,-5.515320334261844,-4.5125348189415035,-3.509749303621163,-2.506963788300851,-1.5041782729805107,-0.5013927576601702,0.5013927576601702,1.5041782729805107,2.506963788300851,3.509749303621163,4.5125348189415035,5.515320334261844,6.518105849582156,7.520891364902525,8.523676880222837,9.526462395543206,10.529247910863518,11.53203342618383,12.534818941504199,13.53760445682451,14.540389972144823,15.543175487465192,16.545961002785504,17.548746518105872,18.551532033426184,19.554317548746496,20.557103064066865,21.559888579387177,22.562674094707546,23.565459610027858,24.56824512534817,25.57103064066854,26.57381615598885,27.576601671309163,28.579387186629532,29.582172701949844,30.584958217270213,31.587743732590525,32.590529247910865,33.593314763231206,34.59610027855152,35.59888579387186,36.6016713091922,37.60445682451254,38.60724233983288,39.61002785515319,40.61281337047353,41.61559888579387,42.61838440111421,43.621169916434525,44.623955431754894,45.626740947075206,46.629526462395546,47.63231197771589,48.6350974930362,49.63788300835657,50.64066852367688,51.64345403899722,52.64623955431756,53.64902506963787,54.65181058495824,55.65459610027855,56.657381615598865,57.660167130919234,58.662952646239546,59.665738161559915,60.66852367688023,61.67130919220054,62.67409470752091,63.67688022284122,64.67966573816153,65.6824512534819,66.68523676880221,67.68802228412258,68.6908077994429,69.6935933147632,70.69637883008357,71.69916434540389,72.70194986072423,73.70473537604457,74.70752089136488,75.71030640668525,76.71309192200556,77.7158774373259,78.71866295264624,79.72144846796658,80.72423398328687,81.72701949860726,82.72980501392755,83.73259052924794,84.73537604456823,85.73816155988857,86.74094707520891,87.74373259052925,88.74651810584959,89.74930362116993,90.75208913649021,91.75487465181061,92.7576601671309,93.76044568245123,94.76323119777157,95.76601671309191,96.76880222841226,97.7715877437326,98.77437325905294,99.77715877437328,100.77994428969362,101.7827298050139,102.78551532033424,103.78830083565458,104.79108635097492,105.79387186629526,106.7966573816156,107.79944289693594,108.80222841225628,109.80501392757657,110.80779944289696,111.81058495821725,112.81337047353765,113.81615598885793,114.81894150417827,115.82172701949861,116.82451253481895,117.82729805013929,118.83008356545963,119.83286908077991,120.83565459610031,121.8384401114206,122.84122562674094,123.84401114206128,124.84679665738162,125.84958217270196,126.8523676880223,127.85515320334258,128.85793871866298,129.86072423398326,130.8635097493036,131.86629526462394,132.86908077994428,133.87186629526462,134.87465181058496,135.8774373259053,136.88022284122565,137.88300835654593,138.88579387186627,139.8885793871866,140.89136490250695,141.8941504178273,142.89693593314763,143.89972144846797,144.9025069637883,145.90529247910865,146.90807799442894,147.91086350974933,148.91364902506962,149.91643454039001,150.9192200557103,151.92200557103064,152.92479108635098,153.92757660167132,154.93036211699166,155.933147632312,156.93593314763228,157.93871866295268,158.94150417827296,159.9442896935933,160.94707520891365,161.949860724234,162.95264623955433,163.95543175487467,164.95821727019495,165.96100278551535,166.96378830083563,167.96657381615597,168.9693593314763,169.97214484679665,170.974930362117,171.97771587743733,172.98050139275767,173.98328690807801,174.9860724233983,175.98885793871864,176.99164345403898,177.99442896935932,178.99721448467966,180,180] ;
+            // norm_0_1 = [0,0.002785515320334262,0.005571030640668524,0.008356545961002786,0.011142061281337047,0.013927576601671309,0.016713091922005572,0.019498607242339833,0.022284122562674095,0.025069637883008356,0.027855153203342618,0.03064066852367688,0.033426183844011144,0.036211699164345405,0.03899721448467967,0.04178272980501393,0.04456824512534819,0.04735376044568245,0.05013927576601671,0.052924791086350974,0.055710306406685235,0.0584958217270195,0.06128133704735376,0.06406685236768803,0.06685236768802229,0.06963788300835655,0.07242339832869081,0.07520891364902507,0.07799442896935933,0.0807799442896936,0.08356545961002786,0.08635097493036212,0.08913649025069638,0.09192200557103064,0.0947075208913649,0.09749303621169916,0.10027855153203342,0.10306406685236769,0.10584958217270195,0.10863509749303621,0.11142061281337047,0.11420612813370473,0.116991643454039,0.11977715877437325,0.12256267409470752,0.12534818941504178,0.12813370473537605,0.1309192200557103,0.13370473537604458,0.13649025069637882,0.1392757660167131,0.14206128133704735,0.14484679665738162,0.14763231197771587,0.15041782729805014,0.1532033426183844,0.15598885793871867,0.15877437325905291,0.1615598885793872,0.16434540389972144,0.1671309192200557,0.16991643454038996,0.17270194986072424,0.17548746518105848,0.17827298050139276,0.181058495821727,0.18384401114206128,0.18662952646239556,0.1894150417827298,0.19220055710306408,0.19498607242339833,0.1977715877437326,0.20055710306406685,0.20334261838440112,0.20612813370473537,0.20891364902506965,0.2116991643454039,0.21448467966573817,0.21727019498607242,0.2200557103064067,0.22284122562674094,0.22562674094707522,0.22841225626740946,0.23119777158774374,0.233983286908078,0.23676880222841226,0.2395543175487465,0.24233983286908078,0.24512534818941503,0.2479108635097493,0.25069637883008355,0.25348189415041783,0.2562674094707521,0.2590529247910863,0.2618384401114206,0.2646239554317549,0.26740947075208915,0.27019498607242337,0.27298050139275765,0.2757660167130919,0.2785515320334262,0.28133704735376047,0.2841225626740947,0.28690807799442897,0.28969359331476324,0.2924791086350975,0.29526462395543174,0.298050139275766,0.3008356545961003,0.30362116991643456,0.3064066852367688,0.30919220055710306,0.31197771587743733,0.3147632311977716,0.31754874651810583,0.3203342618384401,0.3231197771587744,0.32590529247910865,0.3286908077994429,0.33147632311977715,0.3342618384401114,0.3370473537604457,0.3398328690807799,0.3426183844011142,0.34540389972144847,0.34818941504178275,0.35097493036211697,0.35376044568245124,0.3565459610027855,0.3593314763231198,0.362116991643454,0.3649025069637883,0.36768802228412256,0.37047353760445684,0.3732590529247911,0.37604456824512533,0.3788300835654596,0.3816155988857939,0.38440111420612816,0.3871866295264624,0.38997214484679665,0.39275766016713093,0.3955431754874652,0.3983286908077994,0.4011142061281337,0.403899721448468,0.40668523676880225,0.40947075208913647,0.41225626740947074,0.415041782729805,0.4178272980501393,0.4206128133704735,0.4233983286908078,0.42618384401114207,0.42896935933147634,0.43175487465181056,0.43454038997214484,0.4373259052924791,0.4401114206128134,0.4428969359331476,0.4456824512534819,0.44846796657381616,0.45125348189415043,0.45403899721448465,0.4568245125348189,0.4596100278551532,0.4623955431754875,0.46518105849582175,0.467966573816156,0.47075208913649025,0.4735376044568245,0.4763231197771588,0.479108635097493,0.4818941504178273,0.48467966573816157,0.48746518105849584,0.49025069637883006,0.49303621169916434,0.4958217270194986,0.4986072423398329,0.5013927576601671,0.5041782729805014,0.5069637883008357,0.5097493036211699,0.5125348189415042,0.5153203342618384,0.5181058495821727,0.520891364902507,0.5236768802228412,0.5264623955431755,0.5292479108635098,0.532033426183844,0.5348189415041783,0.5376044568245125,0.5403899721448467,0.5431754874651811,0.5459610027855153,0.5487465181058496,0.5515320334261838,0.5543175487465181,0.5571030640668524,0.5598885793871866,0.5626740947075209,0.5654596100278552,0.5682451253481894,0.5710306406685237,0.5738161559888579,0.5766016713091922,0.5793871866295265,0.5821727019498607,0.584958217270195,0.5877437325905293,0.5905292479108635,0.5933147632311978,0.596100278551532,0.5988857938718662,0.6016713091922006,0.6044568245125348,0.6072423398328691,0.6100278551532033,0.6128133704735376,0.6155988857938719,0.6183844011142061,0.6211699164345403,0.6239554317548747,0.6267409470752089,0.6295264623955432,0.6323119777158774,0.6350974930362117,0.637883008356546,0.6406685236768802,0.6434540389972145,0.6462395543175488,0.649025069637883,0.6518105849582173,0.6545961002785515,0.6573816155988857,0.6601671309192201,0.6629526462395543,0.6657381615598886,0.6685236768802229,0.6713091922005571,0.6740947075208914,0.6768802228412256,0.6796657381615598,0.6824512534818942,0.6852367688022284,0.6880222841225627,0.6908077994428969,0.6935933147632312,0.6963788300835655,0.6991643454038997,0.7019498607242339,0.7047353760445683,0.7075208913649025,0.7103064066852368,0.713091922005571,0.7158774373259053,0.7186629526462396,0.7214484679665738,0.724233983286908,0.7270194986072424,0.7298050139275766,0.7325905292479109,0.7353760445682451,0.7381615598885793,0.7409470752089137,0.7437325905292479,0.7465181058495822,0.7493036211699164,0.7520891364902507,0.754874651810585,0.7576601671309192,0.7604456824512534,0.7632311977715878,0.766016713091922,0.7688022284122563,0.7715877437325905,0.7743732590529248,0.7771587743732591,0.7799442896935933,0.7827298050139275,0.7855153203342619,0.7883008356545961,0.7910863509749304,0.7938718662952646,0.7966573816155988,0.7994428969359332,0.8022284122562674,0.8050139275766016,0.807799442896936,0.8105849582172702,0.8133704735376045,0.8161559888579387,0.8189415041782729,0.8217270194986073,0.8245125348189415,0.8272980501392758,0.83008356545961,0.8328690807799443,0.8356545961002786,0.8384401114206128,0.841225626740947,0.8440111420612814,0.8467966573816156,0.8495821727019499,0.8523676880222841,0.8551532033426184,0.8579387186629527,0.8607242339832869,0.8635097493036211,0.8662952646239555,0.8690807799442897,0.871866295264624,0.8746518105849582,0.8774373259052924,0.8802228412256268,0.883008356545961,0.8857938718662952,0.8885793871866295,0.8913649025069638,0.8941504178272981,0.8969359331476323,0.8997214484679665,0.9025069637883009,0.9052924791086351,0.9080779944289693,0.9108635097493036,0.9136490250696379,0.9164345403899722,0.9192200557103064,0.9220055710306406,0.924791086350975,0.9275766016713092,0.9303621169916435,0.9331476323119777,0.935933147632312,0.9387186629526463,0.9415041782729805,0.9442896935933147,0.947075208913649,0.9498607242339833,0.9526462395543176,0.9554317548746518,0.958217270194986,0.9610027855153204,0.9637883008356546,0.9665738161559888,0.9693593314763231,0.9721448467966574,0.9749303621169917,0.9777158774373259,0.9805013927576601,0.9832869080779945,0.9860724233983287,0.9888579387186629,0.9916434540389972,0.9944289693593314,0.9972144846796658,1,1];
 
-            lOrder=[
+            x = []
+            for (i=0;i<1568;i++) {
+                x.push(i)
+            }
+            y=normalize(x,[0,100])
+            var xpt_100 = y
+            // norm_10_40.concat(y.reverse())
+
+            var svgns = 'http://www.w3.org/2000/svg';
+            var defs = document.createElementNS(svgns, 'defs');
+ 
+
+            var xpidx1 =33.33 
+            var xpidx2 = 33.33*2
+            var xpidx3 = 33.33*3
+
+            var lOrder=[
             5,5,5,5,4,4,5,5,5,5,4,4,3,3,5,5,5,5,4,4,5,5,5,5,4,4,3,3,2,2,5,5,5,5,4,4,5,5,5,5,4,4,3,3,5,5,5,5,4,
             4,5,5,5,5,4,4,3,3,2,2,1,1,5,5,5,5,4,4,5,5,5,5,4,4,3,3,5,5,5,5,4,4,5,5,5,5,4,4,3,3,2,2,5,5,5,5,4,4,
             5,5,5,5,4,4,3,3,5,5,5,5,4,4,5,5,5,5,4,4,3,3,2,2,1,1,0,0
             ]
 
-            pensize         = [13,11, 7,5, 3, 2, 1]
-            opacities       = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]
-            maxlengths      = [0,0,0,0,0,0]
-            pre_maxlengths  = [130,70,50,30,20,10]
-            mladj           = [0,0,0,0,0,0]
+            var pensize         = [13,11, 7,5, 3, 2, 1]
+            var opacities       = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]
+            var maxlengths      = [0,0,0,0,0,0]
+            var pre_maxlengths  = [130,70,50,30,20,10]
+            var mladj           = [0,0,0,0,0,0]
 
             //? make the lengths all metal-ratio based
             mr1 = 0.618033989;
@@ -1925,6 +2056,7 @@ function buildpath(xfr) {
             var start_x     = 0
             var start_y     = 0
             var rotation    = -90
+            var inf         = 10e10 
 
             var this_length
             var start_x
@@ -1954,10 +2086,28 @@ function buildpath(xfr) {
                 file:///home/jw/store/src/music/clock_1.svg?c=1000&i=7.5&l=8&k=0&q=1&a1=1&a2=1&a3=1&a4=1&a5=1&a6=1&n=1&o=0.29&g=1&p=0.24
             ────────────────────────────────────────────────
             */
+
+
+            //% █████████████ ADJUSTMENTS █████████████
+            //% let noteseed = (54+tree_counter+ rotation)%108+108
+
+
+            //!  ──────────────────────────────────────────────── 
+            //? ALT CHARACTERS
+            //  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z  <- all
+            //          E F   H                                      <- USED BY BRAVE
+            // A  B C       G   I J K       O     R S   U V W X   Z  <- USED BY THIS APP 
+            //%       D               L M N   P       T         Y    <- AVAILABLE
+            //! ──────────────────────────────────────────────── 
+    // KeyD only works once... using KeyJ is OK
+    // KeyH seems to not reapond at all
+
+
             //@ ARGS
             var loop_delay      = parseFloat(qget("up",1000))
-            var deg_adj         = parseFloat(qget("de",7.5))
+            var deg_adj         = parseFloat(qget("de",180/Math.PI))
             var circle_radius   = parseInt(qget("aN",0))
+            var cycle_circles  = parseInt(qget("aD",0))  
             var cycle_colors    = parseInt(qget("aR",0))
             var show_0          = parseInt(qget("ca1",1))
             var show_1          = parseInt(qget("ca2",1))
@@ -1973,6 +2123,9 @@ function buildpath(xfr) {
             var cycle_path      = parseInt(qget("aK",0))  
             var cycle_dataset   = parseInt(qget("aU",0))  
             var cycle_preset    = parseInt(qget("aA",0))  
+            var cycle_vars      = parseInt(qget("aC",0))  
+            var merge_count     = parseInt(qget("aS",0))  
+            var fullscreen      = parseInt(qget("FS",0))  
             var preset_changed = false //? need to keep track when the cycle preset changes for one-off loads
             //? hidden params
             var rolling_presets  = parseInt(qget("xA",0))  
@@ -1982,12 +2135,13 @@ function buildpath(xfr) {
         //! ┌───────────────────────────────────────────────
         //! │ DEFAULTS
         //! └───────────────────────────────────────────────
-    var _VERSION = 3.27
+    var _VERSION = 3.40
     var _DEV_MODE = false
 
+            var _ = "" //? convenience var for menus
             var last_loop_delay = loop_delay
             var line_thickness  = 1         //? adjustment factor
-            var linelength_adj  = 1         //? adjustment factor
+            var linelength_adj  = 1.8         //? adjustment factor
             var sel_bg          = 0         //? toggle background color... 1= white 0=black
             var bg_color        = "black"   //? default bg color
             var tree_counter    = 0         //? just a simple +1 tree_counter
@@ -1999,16 +2153,18 @@ function buildpath(xfr) {
 
             //? the number of each of these types, needed for MOD-cycling 
             var num_of_paths    = 6 //? 6-count, starts at 1, 0=none
-            var num_of_polys    = 4 //? 4-count, starts at 1, 0=none
+            var num_of_polys    = 3 //? 4-count, starts at 1, 0=none
             var num_of_audios   = 3 //? 4-count, starts at 0
-            var num_of_datasets = 2 //? 3-count, starts at 0
+            var num_of_datasets = 3 //? 3-count, starts at 0
             var num_of_presets  = preqs.length-1; //? starts at ??
             var num_of_colors   = 3 //? 4-count, starts at 0
+            var num_of_circles   = 4 //? 3-count, starts at 1, 0=none
+            var snapshot = 0
 
             pause               = 0
 
             var show_message    = false
-            var showtext        = false
+            var showtext        = true
 
             var last_pos        = 0
             var mloc            = false
@@ -2033,37 +2189,21 @@ function buildpath(xfr) {
             menuCols.push(menuCols[1]+110)  //? desc
             menuCols.push(menuCols[2]+220)  //? counters
             menuCols.push(menuCols[3]+110)
-            // menuCols.push(menuCols[4]+110)
-            // menuCols.push(menuCols[5]+110)
-            // menuCols.push(menuCols[6]+110)
-            // menuCols.push(menuCols[7]+110)
-            // menuCols.push(menuCols[8]+110)
-            // menuCols.push(menuCols[9]+110)
-            // menuCols.push(menuCols[10]+110)
-            // menuCols.push(menuCols[11]+110)
 
             menuAltCols.push(0)
             menuAltCols.push(menuAltCols[0]+30)
             menuAltCols.push(menuAltCols[1]+100)
             menuAltCols.push(menuAltCols[2]+100)
             menuAltCols.push(menuAltCols[3]+130)
-            // menuAltCols.push(menuAltCols[4]+130)
-            // menuAltCols.push(menuAltCols[5]+130)
-            // menuAltCols.push(menuAltCols[6]+130)
-            // menuAltCols.push(menuAltCols[7]+130)
-            // menuAltCols.push(menuAltCols[8]+130)
-            // menuAltCols.push(menuAltCols[9]+130)
-            // menuAltCols.push(menuAltCols[10]+130)
-            // menuAltCols.push(menuAltCols[11]+130)
 
-                var poly_clr_idx = 0
-                var idx1 = tree_counter%360
-                var idx2 = tree_counter*30%360
-                var idx3 = tree_counter*60%360
+            // var poly_clr_idx = 0
+            var idx1 = tree_counter%360
+            var idx2 = tree_counter*30%360
+            var idx3 = tree_counter*60%360
 
-                var idx4 = tree_counter%360
-                var idx5 = tree_counter*33%360
-                var idx6 = tree_counter*66%360
+            var idx4 = tree_counter%360
+            var idx5 = tree_counter*33%360
+            var idx6 = tree_counter*66%360
 
             //? calculate the duration - currently not working properly
             tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
@@ -2096,6 +2236,7 @@ function buildpath(xfr) {
             var context = false //new AudioContext()
             //? initial 'scale'
             var notes = getHarmoniousNotes(54,8)  // 54 comes from the 432 set of frequencies
+            notes.reverse() //? reverse to match frequenciesa with levels
             var notes21 = getHarmoniousNotes(54,21)  // 54 comes from the 432 set of frequencies
 
             var fullary_right = []
@@ -2112,41 +2253,27 @@ function buildpath(xfr) {
                     ]
                 )
             }
-            notes.reverse()
 
-            // var x,y
-            // y=11
-            // // x = cycle_in_range(y,0,5)
-            // // log(y+","+x)
-            // for (let i=0; i<100;i++) {
-            //     x = cycle_in_range(i,3,7)
-            //     log(i+","+x)
-            // }
-            // console.log("NOTES:",JSON.stringify(notes))
-            // console.log("NOTES21:",JSON.stringify(notes21))
-            // console.log("NOTES6:",JSON.stringify(notes6))
+
+
+
+
+
+
+
+
             //! ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ START LOOP ▄▄▄▄▄▄▄
 
 
             drawTree(branch_angle, rotation);
             timer.start(function() {
-                // console.log(JSON.stringify(fullary));
-                // call_log("main")
-                // console.log("---------------------------------------------------------");
-                drawTree(   
-                    //branch_angle = branch_angle + (deg_adj * Math.random(2, 0.9)),
-                    branch_angle = branch_angle + deg_adj,
-                    rotation=rotation,
-                    );
-                    // console.log ("OUTER LOOP",loop_count, tree_counter);
-                    tree_counter++;
-                    fullary_right = []
-                    fullary_left = []
-                    xfullary_right = [{'g':7,'x':0,'y':0}]
-                    xfullary_left = [{'g':7,'x':0,'y':0}]
-                    // debugger
-
-                //*  if (tree_counter > 3) {freeze()}
+                branch_angle = branch_angle + deg_adj;
+                drawTree(branch_angle,rotation);
+                tree_counter++;
+                fullary_right = [];
+                fullary_left = [];
+                xfullary_right = [{'g':7,'x':0,'y':0}];
+                xfullary_left = [{'g':7,'x':0,'y':0}];
             },loop_delay);
             //! ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
@@ -2154,279 +2281,162 @@ function buildpath(xfr) {
             //@ INSERT LISTENERS HERE (and comment out script below)
             //@ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         var lastkey = {}
-        window.addEventListener('keydown', function (event) {
-            lastkey[event.code] = true
-            lastkey[event.key] = true
-            // console.log(JSON.stringify(lastkey))
+        function toggle(n,t) {
+            nx = n+1
+            return nx%t
+        }
+        function dnlimit(v,step,lim) {
+            v = v - step;
+            if (v <lim) {v=lim}
+            return v
+        }
+        function uplimit(v,step,lim) {
+            v = v + step;
+            if (v >lim) {v=lim}
+            return v
+        }
+        function dnCircOpac(n,lim) {
+            n = (parseInt((n*100) - 1)/100);
+            if (n < lim) {
+                n = lim
+            }
+            return n            
+        }
+        function upCircOpac(n,lim) {
+            n = (parseInt((n*100) + 1)/100);
+            if (n > lim) {
+                n = lim
+            }
+            return n            
+        }
 
-            //? ────────────────────────────────────────────────
-            if (lastkey['Space']) {
-                pause = (pause + 1) % 2
+        function dnPolyOpac(n,lim) {
+            n = Math.round((n*100) - 1)/100
+            if (n < lim) {
+                n = lim
+            }
+            return n            
+        }
+        function upPolyOpac(n,lim) {
+            n = Math.round((n*100) + 1)/100
+            if (n > lim) {
+                n = lim
+            }
+            console.log("po after:",n)
+            return n            
+        }
+        function spacepause(pause) {
+                pause = toggle(pause,2)
                 if (pause == 1) {
                     last_loop_delay = loop_delay
-                    loop_delay = 1000000000
+                    loop_delay = 1000000000 
                     timer.set_interval(loop_delay);
-                    console.log("pausing...")
                 } else {
                     loop_delay = last_loop_delay
                     timer.set_interval(loop_delay);
-                    console.log("pausing ("+loop_delay+"s)")
                 }
+        }
+        function homekey() {
+            var svg = document.getElementById("svg");
+            if (sel_bg == 1) { //white
+                svg.setAttribute("style", "border:1px solid #444; background-color: #000;");
+                log("Changing BG color to BLACK")
+                bg_color = "black"
+                sel_bg = 0
+            } else {
+                svg.setAttribute("style", "border:1px solid #444; background-color: #FFF;");
+                log("Changing BG color to WHITE")
+                bg_color = "white"
+                sel_bg = 1
             }
+        }
 
-            //? ────────────────────────────────────────────────
-            if (lastkey['ArrowUp']) {
-                loop_delay = loop_delay - 100
-                if (loop_delay < 1) {loop_delay = 10}
-                timer.set_interval(loop_delay);
-                console.log("loop delay: "+loop_delay)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['ArrowDown']) {
-                loop_delay = loop_delay + 100
-                timer.set_interval(loop_delay);
-                console.log("loop delay: "+loop_delay)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['ArrowLeft']) {
-                line_thickness = line_thickness * .99
-                console.log("line_thickness: "+line_thickness)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['ArrowRight']) {
-                line_thickness = line_thickness * 1.01
-                console.log("line_thickness: "+line_thickness)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['PageDown']) {
-                linelength_adj = linelength_adj *0.99
-                console.log("linelength_adj: "+linelength_adj)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['PageUp']) {
-                linelength_adj = linelength_adj * 1.01
-                console.log("linelength_adj: "+linelength_adj)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F1']) {
-                mladj[0]=mladj[0]+5
-                console.log("Line 1 length: "+mladj[0])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F2']) {
-                mladj[1]=mladj[1]+5
-                console.log("Line 2 length: "+mladj[1])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F3']) {
-                mladj[2]=mladj[2]+5
-                console.log("Line 3 length: "+mladj[2])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F4']) {
-                mladj[3]=mladj[3]+5
-                console.log("Line 4 length: "+mladj[3])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F5']) {
-                mladj[4]=mladj[4]+5
-                console.log("Line 5 length: "+mladj[4])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F6']) {
-                mladj[5]=mladj[5]+5
-                console.log("Line 6 length: "+mladj[5])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit1']) {
-                mladj[0]=mladj[0]-5
-                console.log("Line 1 length: "+mladj[0])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit2']) {
-                mladj[1]=mladj[1]-5
-                console.log("Line 2 length: "+mladj[1])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit3']) {
-                mladj[2]=mladj[2]-5
-                console.log("Line 3 length: "+mladj[2])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit4']) {
-                mladj[3]=mladj[3]-5
-                console.log("Line 4 length: "+mladj[3])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit5']) {
-                mladj[4]=mladj[4]-5
-                console.log("Line 5 length: "+mladj[4])
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit6']) {
-                mladj[5]=mladj[5]-5
-                console.log("Line 6 length: "+mladj[5])
-            }
+        window.addEventListener('keydown', function (event) {
+            lastkey[event.code] = true
+            lastkey[event.key] = true
 
-            //? ────────────────────────────────────────────────
-            if (lastkey['Home']) {
-                var svg = document.getElementById("svg");
-                if (sel_bg == 1) { //white
-                    svg.setAttribute("style", "border:1px solid #444; background-color: #000;");
-                    console.log("Changing BG color to BLACK")
-                    bg_color = "black"
-                    sel_bg = 0
-                } else {
-                    svg.setAttribute("style", "border:1px solid #444; background-color: #FFF;");
-                    console.log("Changing BG color to WHITE")
-                    bg_color = "white"
-                    sel_bg = 1
-                }
-                console.log("Changing BG color")
+            //? ──────────────────────────────────────────────── SNAPSHOT
+            if (lastkey['Backspace']) {
+                snapshot=1
+                log("Snaphot")
             }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Insert']) {
-                deg_adj = deg_adj*2
-                console.log("Degree Adjust: "+deg_adj)
-                let tot_ticks = parseInt(360/deg_adj);
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Delete']) {
-                deg_adj = deg_adj/2
-                console.log("Degree Adjust: "+deg_adj)
-                let tot_ticks = parseInt(360/deg_adj);
-            }
-            //? ────────────────────────────────────────────────
+            //? ──────────────────────────────────────────────── BACKGROUND
+            if (lastkey['Home']) {homekey();log("Changing BG color")}
+            //? ──────────────────────────────────────────────── PAUSE
+            if (lastkey['Space']) {pause = spacepause(pause);log("pausing...")}
+            //? ──────────────────────────────────────────────── PRESETS
+            if (lastkey['Alt'] && lastkey['KeyA']) {preset_changed = true;cycle_preset = toggle(cycle_preset,num_of_presets);log("Cycle Presets: "+cycle_preset)}
+            //? ──────────────────────────────────────────────── SOUND
+            if (lastkey['Control'] && lastkey['KeyY']) {initSound(sound_on);sound_on = toggle(sound_on,2);log("sound system:"+sound_on)}
+            //? ──────────────────────────────────────────────── FAST/SLOW
+            if (lastkey['ArrowUp']) {loop_delay = dnlimit(loop_delay,100,-200);timer.set_interval(loop_delay);log("loop delay: "+loop_delay)}
+            if (lastkey['ArrowDown'])  {loop_delay = uplimit(loop_delay,100, inf);timer.set_interval(loop_delay);log("loop delay: "+loop_delay)}
+            //? ──────────────────────────────────────────────── DEG 
+            if (lastkey['Insert']) {deg_adj = deg_adj*2;log("Degree Adjust: "+deg_adj);let tot_ticks = parseInt(360/deg_adj);}
+            if (lastkey['Delete']) {deg_adj = deg_adj/2; log("Degree Adjust: "+deg_adj); let tot_ticks = parseInt(360/deg_adj);}
+            if (lastkey['Alt'] && lastkey['KeyJ']) {branch_angle = branch_angle + degjump;log("degjump")}            
+            //? ──────────────────────────────────────────────── FAT/THIN
+            if (lastkey['ArrowLeft'])  {line_thickness = line_thickness *  .99;log("line_thickness: "+line_thickness)}
+            if (lastkey['ArrowRight']) {line_thickness = line_thickness * 1.01;log("line_thickness: "+line_thickness)}
+            //? ──────────────────────────────────────────────── LONG/SHORT
+            if (lastkey['PageDown'])   {linelength_adj = linelength_adj * 0.99;log("linelength_adj: "+linelength_adj)}
+            if (lastkey['PageUp'])     {linelength_adj = linelength_adj * 1.01;log("linelength_adj: "+linelength_adj)}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit1']) {mladj[0]=mladj[0]-5;log("Line 1 length: "+mladj[0])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit2']) {mladj[1]=mladj[1]-5;log("Line 2 length: "+mladj[1])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit3']) {mladj[2]=mladj[2]-5;log("Line 3 length: "+mladj[2])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit4']) { mladj[3]=mladj[3]-5;log("Line 4 length: "+mladj[3])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit5']) {mladj[4]=mladj[4]-5;log("Line 5 length: "+mladj[4]);}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['Digit6']) {mladj[5]=mladj[5]-5;log("Line 6 length: "+mladj[5])}
+            //? ──────────────────────────────────────────────── SHOW/HIDE
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F1']) {mladj[0]=mladj[0]+5;log("Line 1 length: "+mladj[0])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F2']) {mladj[1]=mladj[1]+5;log("Line 2 length: "+mladj[1])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F3']) {mladj[2]=mladj[2]+5;log("Line 3 length: "+mladj[2])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F4']) {mladj[3]=mladj[3]+5;log("Line 4 length: "+mladj[3])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F5']) {mladj[4]=mladj[4]+5;log("Line 5 length: "+mladj[4])}
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['F6']) {mladj[5]=mladj[5]+5;log("Line 6 length: "+mladj[5])}
+            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit0']) {show_all_lines = toggle(show_all_lines,2); log("toggle all") }
+            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit1']) {show_0 = toggle(show_0,2); log("toggle level 1") }
+            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit2']) {show_1 = toggle(show_1,2); log("toggle level 2") }
+            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit3']) {show_2 = toggle(show_2,2); log("toggle level 3") }
+            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit4']) {show_3 = toggle(show_3,2); log("toggle level 4") }
+            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit5']) {show_4 = toggle(show_4,2); log("toggle level 5") }
+            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit6']) {show_5 = toggle(show_5,2);log("toggle level 6") }
+            //? ──────────────────────────────────────────────── SHOW/HIDE MENU
             if (lastkey['Control'] && lastkey['Shift'] && lastkey['KeyZ']) {
-                showtext = (showtext + 1) % 2
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['KeyR']) {
-                cycle_colors= (cycle_colors + 1) % 3
-                console.log("Random Colors: "+cycle_colors)
-            }
-            //? ════════════════════════════════════════════════ CIRCLE RADIUS
-            if (lastkey['Alt'] && lastkey['KeyN']) {
-                circle_radius = circle_radius + 1
-                console.log("Increasing Circle Radius: "+circle_radius)
-            }
-            //? ────────────────────────────────────────────────  
-            if (lastkey['Alt'] && lastkey['KeyB']) {
-                circle_radius = circle_radius - 1
-                console.log("Decreasing Circle Radius: "+circle_radius)
-            }
-            
-
-            //? ════════════════════════════════════════════════ CIRCLE OPACITY
-            if (lastkey['Alt'] && lastkey['KeyX']) {
-                circle_opacity = (parseInt((circle_opacity*100) + 1)/100)
-                if (circle_opacity > 1) {circle_opacity = 1}
-                console.log("Increasing Circle Opacity: "+circle_opacity)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['KeyZ']) {
-                circle_opacity = (parseInt((circle_opacity*100) - 2)/100)
-                if (circle_opacity < 0) {circle_opacity = 0}
-                console.log("Decreasing Circle Opacity: "+circle_opacity)
-            }
-
-
-
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['KeyA']) {
-                preset_changed = true
-                cycle_preset = (cycle_preset+1) % num_of_presets 
-                console.log("Cycle Presets: "+cycle_preset)
-                console.log("Preset changed: "+preset_changed)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['KeyV']) {
-                cycle_poly = (cycle_poly+1) % num_of_polys 
-                console.log("Show polys: "+cycle_poly)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['KeyJ']) {
-                branch_angle = branch_angle + degjump 
-                console.log("degjump")
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit0']) {
-                    show_all_lines = (show_all_lines + 1) % 2
-                    console.log("toggle all")
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit1']) {
-                    show_0 = (show_0 + 1) % 2
-                    console.log("toggle level 1")
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit2']) {
-                    show_1 = (show_1 + 1) % 2
-                    console.log("toggle level 2")
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit3']) {
-                    show_2 = (show_2 + 1) % 2
-                    console.log("toggle level 3")
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit4']) {
-                    show_3 = (show_3 + 1) % 2
-                    console.log("toggle level 4")
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit5']) {
-                    show_4 = (show_4 + 1) % 2
-                    console.log("toggle level 5")
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit6']) {
-                    show_5 = (show_5 + 1) % 2
-                    console.log("toggle level 6")
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Control'] && lastkey['KeyY']) {
-            console.log("state:",sound_on)
-                if (sound_on == 0) {
-                    initSound(sound_on);  //? sound_initialized = set to 1 in function
-                    console.log("Sound (KeyY) Inialized")
+                if (fullscreen == 1) {
+                    fullscreen = 0
+                    showtext = 1
+                    log("Fillscreen off, showtext on") 
                 } else {
-                    initSound(sound_on);  //? sound_initialized = set to 1 in function
-                    console.log("Sound (KeyY) UN-Inialized")
+                    showtext = toggle(showtext,2); 
+                    log("Showing text") 
                 }
-                console.log("sound_on before:"+sound_on)
-                sound_on = (sound_on + 1) % 2
-                console.log("sound_on after:"+sound_on)
-           }
-            //? ────────────────────────────────────────────────
-            // if (lastkey['Alt'] && lastkey['KeyH']) { //? KeyH seems to be dead
-            if (lastkey['Alt'] && lastkey['KeyU']) {
-                cycle_dataset = (cycle_dataset+1) % num_of_datasets
-                console.log("Using dataset "+cycle_dataset+"/"+num_of_sets)
             }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['KeyK']) {
-                cycle_path = (cycle_path+1) % num_of_paths
-                console.log("Using path "+cycle_path, num_of_paths)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['KeyG']) {
-                cycle_audio = (cycle_audio+1) % num_of_audios
-                console.log("Using audio "+cycle_audio, num_of_audios)
-            }
-            //? ──────────────────────────────────────────────── 
+            //? ──────────────────────────────────────────────── COLRS
+            if (lastkey['Alt'] && lastkey['KeyR']) { cycle_colors= toggle(cycle_colors,num_of_colors); log("Random Colors: "+cycle_colors) }
+            //? ──────────────────────────────────────────────── MERGE
+            if (lastkey['Alt'] && lastkey['KeyW']) {merge_count = dnlimit(merge_count,1,0);log("- Merge count: "+merge_count)}
+            if (lastkey['Alt'] && lastkey['KeyS']) {merge_count = uplimit(merge_count,1,inf);log("+ Merge count: "+merge_count)}
+            //? ──────────────────────────────────────────────── CIRCLES
+            if (lastkey['Alt'] && lastkey['KeyN']) {circle_radius = uplimit(circle_radius,1,inf);log("+ Radius: "+circle_radius)}
+            if (lastkey['Alt'] && lastkey['KeyB']) {circle_radius = dnlimit(circle_radius,1,0);log("- Radius: "+circle_radius)}
+            if (lastkey['Alt'] && lastkey['KeyM']) {cycle_circles = toggle(cycle_circles,num_of_circles); log("Circle type: "+cycle_circles) }
+            //? ──────────────────────────────────────────────── POLY
+            if (lastkey['Alt'] && lastkey['KeyX']) {circle_opacity = upCircOpac(circle_opacity,1);log("+ Opacity: "+circle_opacity)}
+            if (lastkey['Alt'] && lastkey['KeyZ']) {circle_opacity = dnCircOpac(circle_opacity,0);log("- Opacity: "+circle_opacity)}
             if (lastkey['Alt'] && lastkey['KeyO']) {
-                poly_opacity = (parseInt((poly_opacity*100) + 3)/100)
-                if (poly_opacity >1) {poly_opacity = 1}
-                console.log("Poly opacity+: "+poly_opacity)
-            }
-            //? ────────────────────────────────────────────────
-            if (lastkey['Alt'] && lastkey['KeyI']) {
-                console.log("Prev Poly opacity-: "+poly_opacity)
-                poly_opacity = (parseInt((poly_opacity*100) - 1)/100)
-                if (poly_opacity < 0) {poly_opacity = 0}
-                console.log("New Poly opacity-: "+poly_opacity)
-            }
+                poly_opacity = upPolyOpac(poly_opacity,1);
+                // debugger
+                log("+ Poly opacity: "+poly_opacity)}
+            if (lastkey['Alt'] && lastkey['KeyI']) {poly_opacity = dnPolyOpac(poly_opacity,0);log("- Poly opacity: "+poly_opacity)}
+            //? ──────────────────────────────────────────────── CYCLES
+            if (lastkey['Alt'] && lastkey['KeyC']) {cycle_vars = toggle(cycle_vars,2); log("Cycling vars: "+cycle_vars) }
+            if (lastkey['Alt'] && lastkey['KeyV']) {cycle_poly = toggle(cycle_poly,num_of_polys);log("Show polys: "+cycle_poly)}
+            if (lastkey['Alt'] && lastkey['KeyU']) {cycle_dataset = toggle(cycle_dataset,num_of_datasets); log("Using dataset "+cycle_dataset+"/"+num_of_datasets) }
+            if (lastkey['Alt'] && lastkey['KeyK']) {cycle_path = toggle(cycle_path,num_of_paths); log("Using path "+cycle_path, num_of_paths) }
+            if (lastkey['Alt'] && lastkey['KeyG']) {cycle_audio = toggle(cycle_audio,num_of_audios); log("Using audio "+cycle_audio, num_of_audios) }
+
+            //@ ARGS
         });
         eleSvg.addEventListener('keyup', function (event) {
             lastkey[event.code] = false
@@ -2443,6 +2453,12 @@ function buildpath(xfr) {
             ]]>
             </script>
 
+
+
+            // <script src="canvas2image.js"></script>
         </svg>
+        <!--/canvas-->
+    <!-- /body -->
+<!-- /html -->
 
      

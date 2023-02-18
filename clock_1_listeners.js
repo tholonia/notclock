@@ -1,14 +1,14 @@
         var lastkey = {}
         function toggle(n,t) {
-            n = n+1
-            return n%t
+            nx = n+1
+            return nx%t
         }
-        function dnlimit(v,step,lim,msg) {
+        function dnlimit(v,step,lim) {
             v = v - step;
             if (v <lim) {v=lim}
             return v
         }
-        function uplimit(v,step,lim,msg) {
+        function uplimit(v,step,lim) {
             v = v + step;
             if (v >lim) {v=lim}
             return v
@@ -29,17 +29,18 @@
         }
 
         function dnPolyOpac(n,lim) {
-            n = (parseInt((poly_opacity*100) - 1)/100)
+            n = Math.round((n*100) - 1)/100
             if (n < lim) {
                 n = lim
             }
             return n            
         }
         function upPolyOpac(n,lim) {
-            n = (parseInt((poly_opacity*100) + 1)/100)
+            n = Math.round((n*100) + 1)/100
             if (n > lim) {
                 n = lim
             }
+            console.log("po after:",n)
             return n            
         }
         function spacepause(pause) {
@@ -72,6 +73,11 @@
             lastkey[event.code] = true
             lastkey[event.key] = true
 
+            //? ──────────────────────────────────────────────── SNAPSHOT
+            if (lastkey['Backspace']) {
+                snapshot=1
+                log("Snaphot")
+            }
             //? ──────────────────────────────────────────────── BACKGROUND
             if (lastkey['Home']) {homekey();log("Changing BG color")}
             //? ──────────────────────────────────────────────── PAUSE
@@ -83,6 +89,10 @@
             //? ──────────────────────────────────────────────── FAST/SLOW
             if (lastkey['ArrowUp']) {loop_delay = dnlimit(loop_delay,100,-200);timer.set_interval(loop_delay);log("loop delay: "+loop_delay)}
             if (lastkey['ArrowDown'])  {loop_delay = uplimit(loop_delay,100, inf);timer.set_interval(loop_delay);log("loop delay: "+loop_delay)}
+            //? ──────────────────────────────────────────────── DEG 
+            if (lastkey['Insert']) {deg_adj = deg_adj*2;log("Degree Adjust: "+deg_adj);let tot_ticks = parseInt(360/deg_adj);}
+            if (lastkey['Delete']) {deg_adj = deg_adj/2; log("Degree Adjust: "+deg_adj); let tot_ticks = parseInt(360/deg_adj);}
+            if (lastkey['Alt'] && lastkey['KeyJ']) {branch_angle = branch_angle + degjump;log("degjump")}            
             //? ──────────────────────────────────────────────── FAT/THIN
             if (lastkey['ArrowLeft'])  {line_thickness = line_thickness *  .99;log("line_thickness: "+line_thickness)}
             if (lastkey['ArrowRight']) {line_thickness = line_thickness * 1.01;log("line_thickness: "+line_thickness)}
@@ -109,27 +119,38 @@
             if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit4']) {show_3 = toggle(show_3,2); log("toggle level 4") }
             if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit5']) {show_4 = toggle(show_4,2); log("toggle level 5") }
             if (lastkey['Alt'] && lastkey['Control'] && lastkey['Digit6']) {show_5 = toggle(show_5,2);log("toggle level 6") }
-            //? ──────────────────────────────────────────────── DEG 
-            if (lastkey['Insert']) {deg_adj = deg_adj*2;log("Degree Adjust: "+deg_adj);let tot_ticks = parseInt(360/deg_adj);}
-            if (lastkey['Delete']) {deg_adj = deg_adj/2; log("Degree Adjust: "+deg_adj); let tot_ticks = parseInt(360/deg_adj);}
-            if (lastkey['Alt'] && lastkey['KeyJ']) {branch_angle = branch_angle + degjump;log("degjump")}
             //? ──────────────────────────────────────────────── SHOW/HIDE MENU
-            if (lastkey['Control'] && lastkey['Shift'] && lastkey['KeyZ']) {showtext = toggle(showtext,2); log("Showing text") }
+            if (lastkey['Control'] && lastkey['Shift'] && lastkey['KeyZ']) {
+                if (fullscreen == 1) {
+                    fullscreen = 0
+                    showtext = 1
+                    log("Fillscreen off, showtext on") 
+                } else {
+                    showtext = toggle(showtext,2); 
+                    log("Showing text") 
+                }
+            }
             //? ──────────────────────────────────────────────── COLRS
             if (lastkey['Alt'] && lastkey['KeyR']) { cycle_colors= toggle(cycle_colors,num_of_colors); log("Random Colors: "+cycle_colors) }
+            //? ──────────────────────────────────────────────── MERGE
+            if (lastkey['Alt'] && lastkey['KeyW']) {merge_count = dnlimit(merge_count,1,0);log("- Merge count: "+merge_count)}
+            if (lastkey['Alt'] && lastkey['KeyS']) {merge_count = uplimit(merge_count,1,inf);log("+ Merge count: "+merge_count)}
             //? ──────────────────────────────────────────────── CIRCLES
-            if (lastkey['Alt'] && lastkey['KeyN']) {circle_radius = circle_radius + 1;log("+ Radius: "+circle_radius)}
-            if (lastkey['Alt'] && lastkey['KeyB']) {circle_radius = circle_radius - 1;log("- Radius: "+circle_radius)}
+            if (lastkey['Alt'] && lastkey['KeyN']) {circle_radius = uplimit(circle_radius,1,inf);log("+ Radius: "+circle_radius)}
+            if (lastkey['Alt'] && lastkey['KeyB']) {circle_radius = dnlimit(circle_radius,1,0);log("- Radius: "+circle_radius)}
             if (lastkey['Alt'] && lastkey['KeyM']) {cycle_circles = toggle(cycle_circles,num_of_circles); log("Circle type: "+cycle_circles) }
             //? ──────────────────────────────────────────────── POLY
             if (lastkey['Alt'] && lastkey['KeyX']) {circle_opacity = upCircOpac(circle_opacity,1);log("+ Opacity: "+circle_opacity)}
             if (lastkey['Alt'] && lastkey['KeyZ']) {circle_opacity = dnCircOpac(circle_opacity,0);log("- Opacity: "+circle_opacity)}
-            if (lastkey['Alt'] && lastkey['KeyO']) {poly_opacity = upPolyOpac(poly_opacity,1);log("+ Poly opacity: "+poly_opacity)}
+            if (lastkey['Alt'] && lastkey['KeyO']) {
+                poly_opacity = upPolyOpac(poly_opacity,1);
+                // debugger
+                log("+ Poly opacity: "+poly_opacity)}
             if (lastkey['Alt'] && lastkey['KeyI']) {poly_opacity = dnPolyOpac(poly_opacity,0);log("- Poly opacity: "+poly_opacity)}
             //? ──────────────────────────────────────────────── CYCLES
             if (lastkey['Alt'] && lastkey['KeyC']) {cycle_vars = toggle(cycle_vars,2); log("Cycling vars: "+cycle_vars) }
             if (lastkey['Alt'] && lastkey['KeyV']) {cycle_poly = toggle(cycle_poly,num_of_polys);log("Show polys: "+cycle_poly)}
-            if (lastkey['Alt'] && lastkey['KeyU']) {cycle_dataset = toggle(cycle_dataset,num_of_datasets); log("Using dataset "+cycle_dataset+"/"+num_of_sets) }
+            if (lastkey['Alt'] && lastkey['KeyU']) {cycle_dataset = toggle(cycle_dataset,num_of_datasets); log("Using dataset "+cycle_dataset+"/"+num_of_datasets) }
             if (lastkey['Alt'] && lastkey['KeyK']) {cycle_path = toggle(cycle_path,num_of_paths); log("Using path "+cycle_path, num_of_paths) }
             if (lastkey['Alt'] && lastkey['KeyG']) {cycle_audio = toggle(cycle_audio,num_of_audios); log("Using audio "+cycle_audio, num_of_audios) }
 

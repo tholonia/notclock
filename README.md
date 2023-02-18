@@ -6,7 +6,7 @@
 
 <img src="images/lightning-3.png"/>
 
-It uses no external links and requires no internet connection.  All the data, such as the MP3 files of piano keys, are embedded into the file.  These files in constantly being updated, so what is stated here may not be exactly accurate at times.  This document is accurate to version 3.24.
+It uses no external links and requires no internet connection.  All the data, such as the MP3 files of piano keys, are embedded into the file.  These files in constantly being updated, so what is stated here may not be exactly accurate at times.  This document is accurate to version 3.38.
 
 The four main files are:
 
@@ -83,10 +83,12 @@ The characters in brackets [] represent the HTML query string variable name that
 **⌥ C** `[aC]`      Cycle vars              *Cycles various variables through a continuous loop* <sup>(see note 3)</sup>
 
 **⌥ K** `[aK]`      Cycle Connectors/Paths   *Connecting the points in various ways*
-**⌥ V** `[aV]`      Cycle Polygons           *Cycling thru various polygons based on the data*
-**⌥ O** `[aO]`    ++poly opacity            *Increases density of polygon*
-**⌥ I** `[aI]`       --poly opacity             *Increases translucency of polygon*
+**⌥ V** `[aV]`      Cycle Polygons      *Cycling thru various polygons based on the data*
+**⌥ O** `[aO]`    ++poly opacity         *Increases density of polygon*
+**⌥ I** `[aI]`       --poly opacity         *Increases translucency of polygon*
 **⌥ J**                      Jump fwd 5 deg     *Advance all diverging angles by 5 degrees*
+**⌥ S**                      ++ Merge count     *Increases number of images that can overlay
+**⌥ S**                      -- Merge count       * Decreases number of images that can overlay
 **^ Y**                       Toggle audio           *Start sound system (requires manual initiation)*
 
 **^⌥  1** `[ca1]`   *Toggle show/hide line 1*
@@ -105,9 +107,28 @@ The characters in brackets [] represent the HTML query string variable name that
 **^⇧ F5**   *Shorten line 5*		**^⇧ 5**    *Lengthen Lines 5*
 **^⇧ F6**   *Shorten line 6*		**^⇧ 6**    *Lengthen Lines 6*
 
-Note 1:
+The following query parameters are only available for use by adding them manually to the URL.
 
-Note 2:
+```xA=1``` 
+- Cycles through preexisting presets of configurations.  Currently only 5 and not all that interesting.  This is similar to ```aA=1``` which cycles through present on command, but ```xA=1``` cycles automatically.
+```FS=1``` Open without menu (anabled)
 
-Note 3: 
+***Note 1***: Some of these datasets look boring or ugly, depending on the on the context, like [this](https://tholonia.com/Images/SVG/notclock.svg??up=1000&de=57.29577951308232&aN=0&aR=0&aV=0&aO=1&aG=1&aX=1&aK=0&aU=2&aA=0&aC=0&aM=0&aS=0), for example.  But if you hide the lines, and add some spheres, it likes quite different and certainly more interesting, like [this](https://tholonia.com/Images/SVG/notclock.svg??up=1000&de=57.29577951308232&aN=14&aR=0&a0=0&aV=0&aO=1&aG=1&aX=1&aK=0&aU=2&aA=0&aC=0&aM=1&aS=0).
 
+***Note 2***: Current presets are tests only.
+
+***Note 3:*** This automatically cycles the following variables: circle radius, circle opacity, pen-size of each line, line length of each line, and through the arrays of themes for circles, paths, polygons, datasets, and color spectrums.
+
+## Notes
+
+- To copy the query string, the app much first be paused (space bar) first, otherwise the string gets updated and the selected text is unselected.
+
+## Bugs
+
+- Tracking column in menu often reports the wrong numbers.
+
+- In merge mode, strings overwrite themselves, so if the string changes, such as the query string, it’s unreadable.  However, Copying the string copies the current and last version.
+
+- Fonts don’t change color if you change the BG to white, making them unreadable.
+
+  
