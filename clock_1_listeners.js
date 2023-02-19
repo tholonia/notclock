@@ -1,7 +1,6 @@
         var lastkey = {}
         function toggle(n,t) {
-            nx = n+1
-            return nx%t
+            return (n+1)%t
         }
         function dnlimit(v,step,lim) {
             v = v - step;
@@ -48,11 +47,15 @@
                 if (pause == 1) {
                     last_loop_delay = loop_delay
                     loop_delay = 1000000000 
+                    console.log("pausing for "+parseInt(loop_delay/1000)+" seconds")
                     timer.set_interval(loop_delay);
                 } else {
                     loop_delay = last_loop_delay
+                    console.log("resuming delay of "+loop_delay+" milliseconds")
                     timer.set_interval(loop_delay);
                 }
+                return pause
+
         }
         function homekey() {
             var svg = document.getElementById("svg");
@@ -81,7 +84,7 @@
             //? ──────────────────────────────────────────────── BACKGROUND
             if (lastkey['Home']) {homekey();log("Changing BG color")}
             //? ──────────────────────────────────────────────── PAUSE
-            if (lastkey['Space']) {pause = spacepause(pause);log("pausing...")}
+            if (lastkey['Space']) {pause = spacepause(pause)}
             //? ──────────────────────────────────────────────── PRESETS
             if (lastkey['Alt'] && lastkey['KeyA']) {preset_changed = true;cycle_preset = toggle(cycle_preset,num_of_presets);log("Cycle Presets: "+cycle_preset)}
             //? ──────────────────────────────────────────────── SOUND

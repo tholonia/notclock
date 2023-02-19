@@ -242,7 +242,7 @@ function writeMenu() {
         writGrid([_]);rnum++;
 
         writGrid(['aD','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+')']);rnum++;
-        writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+')']);rnum++;
+        writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+') ' +names_of_colors[cycle_colors]]);rnum++;
         writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+')']);rnum++;
         writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+')']);rnum++;
         writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+')']);rnum++;
@@ -281,7 +281,7 @@ function writeMenu() {
         writGrid(['Query String']);rnum++;
 
         //@ ARGS
-        let qs = makeQs(href).match(/.{1,140}/g);
+        let qs = makeQs(href).match(/.{1,140}/g);  //? limit chars to line to 140, return array of lines
         for (i=0;i<qs.length;i++) {
             writGrid(['                                                                                                                                                                                                                                                                                    ']);
             writGrid([qs[i]]);rnum++;
@@ -358,11 +358,16 @@ function drawTree(branch_angle, rotation) {
             pre_maxlengths[4] = cycle_in_range(Math.round(branch_angle),0,40,0)
             pre_maxlengths[5] = cycle_in_range(Math.round(branch_angle),0,30,0)
 
-            setTimeout(function () {cycle_circles = (cycle_circles + 1) % num_of_circles}, 1000)
-            setTimeout(function () {cycle_path = (cycle_path + 1) % num_of_paths}, 2000)
-            setTimeout(function () {cycle_poly = (cycle_path + 1) % num_of_polys}, 3000)
-            setTimeout(function () {cycle_dataset = (cycle_dataset + 1) % num_of_datasets}, 4000)
-            setTimeout(function () {cycle_colors= (cycle_colors + 1) % num_of_colors}, 6000)
+            // setTimeout(function () {cycle_circles = (cycle_circles + 1) % num_of_circles}, 1)
+            // setTimeout(function () {cycle_path = (cycle_path + 1) % num_of_paths}, 1)
+            // setTimeout(function () {cycle_poly = (cycle_poly + 1) % num_of_polys}, 1)
+            // setTimeout(function () {cycle_dataset = (cycle_dataset + 1) % 2}, 1)  //? less that  num_of_datasets  ... too many
+            // setTimeout(function () {cycle_colors= (cycle_colors + 1) % num_of_colors}, 1)
+            cycle_circles = (cycle_circles + 1) % num_of_circles
+            cycle_path = (cycle_path + 1) % num_of_paths
+            cycle_poly = (cycle_poly + 1) % num_of_polys
+            cycle_dataset = (cycle_dataset + 1) % 2  //? less that  num_of_datasets  ... too many
+            cycle_colors= (cycle_colors + 1) % num_of_colors
         }
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
@@ -380,7 +385,7 @@ function drawTree(branch_angle, rotation) {
         //@ ARGS
         for (const key in qsary) {
             switch(key) {
-                // case 'up':  loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
+                case 'up':  loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
                 case 'de': deg_adj         = parseFloat(qsary[key]); break;  //? keep control manual
                 case 'aN': circle_radius   = parseFloat(qsary[key]); break;
                 case 'aR': cycle_colors    = qsary[key]; break;
@@ -401,7 +406,7 @@ function drawTree(branch_angle, rotation) {
                 case 'aM': cycle_circles    = qsary[key]; break;
                 case 'aS': merge_counts    = qsary[key]; break;
                 case 'FS': fullscreen    = qsary[key]; break;
-                // case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
+                case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
             }
         }
         preset_changed = false
@@ -472,14 +477,14 @@ if (snapshot == 1) {
     tot_cycletime = tt['tot_cycletime']
     tot_images = tt['tot_images']
 
-    if (cycle_colors == 2) {
+    if (cycle_colors == 1) {  //? shift spectrum of 7 color
         for (let i = 0; i < 7; i++) {
-            colors2[0][i] = generateRandomColor()
+            colors2[1][i] = generateColor(cycle_in_range(tree_counter + (i * 45), 0, 360, 0))
         }
     }
-    if (cycle_colors == 1) {
+    if (cycle_colors == 2) {  //? random colors
         for (let i = 0; i < 7; i++) {
-            colors2[0][i] = generateColor(cycle_in_range(tree_counter + (i * 45), 0, 360, 0))
+            colors2[2][i] = generateRandomColor()
         }
     }
 
@@ -632,7 +637,7 @@ if (snapshot == 1) {
 
         if (cycle_circles == 1) { 
 
-            //? prepare teh gradient for the circle
+            //? prepare the gradient for the circle
             //@ DEBUG prob better to move defs into the global scope
             var CIRdefs = document.createElementNS(svgns, 'defs');
             var gradient = document.createElementNS(svgns, 'radialGradient');
@@ -640,7 +645,7 @@ if (snapshot == 1) {
 
             var stops = [
                 {
-                    //        "color":  colors2[0][order].toString(),
+                    //        "color":  colors2[cycle_colors][order].toString(),
                     "color": "white",
                     "offset": "0%"
                 },
@@ -683,7 +688,7 @@ if (snapshot == 1) {
             circle.setAttribute("cx", nx2.toString());
             circle.setAttribute("cy", ny2.toString());
             circle.setAttribute("r", cr_rad);
-            circle.setAttribute("fill", colors2[0][order].toString());
+            circle.setAttribute("fill", colors2[cycle_colors][order].toString());
             circle.setAttribute("stroke", "darkgrey");
             circle.setAttribute("opacity", circle_opacity);
             circle.setAttribute("stroke-width", '1');
@@ -705,7 +710,7 @@ if (snapshot == 1) {
             circle.setAttribute("stroke-width", '1');
             circle.setAttribute("stroke-linecap", "round");
             circle.setAttribute("fill", generateRandomColor());
-            //circle.setAttribute("fill", colors2[0][order].toString());
+            //circle.setAttribute("fill", colors2[cycle_colors][order].toString());
             //circle.setAttribute("stroke", generateRandomColor());
 
             svg.appendChild(circle);
@@ -800,15 +805,20 @@ if (snapshot == 1) {
             //? stops for fillGradient
 
             //? pick 3 colors...
-            tidx = tree_counter%360 //@ is actually branch_angle
-            tidx1 = tidx%360
-            tidx2 = (tidx+120)%360
-            tidx3 = (tidx+240)%360
+            // tidx = tree_counter%360 //@ is actually branch_angle
+            // tidx1 = tidx%360
+            // tidx2 = (tidx+120)%360
+            // tidx3 = (tidx+240)%360
+            //? pick 3 colors...
+            tidx = tree_counter%6 //@ is actually branch_angle
+            tidx1 = randint(0,5)
+            tidx2 = randint(0,5)
+            tidx3 = randint(0,5)
 
             //? ... from the colors2 array
-            let c1 = colors2[1][tidx1]
-            let c2 = colors2[1][tidx2]
-            let c3 = colors2[1][tidx3]
+            let c1 = colors2[cycle_colors][tidx1]
+            let c2 = colors2[cycle_colors][tidx2]
+            let c3 = colors2[cycle_colors][tidx3]
 
             // let c1 = "red"
             // let c2 = "green"
@@ -841,9 +851,9 @@ if (snapshot == 1) {
             tidx6 = tidx3+180
 
 
-            // let c4 = colors2[1][tidx4]
-            // let c5 = colors2[1][tidx5]
-            // let c6 = colors2[1][tidx6]
+            // let c4 = colors2[cycle_colors][tidx4]
+            // let c5 = colors2[cycle_colors][tidx5]
+            // let c6 = colors2[cycle_colors][tidx6]
             let c4 = "black"
             let c5 = "black"
             let c6 = "black"
@@ -877,7 +887,7 @@ if (snapshot == 1) {
 
             let poly = document.createElementNS(svgns, 'polygon');
             poly.setAttribute("points", poly_arr);
-            // poly.setAttribute("fill", colors2[0][order + gens].toString());
+            // poly.setAttribute("fill", colors2[cycle_colors][order + gens].toString());
             poly.setAttribute('fill', 'url(#fillGradient)');
             poly.setAttribute('stroke', 'url(#strokeGradient)');
             poly.setAttribute("opacity", poly_opacity);
@@ -898,7 +908,7 @@ if (snapshot == 1) {
 
         //? DRAW THE LINE
         newLine.setAttribute("stroke-width", newpensize);
-        this_color = colors2[0][order]
+        this_color = colors2[cycle_colors][order]
         newLine.setAttribute("stroke", this_color);
         this_opacity = opacities[order]
         newLine.setAttribute("opacity", this_opacity);
@@ -1007,12 +1017,12 @@ if (snapshot == 1) {
 //! ┌───────────────────────────────────────────────
 //! │ Convert HSV to RGB
 //! └───────────────────────────────────────────────
-function HSVtoRGB(h, s, v) {
+function HSVtoRGB(h, s, v) { //? excpects h,s,v to be in range from 0...1
     var r, g, b, i, f, p, q, t;
-    if (arguments.length === 1) {
+    if (arguments.length === 1) { //? in case the arg is an object
         s = h.s, v = h.v, h = h.h;
     }
-    i = Math.floor(h * 6);
+    i = Math.floor(h * 6); //? identify the 6 color ranges
     f = h * 6 - i;
     p = v * (1 - s);
     q = v * (1 - f * s);
@@ -1045,13 +1055,61 @@ function HSVtoRGB(h, s, v) {
     //    };
 }
 //! ┌───────────────────────────────────────────────
-//! │ Creates RGN string from a number
+//! │ Convert HSV to RGB
+//! └───────────────────────────────────────────────
+function HSVtoRGBArray(h, s, v) {
+    var r, g, b, i, f, p, q, t;
+    if (arguments.length === 1) {  
+        s = h.s, v = h.v, h = h.h;
+    }
+    i = Math.floor(h * 6);
+    f = h * 6 - i;
+    p = v * (1 - s);
+    q = v * (1 - f * s);
+    t = v * (1 - (1 - f) * s);
+    switch (i % 6) {
+        case 0:
+            r = v, g = t, b = p;
+            break;
+        case 1:
+            r = q, g = v, b = p;
+            break;
+        case 2:
+            r = p, g = v, b = t;
+            break;
+        case 3:
+            r = p, g = q, b = v;
+            break;
+        case 4:
+            r = t, g = p, b = v;
+            break;
+        case 5:
+            r = v, g = p, b = q;
+            break;
+    }
+    // return {Math.round(r * 255),Math.round(g * 255),Math.round(b * 255)}
+    return  { 
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+}
+//! ┌───────────────────────────────────────────────
+//! │ Creates RGB string from a number
 //! └───────────────────────────────────────────────
 function generateColor(num) {
-    var H = num / 360 //? H range is 0-360, 0 and 360 are both RED
+    var H = (num%360) / 360 //? H range is 0-360, 0 and 360 are both RED
     //@ probably better to MOD the H, not divide
     var S = .8
     var V = .8
+    return HSVtoRGB(H, S, V)
+}
+//! ┌───────────────────────────────────────────────
+//! │ Creates RGB string from a number and SV vals
+//! └───────────────────────────────────────────────
+function generateColorHSV(num,S,V) {
+    var H = num / 360 //? H range is 0-360, 0 and 360 are both RED
+    //@ probably better to MOD the H, not divide
     return HSVtoRGB(H, S, V)
 }
 //! ┌───────────────────────────────────────────────
