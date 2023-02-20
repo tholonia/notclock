@@ -134,7 +134,7 @@
                 }
             }
             //? ──────────────────────────────────────────────── COLRS
-            if (lastkey['Alt'] && lastkey['KeyR']) { cycle_colors= toggle(cycle_colors,num_of_colors); log("Random Colors: "+cycle_colors) }
+            if (lastkey['Alt'] && lastkey['KeyR']) { cycle_colors= toggle(cycle_colors,num_of_colors); log("Cycle Colors: "+cycle_colors) }
             //? ──────────────────────────────────────────────── MERGE
             if (lastkey['Alt'] && lastkey['KeyW']) {merge_count = dnlimit(merge_count,1,0);log("- Merge count: "+merge_count)}
             if (lastkey['Alt'] && lastkey['KeyS']) {merge_count = uplimit(merge_count,1,inf);log("+ Merge count: "+merge_count)}
@@ -151,7 +151,7 @@
                 log("+ Poly opacity: "+poly_opacity)}
             if (lastkey['Alt'] && lastkey['KeyI']) {poly_opacity = dnPolyOpac(poly_opacity,0);log("- Poly opacity: "+poly_opacity)}
             //? ──────────────────────────────────────────────── CYCLES
-            if (lastkey['Alt'] && lastkey['KeyC']) {cycle_vars = toggle(cycle_vars,2); log("Cycling vars: "+cycle_vars) }
+            if (lastkey['Alt'] && lastkey['KeyC']) {cycle_vars = toggle(cycle_vars,num_of_vars); log("Cycling vars: "+cycle_vars) }
             if (lastkey['Alt'] && lastkey['KeyV']) {cycle_poly = toggle(cycle_poly,num_of_polys);log("Show polys: "+cycle_poly)}
             if (lastkey['Alt'] && lastkey['KeyU']) {cycle_dataset = toggle(cycle_dataset,num_of_datasets); log("Using dataset "+cycle_dataset+"/"+num_of_datasets) }
             if (lastkey['Alt'] && lastkey['KeyK']) {cycle_path = toggle(cycle_path,num_of_paths); log("Using path "+cycle_path, num_of_paths) }
@@ -168,4 +168,11 @@
             point.x = clientX;
             point.y = clientY;
         })
+        eleSvg.addEventListener('wheel', function(event) {
+            if (event.deltaY < 0) {
+                console.log('scrolling up');
+            } else if (event.deltaY > 0) {
+                console.log('scrolling down');
+            }
+        });
 

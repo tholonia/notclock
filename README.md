@@ -6,7 +6,7 @@
 
 <img src="images/lightning-3.png"/>
 
-It uses no external links and requires no internet connection.  All the data, such as the MP3 files of piano keys, are embedded into the file.  These files in constantly being updated, so what is stated here may not be exactly accurate at times.  This document is accurate to version 3.38.
+It uses no external links and requires no internet connection.  All the data, such as the MP3 files of piano keys, are embedded into the file.  These files in constantly being updated, so what is stated here may not be exactly accurate at times.  This document is accurate to version 3.43.
 
 The four main files are:
 
@@ -107,17 +107,25 @@ The characters in brackets [] represent the HTML query string variable name that
 **^⇧ F5**   *Shorten line 5*		**^⇧ 5**    *Lengthen Lines 5*
 **^⇧ F6**   *Shorten line 6*		**^⇧ 6**    *Lengthen Lines 6*
 
+**^⇧ Z** `[FS]`  *Show/hide screen menu*
+
 The following query parameters are only available for use by adding them manually to the URL.
 
 ```xA=1``` 
 - Cycles through preexisting presets of configurations.  Currently only 5 and not all that interesting.  This is similar to ```aA=1``` which cycles through present on command, but ```xA=1``` cycles automatically.
-```FS=1``` Open without menu (anabled)
+
+```FS=1```
+- Open without menu.  The menu can be reopened with **^⇧ Z**
+
+```ia=-1|0-360```
+- Sets the starting angle of divergence.  `-1` uses the seconds of the epoch to set the angle.
+-
 
 ***Note 1***: Some of these datasets look boring or ugly, depending on the on the context, like [this](https://tholonia.com/Images/SVG/notclock.svg??up=1000&de=57.29577951308232&aN=0&aR=0&aV=0&aO=1&aG=1&aX=1&aK=0&aU=2&aA=0&aC=0&aM=0&aS=0), for example.  But if you hide the lines, and add some spheres, it likes quite different and certainly more interesting, like [this](https://tholonia.com/Images/SVG/notclock.svg??up=1000&de=57.29577951308232&aN=14&aR=0&a0=0&aV=0&aO=1&aG=1&aX=1&aK=0&aU=2&aA=0&aC=0&aM=1&aS=0).
 
 ***Note 2***: Current presets are tests only.
 
-***Note 3:*** This automatically cycles the following variables: circle radius, circle opacity, pen-size of each line, line length of each line, and through the arrays of themes for circles, paths, polygons, datasets, and color spectrums.
+***Note 3:*** This automatically cycles the following variables: circle radius, circle opacity, pen-size of each line, line length of each line, and through the arrays of themes for circles, paths, polygons, datasets, and color spectrums.  Tapping **⌥ C** once cycle all variables.  Tapping **⌥ C** again turn off polygons.  Tapping **⌥ C** a third time, turn off all variable changes, but keeps whatever the last setting were.
 
 ## Notes
 
@@ -125,10 +133,5 @@ The following query parameters are only available for use by adding them manuall
 
 ## Bugs
 
-- Tracking column in menu often reports the wrong numbers.
-
-- In merge mode, strings overwrite themselves, so if the string changes, such as the query string, it’s unreadable.  However, Copying the string copies the current and last version.
-
-- Fonts don’t change color if you change the BG to white, making them unreadable.
-
-  
+- Tracking column in menu often might the wrong numbers.
+- In merge mode, strings on the menu screen overwrite themselves, so if the string changes, such as the query string, it’s unreadable.  However, Copying the string copies the current and last version.
