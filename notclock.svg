@@ -956,32 +956,32 @@ function drawTree(branch_angle, rotation) {
 
             //? pick 3 colors...
             // tidx = tree_counter%360 //@ is actually branch_angle
-            // tidx1 = tidx%360
-            // tidx2 = (tidx+120)%360
-            // tidx3 = (tidx+240)%360
+            // clrIdx_1 = tidx%360
+            // clrIdx_2 = (tidx+120)%360
+            // clrIdx_1 = (tidx+240)%360
             //? pick 3 colors...
             tidx = tree_counter%6 //@ is actually branch_angle
-            tidx1 = randint(0,5)
-            tidx2 = randint(0,5)
-            tidx3 = randint(0,5)
+            clrIdx_1 = randint(0,5)
+            clrIdx_2 = randint(0,5)
+            clrIdx_1 = randint(0,5)
 
             //? ... from the colors2 array
-            let c1 = colors2[cycle_colors][tidx1]
-            let c2 = colors2[cycle_colors][tidx2]
-            let c3 = colors2[cycle_colors][tidx3]
+            let c1 = colors2[cycle_colors][clrIdx_1]
+            let c2 = colors2[cycle_colors][clrIdx_2]
+            let c3 = colors2[cycle_colors][clrIdx_1]
 
             // let c1 = "red"
             // let c2 = "green"
             // let c3 = "blue"
 
-            xpidx1 = parseInt((xpidx1+1)%1)  //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
-            xpidx2 = parseInt((xpidx2+1)%50)
-            xpidx3 = parseInt((xpidx3+1)%100)
+            polyColor_1_offset = parseInt((polyColor_1_offset+1)%1)  //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
+            polyColor_2_offset = parseInt((polyColor_2_offset+1)%50)
+            polyColor_3_offset = parseInt((polyColor_3_offset+1)%100)
 
             var fillGradient_stops = [
-                {"color":  c1,"offset":  xpidx1.toString()+"%"},  //? where along the line do these colors end
-                {"color":  c2,"offset":  xpidx2.toString()+"%"},
-                {"color":  c3,"offset":  xpidx3.toString()+"%"},
+                {"color":  c1,"offset":  polyColor_1_offset.toString()+"%"},  //? where along the line do these colors end
+                {"color":  c2,"offset":  polyColor_2_offset.toString()+"%"},
+                {"color":  c3,"offset":  polyColor_3_offset.toString()+"%"},
             ];
 
             for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
@@ -996,9 +996,9 @@ function drawTree(branch_angle, rotation) {
             var strokeGradient = document.createElementNS(svgns, 'linearGradient');
 
             //? stops for strokeGradient
-            tidx4 = tidx1+180
-            tidx5 = tidx2+180
-            tidx6 = tidx3+180
+            tidx4 = clrIdx_1+180
+            tidx5 = clrIdx_2+180
+            tidx6 = clrIdx_1+180
 
 
             // let c4 = colors2[cycle_colors][tidx4]
@@ -2196,9 +2196,9 @@ function buildpath(xfr) {
             var defs = document.createElementNS(svgns, 'defs');
  
 
-            var xpidx1 =33.33 
-            var xpidx2 = 33.33*2
-            var xpidx3 = 33.33*3
+            var polyColor_1_offset =33.33 
+            var polyColor_2_offset = 33.33*2
+            var polyColor_3_offset = 33.33*3
 
             var lOrder=[
             5,5,5,5,4,4,5,5,5,5,   4,4,3,3,5,5,5,5,4,4,   5,5,5,5,4,4,3,3,2,2,   5,5,5,5,4,4,5,5,5,5,   4,4,3,3,5,5,5,5,4,4,   

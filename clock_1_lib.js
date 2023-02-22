@@ -228,6 +228,15 @@ function wTL(args) {
 //! │ all the menu and screen text is written here
 //! └───────────────────────────────────────────────
 function writeMenu() {
+    // if (cycle_vars != 0) {
+    //     var longqs = "";
+    //     //? always send a copy of the qs to the console when in cycla_vars mode
+    //     let qs = makeQs(href).match(/.{1,140}/g);  //? limit chars to line to 140, return array of lines
+    //     for(let i = 0; i < qs.length; i++ ) {
+    //         longqs = longqs + qs[i];
+    //     }
+    //     console.log("LATEST QUERY STRING: ",longqs);
+    // }
     if (showtext == 0) {return}
     if (fullscreen == 0) {
         menu_fontweight="600";menu_fontclr="#00ffff"; writGrid(['✅',_,_,_,'⌥ = Alt']);
@@ -259,6 +268,7 @@ function writeMenu() {
         writGrid(['aX','⌥ (X|Z)','Circle opacity +/-',   '(' +circle_opacity+')']);rnum++;
         writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
         writGrid(['aS','⌥ (S|W)','Merge Count   +/-',   '(' + merge_count + ')']);rnum++;
+        writGrid(['aT','⌥ T','Dynamic Zoom on/off',   '(' + zoomin + ')']);rnum++;
 
         writGrid([_,'⌥ J','Jump fwd 5°']);rnum++;
         writGrid([_]);rnum++;
@@ -283,15 +293,13 @@ function writeMenu() {
         }
         writGrid([_]);rnum++;
         writGrid([_]);rnum++;
-        writGrid(['Query String']);rnum++;
-
         //@ ARGS
+        writGrid(['Query String']);rnum++;
         let qs = makeQs(href).match(/.{1,140}/g);  //? limit chars to line to 140, return array of lines
+        let ba = (branch_angle % 360).toFixed(2)
         for (i=0;i<qs.length;i++) {
-            writGrid(['                                                                                                                                                                                                                                                                                    ']);
             writGrid([qs[i]]);rnum++;
         }
-        let ba = (branch_angle % 360).toFixed(2)
         writGrid([_]);rnum++;
         writGrid(['TIME PER CYCLE: '+cycletime+'/ Current Angle: '+ba]);rnum++;
         writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
@@ -299,7 +307,8 @@ function writeMenu() {
         //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
         rnum = 0;
         //? report mouse x/y position on teh screen
-        writGrid([_,_,_,_,"x="+point.x+" y="+point.y])
+        writGrid([_,_,_,_,"x="+point.x+" y="+point.y]);rnum++
+        writGrid([_,_,_,_,"x="+gMin_x+":"+gMax_x+" y="+gMin_y+":"+gMax_y])
     }
 }
 //! ┌───────────────────────────────────────────────
@@ -335,12 +344,168 @@ function makeQs(qs) {
     if (cycle_vars      != DEF_cycle_vars)      {qs = qs + "&aC=" + cycle_vars;}
     if (cycle_circles   != DEF_cycle_circles)   {qs = qs + "&aM=" + cycle_circles;}
     if (merge_count     != DEF_merge_count)     {qs = qs + "&aS=" + merge_count;}
+    if (zoomin          != DEF_zoomin)          {qs = qs + "&aT=" + zoomin;}
     //@ ARGS
     return(qs)
 }
 
+function xytrack(x,y) {
+    if (x>gMax_x) {gMax_x = x;}
+    if (x<gMin_x) {gMin_x = x;}
+    if (y>gMax_y) {gMax_y = y;}
+    if (y<gMin_y) {gMin_y = y;}
+}
+
+function updateListMinMax(data) {
+    //? no need to traxk if zoom is not on
+    if (zoomin ==1) {
+        for (i=0;i<data.length;i++) {
+            xytrack(data[i][0],data[i][1]);
+            // console.log("xytrack("+data[i][0]+","+data[i][1]+")=>"+gMax_x+","+gMin_y)
+        }
+    }
+}
+function updateObjMinMax(data) {
+    for (i=0;i<data.length;i++) {
+        for (j=0;j<data[i].length;j++){
+            xytrack(data[i][j].x,data[i][j].y);
+        }
+    }
+}
 
 
+
+function zoomvb(xmin, xmax, ymin, ymax) {
+    let len = Math.round(xmax-xmin);
+    let hei = Math.round(ymax-ymin);
+
+    vbMaxX = xmax+100
+    vbMaxY = ymax+100
+    vbMinX = xmin-100
+    vbMinY = ymin-100
+    vbLen = vbMaxX-vbMinX
+    vbHei = vbMaxY-vbMinY
+
+    let vbstr =  vbMinX.toString()+" "+vbMinY.toString()+" "+vbLen.toString()+" "+vbHei.toString();
+    eleSvg.setAttribute("viewBox", vbstr);
+}
+
+function drawBox(xmin, xmax, ymin, ymax) {
+    let len = Math.round(xmax-xmin);
+    let hei = Math.round(ymax-ymin);
+    box = document.createElementNS(svgns, 'rect');
+    box.setAttribute('x', xmin);
+    box.setAttribute('y', ymin);
+    box.setAttribute('width', len);
+    box.setAttribute('height', hei);
+    box.setAttribute("fill", "white");
+    box.setAttribute("opacity", "0.1");
+    box.setAttribute("stroke", "white");
+    box.setAttribute("stroke-width", '1');
+    eleSvg.appendChild(box);
+
+    vbMaxX = xmax+100
+    vbMaxY = ymax+100
+    vbMinX = xmin-100
+    vbMinY = ymin-100
+    vbLen = vbMaxX-vbMinX
+    vbHei = vbMaxY-vbMinY
+
+    // let vbstr =  vbMinX.toString()+" "+vbMinY.toString()+" "+vbLen.toString()+" "+vbHei.toString();
+    // eleSvg.setAttribute("viewBox", vbstr);
+
+    zoomvb(xmin, xmax, ymin, ymax);
+}
+
+//? https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors#:~:text=Just%20pass%20in%20a%20string,number%20(i.e.%20%2D20%20).
+const pSBC=(p,c0,c1,l)=>{
+    let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
+    if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
+    if(!this.pSBCr)this.pSBCr=(d)=>{
+        let n=d.length,x={};
+        if(n>9){
+            [r,g,b,a]=d=d.split(","),n=d.length;
+            if(n<3||n>4)return null;
+            x.r=i(r[3]=="a"?r.slice(5):r.slice(4)),x.g=i(g),x.b=i(b),x.a=a?parseFloat(a):-1
+        }else{
+            if(n==8||n==6||n<4)return null;
+            if(n<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(n>4?d[4]+d[4]:"");
+            d=i(d.slice(1),16);
+            if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;
+            else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1
+        }return x};
+    h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=this.pSBCr(c0),P=p<0,t=c1&&c1!="c"?this.pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
+    if(!f||!t)return null;
+    if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);
+    else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
+    a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;
+    if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
+    else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
+
+// // Tests:
+
+// /*** Log Blending ***/
+// // Shade (Lighten or Darken)
+// pSBC ( 0.42, color1 ); // rgb(20,60,200) + [42% Lighter] => rgb(166,171,225)
+// pSBC ( -0.4, color5 ); // #F3A + [40% Darker] => #c62884
+// pSBC ( 0.42, color8 ); // rgba(200,60,20,0.98631) + [42% Lighter] => rgba(225,171,166,0.98631)
+
+// // Shade with Conversion (use "c" as your "to" color)
+// pSBC ( 0.42, color2, "c" ); // rgba(20,60,200,0.67423) + [42% Lighter] + [Convert] => #a6abe1ac
+
+// // RGB2Hex & Hex2RGB Conversion Only (set percentage to zero)
+// pSBC ( 0, color6, "c" ); // #F3A9 + [Convert] => rgba(255,51,170,0.6)
+
+// // Blending
+// pSBC ( -0.5, color2, color8 ); // rgba(20,60,200,0.67423) + rgba(200,60,20,0.98631) + [50% Blend] => rgba(142,60,142,0.83)
+// pSBC ( 0.7, color2, color7 ); // rgba(20,60,200,0.67423) + rgb(200,60,20) + [70% Blend] => rgba(168,60,111,0.67423)
+// pSBC ( 0.25, color3, color7 ); // #67DAF0 + rgb(200,60,20) + [25% Blend] => rgb(134,191,208)
+// pSBC ( 0.75, color7, color3 ); // rgb(200,60,20) + #67DAF0 + [75% Blend] => #86bfd0
+
+// /*** Linear Blending ***/
+// // Shade (Lighten or Darken)
+// pSBC ( 0.42, color1, false, true ); // rgb(20,60,200) + [42% Lighter] => rgb(119,142,223)
+// pSBC ( -0.4, color5, false, true ); // #F3A + [40% Darker] => #991f66
+// pSBC ( 0.42, color8, false, true ); // rgba(200,60,20,0.98631) + [42% Lighter] => rgba(223,142,119,0.98631)
+
+// // Shade with Conversion (use "c" as your "to" color)
+// pSBC ( 0.42, color2, "c", true ); // rgba(20,60,200,0.67423) + [42% Lighter] + [Convert] => #778edfac
+
+// // RGB2Hex & Hex2RGB Conversion Only (set percentage to zero)
+// pSBC ( 0, color6, "c", true ); // #F3A9 + [Convert] => rgba(255,51,170,0.6)
+
+// // Blending
+// pSBC ( -0.5, color2, color8, true ); // rgba(20,60,200,0.67423) + rgba(200,60,20,0.98631) + [50% Blend] => rgba(110,60,110,0.83)
+// pSBC ( 0.7, color2, color7, true ); // rgba(20,60,200,0.67423) + rgb(200,60,20) + [70% Blend] => rgba(146,60,74,0.67423)
+// pSBC ( 0.25, color3, color7, true ); // #67DAF0 + rgb(200,60,20) + [25% Blend] => rgb(127,179,185)
+// pSBC ( 0.75, color7, color3, true ); // rgb(200,60,20) + #67DAF0 + [75% Blend] => #7fb3b9
+
+// /*** Other Stuff ***/
+// // Error Checking
+// pSBC ( 0.42, "#FFBAA" ); // #FFBAA + [42% Lighter] => null??(Invalid Input Color)
+// pSBC ( 42, color1, color5 ); // rgb(20,60,200) + #F3A + [4200% Blend] => null??(Invalid Percentage Range)
+// pSBC ( 0.42, {} ); // [object Object] + [42% Lighter] => null??(Strings Only for Color)
+// pSBC ( "42", color1 ); // rgb(20,60,200) + ["42"] => null??(Numbers Only for Percentage)
+// pSBC ( 0.42, "salt" ); // salt + [42% Lighter] => null??(A Little Salt is No Good...)
+
+// // Error Check Fails?(Some Errors are not Caught)
+// pSBC ( 0.42, "#salt" ); // #salt + [42% Lighter] => #a5a5a500??(...and a Pound of Salt is Jibberish)
+
+// // Ripping
+// pSBCr ( color4 ); // #5567DAF0 + [Rip] => [object Object] => {'r':85,'g':103,'b':218,'a':0.941}
+
+
+}
+
+function sortNumbers(a, b) {
+  if (a > b) {
+    return 1;
+  } else if (b > a) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
 //! ┌───────────────────────────────────────────────
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
@@ -348,44 +513,45 @@ function drawTree(branch_angle, rotation) {
         branch_angle = branch_angle%360;
         rotation = rotation%360;
 
-        //! ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+        //! ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡ CYCLE VARS
         if (cycle_vars > 0) {
 
-            pensize[0] = cycle_in_range(Math.round(branch_angle),0,13,0) //? use initialial values of pensize[]
-            pensize[1] = cycle_in_range(Math.round(branch_angle),0,11,0)
-            pensize[2] = cycle_in_range(Math.round(branch_angle),0,6,0)
-            pensize[3] = cycle_in_range(Math.round(branch_angle),0,5,0)
-            pensize[4] = cycle_in_range(Math.round(branch_angle),0,5,0)
-            pensize[5] = cycle_in_range(Math.round(branch_angle),0,5,0)
-
-            pre_maxlengths[0] = cycle_in_range(Math.round(branch_angle),0,130,0)  //? use initialial values of pre_maxlengths[]
-            pre_maxlengths[1] = cycle_in_range(Math.round(branch_angle),0,70,0)
-            pre_maxlengths[2] = cycle_in_range(Math.round(branch_angle),0,60,0)
-            pre_maxlengths[3] = cycle_in_range(Math.round(branch_angle),0,50,0)
-            pre_maxlengths[4] = cycle_in_range(Math.round(branch_angle),0,40,0)
-            pre_maxlengths[5] = cycle_in_range(Math.round(branch_angle),0,30,0)
+            for (i=0;i<6;i++) {
+                pensize[i] = cycle_in_range(Math.round(branch_angle),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                pre_maxlengths[i] = cycle_in_range(Math.round(branch_angle),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+            }
 
             //? non-deterministic selection
-            cycle_circles   = randint(0, num_of_circles)
-            cycle_path      = randint(0,num_of_paths)
-            if (cycle_vars == 2) { //? don't change poly setting 
-                cycle_poly = DEF_cycle_poly;
-            } else {
-                cycle_poly      = randint(0,num_of_polys)  
-            }
-            cycle_dataset   = randint(0,1)
-            cycle_colors    = randint(0,num_of_colors)
-            circle_radius   = randint(5,20)
-            circle_opacity  = randint(1,100)/100
+            // cycle_circles   = randint(0, num_of_circles)
+            // cycle_path      = randint(0,num_of_paths)
+            // cycle_dataset   = randint(0,1)
+            // cycle_colors    = randint(0,num_of_colors)
+            // circle_radius   = randint(5,20)
+            // circle_opacity  = randint(1,100)/100
+            // if (cycle_vars == 2) { //? don't change poly setting 
+            //     cycle_poly = DEF_cycle_poly;
+            // } else {
+            //     cycle_poly      = randint(0,num_of_polys)  
+            // }
 
             //? deterministic selection
-            // circle_opacity = cycle_in_range(Math.round(branch_angle),0,100,0)/100
-            // circle_radius = cycle_in_range(Math.round(branch_angle),0,30)
-            // cycle_circles = (cycle_circles + 1) % num_of_circles
-            // cycle_path = (cycle_path + 1) % num_of_paths
-            // cycle_poly = (cycle_poly + 1) % num_of_polys
-            // cycle_dataset = (cycle_dataset + 1) % 2  //? less than 'num_of_datasets' ... too many
-            // cycle_colors= (cycle_colors + 1) % num_of_colors
+
+            cycle_circles   = (cycle_circles + 1) % num_of_circles
+            cycle_path      = (cycle_path + 1) % num_of_paths
+            cycle_dataset   = (cycle_dataset + 1) % 2  //? less than 'num_of_datasets' ... too many
+            circle_opacity  = cycle_in_range(Math.round(branch_angle),0,100,0)/100
+            circle_radius   = cycle_in_range(Math.round(branch_angle),5,20)
+
+            //? don't change poly setting if aC=2
+            if (cycle_vars == 2) { 
+                cycle_poly  = DEF_cycle_poly;
+            } else {
+                cycle_poly  = (cycle_poly + 1) % num_of_polys
+            }
+            //? leave colors alone if aC=3
+            if (cycle_vars != 3) { //? don't change poly setting 
+                cycle_colors    = (cycle_colors + 1) % num_of_colors
+            }
         } 
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
@@ -426,57 +592,13 @@ function drawTree(branch_angle, rotation) {
                 case 'aS': merge_counts    = qsary[key]; break;
                 case 'FS': fullscreen    = qsary[key]; break;
                 case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
+                case 'aT':  zoomin   = qsary[key]; break;  //? it makes no sense to use this one
             }
         }
         preset_changed = false
         console.log("Preset changed: "+preset_changed)
-
     }
     //% ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-
-    if (snapshot == 1) {
-        snapshot = 0
-        var svgElement = document.getElementById('svg');
-        let {width, height} = svgElement.getBBox(); 
-        let clonedSvgElement = svgElement.cloneNode(true);
-        // true for deep clone
-        let outerHTML = clonedSvgElement.outerHTML,
-        blob = new Blob([outerHTML],{type:'image/svg+xml;charset=utf-8'});
-        let URL = window.URL || window.webkitURL || window;
-        let blobURL = URL.createObjectURL(blob);
-        let image = new Image();
-        jstr(blobURL)
-
-        body = document.getElementById('body')
-        canvas = document.createElementNS("http://www.w3.org/1999/xhtml","canvas")
-        body.appendChild(canvas)
-
-
-        image.onload = () => {
-           const ctx = canvas.getContext('2d');
-           canvas.widht = width;       
-           canvas.height = height;
-           let context = canvas.getContext('2d');
-           context.drawImage(image, 0, 0, width, height );
-        };
-        image.src = blobURL;
-        let png = canvas.toDataURL(); // default png
-        jstr(png)
-
-        var download = function(href, name){
-            var div = document.createElementNS("http://www.w3.org/1999/xhtml","div")
-            var link = document.createElementNS("http://www.w3.org/1999/xhtml","a")
-            link.download = name;
-            link.style.opacity = "0";
-            div.append(link);
-            link.href = href;
-            link.click();
-            link.remove();
-        }
-        download(png, "image.png");
-    }
-
-
     if (merge_count == 0) {
         clearCanvas()        
     } else {
@@ -484,16 +606,14 @@ function drawTree(branch_angle, rotation) {
             clearCanvas()
         }
     }
-
-
-
-
+    //? ────────────────────────────────────────────────
     //? rebuild timing data based on changes in specs
     tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
     cycletime = tt['cycletime']
     tot_cycletime = tt['tot_cycletime']
     tot_images = tt['tot_images']
 
+    //? ──────────────────────────────────────────────── CYCLE COLORS
     if (cycle_colors == 1) {  //? shift spectrum of 7 color
         for (let i = 0; i < 7; i++) {
             colors2[1][i] = generateColor(cycle_in_range(tree_counter + (i * 45), 0, 360, 0))
@@ -504,10 +624,10 @@ function drawTree(branch_angle, rotation) {
             colors2[2][i] = generateRandomColor()
         }
     }
-
+    //? ────────────────────────────────────────────────
     //% █████████████ ADJUSTMENTS █████████████
     //% let noteseed = (54+tree_counter+ rotation)%108+108
-
+    //? ────────────────────────────────────────────────
     writeMenu()
 
     //@ this part is very confusing...  we need to swap 'rotation' and 'branch_angle' otherwise we get lines all 
@@ -526,7 +646,6 @@ function drawTree(branch_angle, rotation) {
 
     gen = 0
  
-
     //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
     //* ███████████████████ DATASETS █████████████████████████████████████████████████████████████████████████████████████████████████████████████
     //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
@@ -563,10 +682,10 @@ function drawTree(branch_angle, rotation) {
         adata_right = sortByKey(adata_right,'x');
         adata_left = sortByKey(adata_left,'y');
     }
-    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    //* ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+    //* ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡ PATHS ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+    //* ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
-
-    
     if (dataform=="buildpath") {
         //? build the paths
         //@ DEBUG need trigger to turn on/off paths
@@ -608,7 +727,6 @@ function drawTree(branch_angle, rotation) {
         gradient.setAttribute('cy', '0.3');  //? light is slightly above horizon
         gradient.setAttribute('r', '1');
         DATdefs.appendChild(gradient);
-        newPath_l.setAttribute('fill', 'url(#datasetGradient)');
         newPath_r.setAttribute('d', ""+path_r[gen]);
         newPath_r.setAttribute("fill-opacity", "0");
         newPath_r.setAttribute("stroke-width", path_width);
@@ -616,32 +734,29 @@ function drawTree(branch_angle, rotation) {
         svg.appendChild(DATdefs);
         svg.appendChild(newPath_r);
 
+        newpensize = pensize[gen] * line_thickness
+
         newPath_l.setAttribute('d', ""+path_l[gen]);
         newPath_l.setAttribute("fill-opacity", "0");
-        newPath_l.setAttribute("stroke-width", path_width);
+        newPath_l.setAttribute("stroke-width", newpensize);//path_width);//@ SD
         newPath_l.setAttribute('stroke', 'url(#datasetGradient)');
         svg.appendChild(DATdefs);
         svg.appendChild(newPath_l);
     }
 
+    //* ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+    //? loop through the generated data
     for (let idx = 0; idx<adata_right.length; idx++) {
+        //? set the base data vars
         nx1 = adata_right[idx].x
         ny1 = adata_right[idx].y
         nx2 = adata_left[idx].x
         ny2 = adata_left[idx].y
 
-        //? create LINE instance
-        var newLine = document.createElementNS(svgns, 'line');
-        newLine.setAttribute('x1', nx1.toString());
-        newLine.setAttribute('y1', ny1.toString());
-        newLine.setAttribute('x2', nx2.toString());
-        newLine.setAttribute('y2', ny2.toString());
+        xytrack(nx2,ny2);
 
-
-        // console.log("gen:",gen,'lOrder['+gen+']:',lOrder[gen])
-
-        let order = lOrder[gen] //? get the actual gen value from the gens, which goes uo to 126
-
+        let order = lOrder[gen] //? get the actual gen value from the gens, which goes up to 126
 
         //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
         //@ ███████████████████ CIRCLES ██████████████████████████████████████████████████████████████████████████████████████████████████████████████
@@ -651,77 +766,21 @@ function drawTree(branch_angle, rotation) {
         var totcirc = 3
    
         //% █████████████ ADJUSTMENTS █████████████
-
-
-        var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycles throug the circle-types
+        var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycle through the circle-types
 
         if (cycle_circles > 0) { 
-
-        //     //? prepare the gradient for the circle
-        //     //@ DEBUG prob better to move defs into the global scope
-        //     var CIRdefs = document.createElementNS(svgns, 'defs');
-        //     var gradient = document.createElementNS(svgns, 'radialGradient');
-        //     var circle = document.createElementNS(svgns, 'circle');
-
-        //     var stops = [
-        //         {
-        //             //        "color":  colors2[cycle_colors][order].toString(),
-        //             "color": "white",
-        //             "offset": "0%"
-        //         },
-        //         {
-        //             "color": "#000000",
-        //             "offset": "100%"
-        //         }
-        //     ];
-
-        //     for (var i = 0, length = stops.length; i < length; i++) {
-        //         var stop = document.createElementNS(svgns, 'stop');
-        //         stop.setAttribute('offset', stops[i].offset);
-        //         stop.setAttribute('stop-color', stops[i].color);
-        //         gradient.appendChild(stop);
-        //     }
-
-        //     gradient.id = 'Gradient';
-        //     gradient.setAttribute('cx', '0.3');
-        //     gradient.setAttribute('cy', '0.3');
-        //     gradient.setAttribute('r', '1');
-        //     CIRdefs.appendChild(gradient);
-        //     //! ---------------------------------------------
-
-        //     circle.setAttribute('fill', 'url(#Gradient)');
-        //     circle.setAttribute("id", "circles");
-        //     circle.setAttribute("cx", nx2.toString());
-        //     circle.setAttribute("cy", ny2.toString());
-        //     circle.setAttribute("r", cr_rad);
-        //     circle.setAttribute("opacity", circle_opacity);
-
-        //     svg.appendChild(CIRdefs);
-        //     svg.appendChild(circle);
-        // }
-
-//@ XXX
-        // if (cycle_circles == 2) {
-            // console.log(order)
             //? prepare the gradient for the circle
-            //@ DEBUG prob better to move defs into the global scope
             mCIRdefs[order] = document.createElementNS(svgns, 'defs');
             mCIRgradient[order] = document.createElementNS(svgns, 'radialGradient');
             mCIRcircle[order] = document.createElementNS(svgns, 'circle');
-            // mCIRcolor[order]
+
             if (cycle_circles == 1) {mCIRcolor[order] = "white"} 
             if (cycle_circles == 2) {mCIRcolor[order] = colors2[cycle_colors][order].toString()} 
             if (cycle_circles == 3) {mCIRcolor[order] = generateRandomColor()} 
 
             mCIRstops[order] = [
-                {
-                    "color":  mCIRcolor[order],
-                    "offset": "0%"
-                },
-                {
-                    "color": "#000000",
-                    "offset": "100%"
-                }
+                {"color":  mCIRcolor[order],"offset": "0%"},
+                {"color": "#000000",        "offset": "100%"}
             ];
 
             for (var i = 0, length = mCIRstops[order].length; i < length; i++) {
@@ -736,32 +795,17 @@ function drawTree(branch_angle, rotation) {
             mCIRgradient[order].setAttribute('cy', '0.3');
             mCIRgradient[order].setAttribute('r', '1');
             mCIRdefs[order].appendChild(mCIRgradient[order]);
-            //! ---------------------------------------------
+            //? end of prep  ----------------------------------
+
             mCIRcircle[order].setAttribute("id", "circles"+order);
             mCIRcircle[order].setAttribute("cx", nx2.toString());
             mCIRcircle[order].setAttribute("cy", ny2.toString());
             mCIRcircle[order].setAttribute("r", cr_rad);            
             mCIRcircle[order].setAttribute('fill', 'url(#Gradient'+order+')');
             mCIRcircle[order].setAttribute("opacity", circle_opacity);
+
             svg.appendChild(mCIRdefs[order]);
             svg.appendChild(mCIRcircle[order]);
-        // }
-        // if (cycle_circles == 3) {
-        //     let circle = document.createElementNS(svgns, 'circle');
-
-        //     circle.setAttribute("id", "circles");
-        //     circle.setAttribute("cx", nx2.toString());
-        //     circle.setAttribute("cy", ny2.toString());
-        //     circle.setAttribute("r", cr_rad);
-        //     circle.setAttribute("stroke", "darkgrey");
-        //     circle.setAttribute("opacity", circle_opacity);
-        //     circle.setAttribute("stroke-width", '1');
-        //     circle.setAttribute("stroke-linecap", "round");
-        //     circle.setAttribute("fill", generateRandomColor());
-        //     //circle.setAttribute("fill", colors2[cycle_colors][order].toString());
-        //     //circle.setAttribute("stroke", generateRandomColor());
-
-        //     svg.appendChild(circle);
         }
         //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
@@ -771,7 +815,7 @@ function drawTree(branch_angle, rotation) {
         //? ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
         var poly_arr = false
-        //? ────────────────────────────────────────────────
+        //? ──────────────────────────────────────────────── "cos/sin-10"
         if (cycle_poly == 1) {
             poly_arr = [
                 [nx2, ny2],
@@ -785,7 +829,7 @@ function drawTree(branch_angle, rotation) {
                 ],
             ];
         }
-        //? ────────────────────────────────────────────────
+        //? ──────────────────────────────────────────────── "CiN(cos*sin)-10"
         if (cycle_poly == 2) {  
             poly_arr =
                     [
@@ -800,7 +844,7 @@ function drawTree(branch_angle, rotation) {
                         ],
                     ];
         }
-        //? ────────────────────────────────────────────────
+        //? ──────────────────────────────────────────────── "DeltasCos(rot)"
         if (cycle_poly == 3) {
             poly_arr =
                     [
@@ -815,7 +859,7 @@ function drawTree(branch_angle, rotation) {
                         ],
                     ];
         }
-        //? ────────────────────────────────────────────────
+        //? ──────────────────────────────────────────────── "Petal"
         if (cycle_poly == 4) {
             // console.log("Usng polugon 4")
             var petal = [
@@ -843,86 +887,98 @@ function drawTree(branch_angle, rotation) {
             poly_arr = parr
         }
         //? ════════════════════════════════════════════════
-
         if (cycle_poly > 0) {  
+            updateListMinMax(poly_arr);
 
             //? ┌───────────────────────────────────────────────
             //? │ we have a poly, now prepare the gradients for poly and stroke for the PATHS
             //? └───────────────────────────────────────────────
-            //? !!!!!When 'defs' is defined globally, the refresh rate drops by about 80%!!!!!!
+            //@ !!!!!When 'defs' is defined globally, the refresh rate drops by about 80%!!!!!!
+            //? ------------------------------------
+            //? create the gradiant for FILL
+            //? ------------------------------------
             var LGdefs = document.createElementNS(svgns, 'defs');
             var fillGradient = document.createElementNS(svgns, 'linearGradient');
             //? stops for fillGradient
-
-            //? pick 3 colors...
-            // tidx = tree_counter%360 //@ is actually branch_angle
-            // tidx1 = tidx%360
-            // tidx2 = (tidx+120)%360
-            // tidx3 = (tidx+240)%360
             //? pick 3 colors...
             tidx = tree_counter%6 //@ is actually branch_angle
-            tidx1 = randint(0,5)
-            tidx2 = randint(0,5)
-            tidx3 = randint(0,5)
 
-            //? ... from the colors2 array
-            let c1 = colors2[cycle_colors][tidx1]
-            let c2 = colors2[cycle_colors][tidx2]
-            let c3 = colors2[cycle_colors][tidx3]
+            clrIdx_1 = tidx
+            clrIdx_2 = (tidx+2)%6
+            clrIdx_3 = (tidx+4)%6
 
-            // let c1 = "red"
-            // let c2 = "green"
-            // let c3 = "blue"
+            //? select 3 colors from the colors2 array
+            let polyColor_1 = colors2[cycle_colors][clrIdx_1]
+            let polyColor_2 = colors2[cycle_colors][clrIdx_2]
+            let polyColor_3 = colors2[cycle_colors][clrIdx_3]
+            //? for testing
+            // let polyColor_1 = "#FF0000"
+            // let polyColor_2 = "#00FF00"
+            // let polyColor_3 = "#0000FF" 
 
-            xpidx1 = parseInt((xpidx1+1)%1)  //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
-            xpidx2 = parseInt((xpidx2+1)%50)
-            xpidx3 = parseInt((xpidx3+1)%100)
+            //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
+            offsets = normalize(
+                [
+                    (polyColor_1_offset + 1)%33,
+                    (polyColor_1_offset + polyColor_2_offset+1)%66,
+                    (polyColor_1_offset + polyColor_2_offset + polyColor_3_offset+1)%99
+                ],[1,100]
+            )
+            offsets.sort(sortNumbers);
+
+
+            polyColor_1_offset = Math.round(offsets[0])
+            polyColor_2_offset = Math.round(offsets[1])
+            polyColor_3_offset = Math.round(offsets[2])
+
 
             var fillGradient_stops = [
-                {"color":  c1,"offset":  xpidx1.toString()+"%"},  //? where along the line do these colors end
-                {"color":  c2,"offset":  xpidx2.toString()+"%"},
-                {"color":  c3,"offset":  xpidx3.toString()+"%"},
+                {"color":  polyColor_1,"offset":  polyColor_1_offset+"%"},  
+                {"color":  polyColor_2,"offset":  polyColor_2_offset+"%"},
+                {"color":  polyColor_3,"offset":  polyColor_3_offset+"%"},
             ];
+            console.log("-------- FILL ---------------------------------")
+
+            console.log(">>>",offsets)
+            console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
 
             for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
                 stop.setAttribute('offset', fillGradient_stops[i].offset);
                 stop.setAttribute('stop-color', fillGradient_stops[i].color);
                 fillGradient.appendChild(stop);
+                console.log("FILL STOP offsets:",fillGradient_stops[i].offset+"%",fillGradient_stops[i].color)
             }
 
+            //? ------------------------------------
+            //? create the gradiant for STROKE
+            //? ------------------------------------
             var STdefs = document.createElementNS(svgns, 'defs');
-
             var strokeGradient = document.createElementNS(svgns, 'linearGradient');
 
-            //? stops for strokeGradient
-            tidx4 = tidx1+180
-            tidx5 = tidx2+180
-            tidx6 = tidx3+180
 
-
-            // let c4 = colors2[cycle_colors][tidx4]
-            // let c5 = colors2[cycle_colors][tidx5]
-            // let c6 = colors2[cycle_colors][tidx6]
-            let c4 = "black"
-            let c5 = "black"
-            let c6 = "black"
-
+            //? user the same offsets
             var strokeGradient_stops = [
-                {"color": c4 ,"offset": "33%"},
-                {"color": c5 ,"offset": "66%"},
-                // {"color": c6 ,"offset": "99%"}
+                {"color":  polyColor_1,"offset":  polyColor_1_offset+"%"},  
+                {"color":  polyColor_2,"offset":  polyColor_2_offset+"%"},
+                {"color":  polyColor_3,"offset":  polyColor_3_offset+"%"},
             ];
+
+            console.log("---- STROKE -------------------------------------")
+            console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
+
             for (var i = 0, length = strokeGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
                 stop.setAttribute('offset', strokeGradient_stops[i].offset);
                 stop.setAttribute('stop-color', strokeGradient_stops[i].color);
                 strokeGradient.appendChild(stop);
+                console.log("FILL STOP offsets:",strokeGradient_stops[i].offset+"%",strokeGradient_stops[i].color)
+
             }
 
             fillGradient.id = 'fillGradient';
             fillGradient.setAttribute('x1', '0%');
-            fillGradient.setAttribute('x2', '0%');
+            fillGradient.setAttribute('x2', '100%');
             fillGradient.setAttribute('y1', '0%');
             fillGradient.setAttribute('y2', '100%');
 
@@ -956,37 +1012,88 @@ function drawTree(branch_angle, rotation) {
         newpensize = pensize[order] * line_thickness
         //% newpensize = cycle_in_range((tree_counter-order)/10*(order+1),1,10,0)
 
+
+//=========================================================================
+
         //? DRAW THE LINE
-        newLine.setAttribute("stroke-width", newpensize);
-        // console.log("1>>order",order)
-        // console.log("2>>cycle_colors["+order+"]",cycle_colors[order])
-        // console.log("3>>colors2",colors2)
-        // console.log("3>>cycle_colors",cycle_colors)
-        // console.log("4>>colors2[cycle_colors]["+order+"]",colors2[cycle_colors][order])
-        this_color = colors2[cycle_colors][order]
-        newLine.setAttribute("stroke", this_color);
-        this_opacity = opacities[order]
-        newLine.setAttribute("opacity", this_opacity);
+        //? prepare the gradient for the line
+        linecolors = colors2[cycle_colors]
+
+        mLINEdefs[order]    = document.createElementNS(svgns, 'defs');
+        mLINEgradient[order]= document.createElementNS(svgns, 'radialGradient');
+        mLINEline[order]    = document.createElementNS(svgns, 'line');
+
+        mLINEcolor[order] = linecolors[order]
+
+        mLINEstops[order] = [
+            {
+                "color": mLINEcolor[(Math.abs(order+1))%6],
+                "offset": "10%"
+            },
+            {
+                "color":  mLINEcolor[order],
+                "offset": "90%"
+            }
+        ];
+
+        for (var i = 0, length = mLINEstops[order].length; i < length; i++) {
+            var stop = document.createElementNS(svgns, 'stop');
+            stop.setAttribute('offset', mLINEstops[order][i].offset);
+            stop.setAttribute('stop-color', mLINEstops[order][i].color);
+            mLINEgradient[order].appendChild(stop);
+        }
+
+        //? ug!  This gradiant spec is one of the worst, and it's broken as well.  radialGradient are only radial
+        //? at 45 degrees, and they disappear at 0 and 90 deg.
+        mLINEgradient[order].id = 'lineGradient'+order;
+        mLINEgradient[order].setAttribute('cx', "50%");
+        mLINEgradient[order].setAttribute('cy', "50%");
+        mLINEgradient[order].setAttribute('r', "100%");//this_length);
+        mLINEdefs[order].appendChild(mLINEgradient[order]);
+        //! ---------------------------------------------
+        mLINEline[order].setAttribute('x1', nx1.toString())
+        mLINEline[order].setAttribute('y1', ny1.toString())
+        mLINEline[order].setAttribute('x2', nx2.toString())
+        mLINEline[order].setAttribute('y2', ny2.toString())
+
+        mLINEline[order].setAttribute("id", "lines"+order);
+        mLINEline[order].setAttribute('stroke', 'url(#lineGradient'+order+')');
+        mLINEline[order].setAttribute("opacity", "1");
+
+        mLINEline[order].setAttribute("stroke-width", newpensize);
+        this_opacity = 1//opacities[order]
+        mLINEline[order].setAttribute("opacity", this_opacity);
+
+        svg.appendChild(mLINEdefs[order]);
+        // svg.appendChild(mLINEline[order]);
+
+
 
         // what line sto show/hide
         if (show_all_lines == 1) {
             if (show_0 == 1 && order == 0) {
-                svg.appendChild(newLine);
+                svg.appendChild(mLINEline[order]);
+                // svg.appendChild(newLine);
             }
             if (show_1 == 1 && order == 1) {
-                svg.appendChild(newLine);
+                svg.appendChild(mLINEline[order]);
+                // svg.appendChild(newLine);
             }
             if (show_2 == 1 && order == 2) {
-                svg.appendChild(newLine);
+                svg.appendChild(mLINEline[order]);
+                // svg.appendChild(newLine);
             }
             if (show_3 == 1 && order == 3) {
-                svg.appendChild(newLine);
+                svg.appendChild(mLINEline[order]);
+                // svg.appendChild(newLine);
             }
             if (show_4 == 1 && order == 4) {
-                svg.appendChild(newLine);
+                svg.appendChild(mLINEline[order]);
+                // svg.appendChild(newLine);
             }
             if (show_5 == 1 && order == 5) {
-                svg.appendChild(newLine);
+                svg.appendChild(mLINEline[order]);
+                // svg.appendChild(newLine);
             }
         }
         gen++;
@@ -1068,6 +1175,19 @@ function drawTree(branch_angle, rotation) {
         // }
     }
         //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+
+//@ SD 
+    // console.log("drawBox("+gMin_x+","+gMax_x+","+gMin_y+","+gMax_y+")")
+    // drawBox(gMin_x, gMax_x, gMin_y, gMax_y)
+    if (zoomin == 1) {
+        zoomvb(gMin_x, gMax_x, gMin_y, gMax_y)  
+        showtext=0; //? turn off the menu, as it is unreadable
+    } else {
+        if (gMin_x+gMax_x+gMin_y+gMax_y != 0) {
+            zoomvb(-960, 960, -512, 512)  
+            showtext = 1 //? turn menu back up
+        }
+    }
 }
 
 //? END OF FUNCTION 'drawTree'
@@ -1272,8 +1392,6 @@ function BezierCurve(points) {
     //? [{"x":-64.25896664854749,"y":12.508200260460674},{"x":-89.73634559153838,"y":4.5384851983379075},{"x":-38.78158770555659,"y":20.477915322583442},{"x":-56.28925158642472,"y":37.98557920345157},{"x":-72.22868171067026,"y":-12.969178682530222}]
 
     let n = points.length;
-    // console.log("points",n,)
-    // jstr(ponts)
     let curvepoints = [];
     for (let u = 0; u <= 1; u += 0.01) {
         let p = {x: 0, y: 0};
@@ -1744,7 +1862,7 @@ function buildpath(xfr) {
     }
     //? CUBIC CURVE - not curvy at all
     function makepath_CS(q) {
-        path_width = 4
+        path_width = 2
         path_ary = []
         path=[0,0,0,0,0,0]
         j=0
@@ -1806,7 +1924,6 @@ function buildpath(xfr) {
             }
             path[k]=x
         }    
-        // jstr(path)
         return path
     }
     //? CUBIC CURVE v2 - mosty curvy
@@ -1889,6 +2006,7 @@ function buildpath(xfr) {
         let x = ""
         for (k=0;k< sqary_r.length;k++) {
             let s = sqary_r[k]
+
             x = x + "M "+s[0].x*q+","+s[0].y+" "
             j=0
             for (i=1; i<64;i++) {
@@ -1905,6 +2023,9 @@ function buildpath(xfr) {
         return path
     }
  
+    updateObjMinMax(sqary_r);
+
+
 
     if (cycle_path == 1) {
         path_r = makepath_CS2(1); path_l = makepath_CS2(-1); //? works

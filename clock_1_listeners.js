@@ -133,6 +133,8 @@
                     log("Showing text") 
                 }
             }
+            //? ──────────────────────────────────────────────── ZOOM
+            if (lastkey['Alt'] && lastkey['KeyT']) { zoomin= toggle(zoomin,2); log("Zoomin: "+zoomin) }
             //? ──────────────────────────────────────────────── COLRS
             if (lastkey['Alt'] && lastkey['KeyR']) { cycle_colors= toggle(cycle_colors,num_of_colors); log("Cycle Colors: "+cycle_colors) }
             //? ──────────────────────────────────────────────── MERGE
