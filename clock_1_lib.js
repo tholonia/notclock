@@ -255,7 +255,7 @@ function writeMenu() {
         writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
         writGrid([_]);rnum++;
 
-        writGrid(['aD','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+') ' +names_of_circles[cycle_circles]]);rnum++;
+        writGrid(['aM','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+') ' +names_of_circles[cycle_circles]]);rnum++;
         writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+') ' +names_of_colors[cycle_colors]]);rnum++;
         writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+') '+names_of_audios[cycle_audio]]);rnum++;
         writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+') '+names_of_datasets[cycle_dataset]]);rnum++;
@@ -937,17 +937,17 @@ function drawTree(branch_angle, rotation) {
                 {"color":  polyColor_2,"offset":  polyColor_2_offset+"%"},
                 {"color":  polyColor_3,"offset":  polyColor_3_offset+"%"},
             ];
-            console.log("-------- FILL ---------------------------------")
+            // console.log("-------- FILL ---------------------------------")
 
-            console.log(">>>",offsets)
-            console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
+            // console.log(">>>",offsets)
+            // console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
 
             for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
                 stop.setAttribute('offset', fillGradient_stops[i].offset);
                 stop.setAttribute('stop-color', fillGradient_stops[i].color);
                 fillGradient.appendChild(stop);
-                console.log("FILL STOP offsets:",fillGradient_stops[i].offset+"%",fillGradient_stops[i].color)
+                // console.log("FILL STOP offsets:",fillGradient_stops[i].offset+"%",fillGradient_stops[i].color)
             }
 
             //? ------------------------------------
@@ -956,23 +956,32 @@ function drawTree(branch_angle, rotation) {
             var STdefs = document.createElementNS(svgns, 'defs');
             var strokeGradient = document.createElementNS(svgns, 'linearGradient');
 
+            // let altPolyColor_1 = colors2[cycle_colors][(clrIdx_1+1)%6]
+            // let altPolyColor_2 = colors2[cycle_colors][(clrIdx_2+1)%6]
+            // let altPolyColor_3 = colors2[cycle_colors][(clrIdx_3+1)%6]
+            let altPolyColor_1 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_1+1)%6])
+            let altPolyColor_2 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_2+1)%6])
+            let altPolyColor_3 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_3+1)%6])
+
+            console.log("alt colors:",altPolyColor_1,altPolyColor_2,altPolyColor_3)
+
 
             //? user the same offsets
             var strokeGradient_stops = [
-                {"color":  polyColor_1,"offset":  polyColor_1_offset+"%"},  
-                {"color":  polyColor_2,"offset":  polyColor_2_offset+"%"},
-                {"color":  polyColor_3,"offset":  polyColor_3_offset+"%"},
+                {"color":  altPolyColor_1,"offset":  polyColor_1_offset+"%"},  
+                {"color":  altPolyColor_2,"offset":  polyColor_2_offset+"%"},
+                {"color":  altPolyColor_3,"offset":  polyColor_3_offset+"%"},
             ];
 
-            console.log("---- STROKE -------------------------------------")
-            console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
+            // console.log("---- STROKE -------------------------------------")
+            // console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
 
             for (var i = 0, length = strokeGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
                 stop.setAttribute('offset', strokeGradient_stops[i].offset);
                 stop.setAttribute('stop-color', strokeGradient_stops[i].color);
                 strokeGradient.appendChild(stop);
-                console.log("FILL STOP offsets:",strokeGradient_stops[i].offset+"%",strokeGradient_stops[i].color)
+                // console.log("FILL STOP offsets:",strokeGradient_stops[i].offset+"%",strokeGradient_stops[i].color)
 
             }
 
@@ -1018,12 +1027,12 @@ function drawTree(branch_angle, rotation) {
         //? DRAW THE LINE
         //? prepare the gradient for the line
         linecolors = colors2[cycle_colors]
+        mLINEcolor[order] = linecolors[order]
 
         mLINEdefs[order]    = document.createElementNS(svgns, 'defs');
         mLINEgradient[order]= document.createElementNS(svgns, 'radialGradient');
         mLINEline[order]    = document.createElementNS(svgns, 'line');
 
-        mLINEcolor[order] = linecolors[order]
 
         mLINEstops[order] = [
             {

@@ -155,9 +155,22 @@
             //? ──────────────────────────────────────────────── CYCLES
             if (lastkey['Alt'] && lastkey['KeyC']) {cycle_vars = toggle(cycle_vars,num_of_vars); log("Cycling vars: "+cycle_vars) }
             if (lastkey['Alt'] && lastkey['KeyV']) {cycle_poly = toggle(cycle_poly,num_of_polys);log("Show polys: "+cycle_poly)}
-            if (lastkey['Alt'] && lastkey['KeyU']) {cycle_dataset = toggle(cycle_dataset,num_of_datasets); log("Using dataset "+cycle_dataset+"/"+num_of_datasets) }
+            // if (lastkey['Alt'] && lastkey['KeyU']) {cycle_dataset = toggle(cycle_dataset,num_of_datasets); log("Using dataset "+cycle_dataset+"/"+num_of_datasets) }
             if (lastkey['Alt'] && lastkey['KeyK']) {cycle_path = toggle(cycle_path,num_of_paths); log("Using path "+cycle_path, num_of_paths) }
             if (lastkey['Alt'] && lastkey['KeyG']) {cycle_audio = toggle(cycle_audio,num_of_audios); log("Using audio "+cycle_audio, num_of_audios) }
+            if (lastkey['Alt'] && lastkey['KeyU']) {
+                cycle_dataset = toggle(cycle_dataset,num_of_datasets); 
+                console.log(cycle_dataset)
+                if (cycle_dataset > 0) {
+                    cycle_circles = toggle(cycle_circles,num_of_circles)
+                    circle_radius = uplimit(circle_radius,15,inf)
+                } else {
+                    cycles_circles=0
+                    circle_radius=0
+                }
+                log("Using dataset "+cycle_dataset+"/"+num_of_datasets) 
+            }
+
 
             //@ ARGS
         });
