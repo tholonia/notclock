@@ -273,14 +273,15 @@ function writeMenu() {
         writGrid([_,'⌥ J','Jump fwd 5°']);rnum++;
         writGrid([_]);rnum++;
         writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
-        writGrid(['a0','^⌥ 0','Toggle All Lines','(' + show_all_lines + ')']);rnum++;
+        writGrid(['ca0','^⌥ 0','Show/Hide All Lines','(' + show_all_lines + ') '+names_of_show_all_lines[show_all_lines]]);rnum++;
         writGrid([_]);rnum++;
         writGrid([_,'^⇧Z','Show/Hide this menu']);rnum++;
         writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
+        writGrid(['aP','⌥ P','Screen Save','(' + screensave + ')']);rnum++;
         writGrid([_,'SPACE','Pause/Run']);rnum++;
         writGrid([_]);rnum++;
         writGrid([_]);rnum++;
-        writGrid([_]);rnum++;
+        writGrid([_]);rnum++; 
         writGrid([_]);rnum++;
         writGrid([_]);rnum++;
         writGrid([_]);rnum++;
@@ -325,7 +326,7 @@ function makeQs(qs) {
     if (circle_radius   != DEF_circle_radius)   {qs = qs + "&aN=" + circle_radius;}
     if (cycle_colors    != DEF_cycle_colors)    {qs = qs + "&aR=" + cycle_colors;}
 
-    if (show_all_lines != DEF_show_all_lines)   {qs = qs + "&a0=" + show_all_lines;}
+    if (show_all_lines  != DEF_show_all_lines)  {qs = qs + "&ca0=" + show_all_lines;}
 
     if (show_0 != DEF_show_0) {qs = qs + "&ca0=" + show_0;}
     if (show_1 != DEF_show_1) {qs = qs + "&ca1=" + show_1;}
@@ -345,6 +346,7 @@ function makeQs(qs) {
     if (cycle_circles   != DEF_cycle_circles)   {qs = qs + "&aM=" + cycle_circles;}
     if (merge_count     != DEF_merge_count)     {qs = qs + "&aS=" + merge_count;}
     if (zoomin          != DEF_zoomin)          {qs = qs + "&aT=" + zoomin;}
+    if (screensave      != DEF_screensave)      {qs = qs + "&aT=" + screensave;}
     //@ ARGS
     return(qs)
 }
@@ -510,8 +512,25 @@ function sortNumbers(a, b) {
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
 function drawTree(branch_angle, rotation) {
-        branch_angle = branch_angle%360;
-        rotation = rotation%360;
+        //FIXME for some reason, these angles do not appear when integers!  Javascript really sucks!!
+        //@ AND!!! is a do a toFixed(2), branch_angle becomes rotation !!!!!!!
+        branch_angle = parseFloat(branch_angle%360);
+        branch_angle = branch_angle + 0.00001 //? more that 4 0s and lines begin to disappear
+        rotation = rotation%360
+        log(branch_angle)
+
+        // branch_angle = branch_angle+0.001s
+        // if (branch_angle == 45*0 || 
+        //     branch_angle == 45*1 ||
+        //     branch_angle == 45*2 ||
+        //     branch_angle == 45*3 ||
+        //     branch_angle == 45*4 ||
+        //     branch_angle == 45*5 ||
+        //     branch_angle == 45*6 ||
+        //     branch_angle == 45*7 
+        //     ) {
+        //     branch_angle = branch_angle+0.001
+        // }
 
         //! ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡ CYCLE VARS
         if (cycle_vars > 0) {
@@ -521,36 +540,40 @@ function drawTree(branch_angle, rotation) {
                 pre_maxlengths[i] = cycle_in_range(Math.round(branch_angle),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
             }
 
-            //? non-deterministic selection
-            // cycle_circles   = randint(0, num_of_circles)
-            // cycle_path      = randint(0,num_of_paths)
-            // cycle_dataset   = randint(0,1)
-            // cycle_colors    = randint(0,num_of_colors)
-            // circle_radius   = randint(5,20)
-            // circle_opacity  = randint(1,100)/100
-            // if (cycle_vars == 2) { //? don't change poly setting 
-            //     cycle_poly = DEF_cycle_poly;
-            // } else {
-            //     cycle_poly      = randint(0,num_of_polys)  
-            // }
-
-            //? deterministic selection
-
-            cycle_circles   = (cycle_circles + 1) % num_of_circles
-            cycle_path      = (cycle_path + 1) % num_of_paths
-            cycle_dataset   = (cycle_dataset + 1) % 2  //? less than 'num_of_datasets' ... too many
-            circle_opacity  = cycle_in_range(Math.round(branch_angle),0,100,0)/100
-            circle_radius   = cycle_in_range(Math.round(branch_angle),5,20)
-
-            //? don't change poly setting if aC=2
-            if (cycle_vars == 2) { 
-                cycle_poly  = DEF_cycle_poly;
+            if (1 == 1) {
+                //? non-deterministic selection
+                cycle_circles   = randint(0, num_of_circles)
+                //? tmp disable
+                // cycle_path      = randint(0,num_of_paths)
+                cycle_dataset   = randint(0,1)
+                cycle_colors    = randint(0,num_of_colors)
+                circle_radius   = randint(5,20)
+                circle_opacity  = randint(1,100)/100
+                if (cycle_vars == 2) { //? don't change poly setting 
+                    cycle_poly = DEF_cycle_poly;
+                } else {
+                    cycle_poly      = randint(0,num_of_polys)  
+                }
             } else {
-                cycle_poly  = (cycle_poly + 1) % num_of_polys
-            }
-            //? leave colors alone if aC=3
-            if (cycle_vars != 3) { //? don't change poly setting 
-                cycle_colors    = (cycle_colors + 1) % num_of_colors
+                //? deterministic selection
+
+                cycle_circles   = (cycle_circles + 1) % num_of_circles
+                //? tmp disable
+                // cycle_path      = (cycle_path + 1) % num_of_paths
+                cycle_dataset   = (cycle_dataset + 1) % 2  //? less than 'num_of_datasets' ... too many
+                circle_opacity  = cycle_in_range(Math.round(branch_angle),0,100,0)/100
+                circle_radius   = cycle_in_range(Math.round(branch_angle),5,20)
+
+                //? don't change poly setting if aC=2
+                if (cycle_vars == 2) { 
+                    cycle_poly  = DEF_cycle_poly;
+                } else {
+                    cycle_poly  = (cycle_poly + 1) % num_of_polys
+                }
+                //? leave colors alone if aC=3
+                if (cycle_vars != 3) { //? don't change poly setting 
+                    cycle_colors    = (cycle_colors + 1) % num_of_colors
+                }
             }
         } 
 
@@ -573,6 +596,8 @@ function drawTree(branch_angle, rotation) {
                 case 'ia': iangle          = parseFloat(qsary[key]); break;  
                 case 'de': deg_adj         = parseFloat(qsary[key]); break;  //? keep control manual
                 case 'aN': circle_radius   = parseFloat(qsary[key]); break;
+                case 'aO': poly_opacity    = parseFloat(qsary[key]); break;
+                case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
                 case 'aR': cycle_colors    = qsary[key]; break;
                 case 'a1': show_0          = qsary[key]; break;
                 case 'a2': show_1          = qsary[key]; break;
@@ -580,19 +605,18 @@ function drawTree(branch_angle, rotation) {
                 case 'a4': show_3          = qsary[key]; break;
                 case 'a5': show_4          = qsary[key]; break;
                 case 'a6': show_5          = qsary[key]; break;
-                case 'a0': show_all_lines  = qsary[key]; break;
+                case 'ca0': show_all_lines  = qsary[key]; break;
                 case 'aV': cycle_poly      = qsary[key]; break;
-                case 'aO': poly_opacity    = parseFloat(qsary[key]); break;
                 case 'aG': cycle_audio     = qsary[key]; break;
-                case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
                 case 'aK': cycle_path      = qsary[key]; break;
                 case 'aU': cycle_dataset   = qsary[key]; break;
-                case 'aC': cycle_vars     = qsary[key]; break;
-                case 'aM': cycle_circles    = qsary[key]; break;
+                case 'aC': cycle_vars      = qsary[key]; break;
+                case 'aM': cycle_circles   = qsary[key]; break;
                 case 'aS': merge_counts    = qsary[key]; break;
-                case 'FS': fullscreen    = qsary[key]; break;
-                case 'aA':  cycle_preset    = qsary[key]; break;  //? it makes no sense to use this one
-                case 'aT':  zoomin   = qsary[key]; break;  //? it makes no sense to use this one
+                case 'FS': fullscreen      = qsary[key]; break;
+                case 'aA':  cycle_preset   = qsary[key]; break;  //? it makes no sense to use this one
+                case 'aT':  zoomin         = qsary[key]; break;  //? it makes no sense to use this one
+                case 'aP':  screensave     = qsary[key]; break;  //? it makes no sense to use this one
             }
         }
         preset_changed = false
@@ -963,7 +987,7 @@ function drawTree(branch_angle, rotation) {
             let altPolyColor_2 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_2+1)%6])
             let altPolyColor_3 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_3+1)%6])
 
-            console.log("alt colors:",altPolyColor_1,altPolyColor_2,altPolyColor_3)
+            // console.log("alt colors:",altPolyColor_1,altPolyColor_2,altPolyColor_3)
 
 
             //? user the same offsets
@@ -985,13 +1009,13 @@ function drawTree(branch_angle, rotation) {
 
             }
 
-            fillGradient.id = 'fillGradient';
+            fillGradient.id = 'fillGradient'+gen;
             fillGradient.setAttribute('x1', '0%');
             fillGradient.setAttribute('x2', '100%');
             fillGradient.setAttribute('y1', '0%');
             fillGradient.setAttribute('y2', '100%');
 
-            strokeGradient.id = 'strokeGradient';
+            strokeGradient.id = 'strokeGradient'+gen;
             strokeGradient.setAttribute('x1', '0%');
             strokeGradient.setAttribute('x2', '0%');
             strokeGradient.setAttribute('y1', '0%');
@@ -1003,8 +1027,8 @@ function drawTree(branch_angle, rotation) {
             let poly = document.createElementNS(svgns, 'polygon');
             poly.setAttribute("points", poly_arr);
             // poly.setAttribute("fill", colors2[cycle_colors][order + gens].toString());
-            poly.setAttribute('fill', 'url(#fillGradient)');
-            poly.setAttribute('stroke', 'url(#strokeGradient)');
+            poly.setAttribute('fill', 'url(#fillGradient'+gen+')');
+            poly.setAttribute('stroke', 'url(#strokeGradient'+gen+')');
             poly.setAttribute("opacity", poly_opacity);
             //poly.setAttribute("fill", generateRandomColor());
             //poly.setAttribute("stroke", generateRandomColor());
@@ -1026,35 +1050,41 @@ function drawTree(branch_angle, rotation) {
 
         //? DRAW THE LINE
         //? prepare the gradient for the line
+        //! The generatio indexing starts at 1, not 0 !!
         linecolors = colors2[cycle_colors]
         mLINEcolor[order] = linecolors[order]
+
+        // console.log(linecolors)
 
         mLINEdefs[order]    = document.createElementNS(svgns, 'defs');
         mLINEgradient[order]= document.createElementNS(svgns, 'radialGradient');
         mLINEline[order]    = document.createElementNS(svgns, 'line');
 
+        // let c1 = mLINEcolor[cycle_in_range(Math.abs(order+1),0,5,0)]
+        let c1 = mLINEcolor[(Math.abs(order+1))%6]
+
+        // let c1 = mLINEcolor[order]
+        let c2 = mLINEcolor[order]
+
+
+
+
+        // console.log(nx1,nx,ny1,ny2)
 
         mLINEstops[order] = [
-            {
-                "color": mLINEcolor[(Math.abs(order+1))%6],
-                "offset": "10%"
-            },
-            {
-                "color":  mLINEcolor[order],
-                "offset": "90%"
-            }
+            {"color": c1,   "offset": "10%"},
+            {"color": c2,   "offset": "90%"},
         ];
 
-        for (var i = 0, length = mLINEstops[order].length; i < length; i++) {
+        for (var i = 0; i < mLINEstops[order].length; i++) {
             var stop = document.createElementNS(svgns, 'stop');
             stop.setAttribute('offset', mLINEstops[order][i].offset);
             stop.setAttribute('stop-color', mLINEstops[order][i].color);
             mLINEgradient[order].appendChild(stop);
         }
-
         //? ug!  This gradiant spec is one of the worst, and it's broken as well.  radialGradient are only radial
         //? at 45 degrees, and they disappear at 0 and 90 deg.
-        mLINEgradient[order].id = 'lineGradient'+order;
+        mLINEgradient[order].id = 'lineGradient'+gen;
         mLINEgradient[order].setAttribute('cx', "50%");
         mLINEgradient[order].setAttribute('cy', "50%");
         mLINEgradient[order].setAttribute('r', "100%");//this_length);
@@ -1065,46 +1095,38 @@ function drawTree(branch_angle, rotation) {
         mLINEline[order].setAttribute('x2', nx2.toString())
         mLINEline[order].setAttribute('y2', ny2.toString())
 
-        mLINEline[order].setAttribute("id", "lines"+order);
-        mLINEline[order].setAttribute('stroke', 'url(#lineGradient'+order+')');
-        mLINEline[order].setAttribute("opacity", "1");
-
-        mLINEline[order].setAttribute("stroke-width", newpensize);
-        this_opacity = 1//opacities[order]
-        mLINEline[order].setAttribute("opacity", this_opacity);
+        mLINEline[order].setAttribute("id", "lines"+gen);
+        mLINEline[order].setAttribute('stroke', 'url(#lineGradient'+gen+')');
+        // mLINEline[order].setAttribute("opacity", "1");
+        mLINEline[order].setAttribute("stroke-width",newpensize);
+        mLINEline[order].setAttribute("opacity", opacities[order]);
 
         svg.appendChild(mLINEdefs[order]);
-        // svg.appendChild(mLINEline[order]);
 
-
-
-        // what line sto show/hide
+        //? what lines to show/hide
         if (show_all_lines == 1) {
             if (show_0 == 1 && order == 0) {
+                // console.log(show_all_lines,show_0,order)
+                // console.log(mLINEline[order])
                 svg.appendChild(mLINEline[order]);
-                // svg.appendChild(newLine);
             }
             if (show_1 == 1 && order == 1) {
                 svg.appendChild(mLINEline[order]);
-                // svg.appendChild(newLine);
             }
             if (show_2 == 1 && order == 2) {
                 svg.appendChild(mLINEline[order]);
-                // svg.appendChild(newLine);
             }
             if (show_3 == 1 && order == 3) {
                 svg.appendChild(mLINEline[order]);
-                // svg.appendChild(newLine);
             }
             if (show_4 == 1 && order == 4) {
                 svg.appendChild(mLINEline[order]);
-                // svg.appendChild(newLine);
             }
             if (show_5 == 1 && order == 5) {
                 svg.appendChild(mLINEline[order]);
-                // svg.appendChild(newLine);
             }
         }
+         // if (branch_angle == 90) {debugger}
         gen++;
     };
 
@@ -1188,6 +1210,7 @@ function drawTree(branch_angle, rotation) {
 //@ SD 
     // console.log("drawBox("+gMin_x+","+gMax_x+","+gMin_y+","+gMax_y+")")
     // drawBox(gMin_x, gMax_x, gMin_y, gMax_y)
+    //? this only works here (not in listeners)
     if (zoomin == 1) {
         zoomvb(gMin_x, gMax_x, gMin_y, gMax_y)  
         showtext=0; //? turn off the menu, as it is unreadable

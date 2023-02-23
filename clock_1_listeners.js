@@ -133,8 +133,24 @@
                     log("Showing text") 
                 }
             }
+            //? ──────────────────────────────────────────────── SCREENSAVE
+            if (lastkey['Alt'] && lastkey['KeyP']) { screensave= toggle(screensave,2); log("screensave: "+screensave) }
             //? ──────────────────────────────────────────────── ZOOM
-            if (lastkey['Alt'] && lastkey['KeyT']) { zoomin= toggle(zoomin,2); log("Zoomin: "+zoomin) }
+            if (lastkey['Alt'] && lastkey['KeyT']) { 
+                zoomin= toggle(zoomin,2); 
+                log("Zoomin: "+zoomin) 
+
+                //? this doesn't work here
+                // if (zoomin == 1) {
+                //     zoomvb(gMin_x, gMax_x, gMin_y, gMax_y)  
+                //     showtext=0; //? turn off the menu, as it is unreadable
+                // } else {
+                //     if (gMin_x+gMax_x+gMin_y+gMax_y != 0) {
+                //         zoomvb(-960, 960, -512, 512)  
+                //         showtext = 1 //? turn menu back up
+                //     }
+                // }
+            }
             //? ──────────────────────────────────────────────── COLRS
             if (lastkey['Alt'] && lastkey['KeyR']) { cycle_colors= toggle(cycle_colors,num_of_colors); log("Cycle Colors: "+cycle_colors) }
             //? ──────────────────────────────────────────────── MERGE

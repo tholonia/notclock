@@ -21,6 +21,9 @@ The four main files are:
 
 - `clock_1_merge.py`
   - Python script to merge the three files into one file called `notclock.svg`
+- `sserver.py`
+  - local server used to save each image as a screenshot.  See more info below
+
 
 
 The files have been broken up in three parts to make editing easier.
@@ -73,7 +76,7 @@ The characters in brackets [] represent the HTML query string variable name that
 
 **⌥ N** `[aN]`   ++Circles Radius      *Increases size of circles*
 **⌥ B** `[aB]`    --Circles Radius        *Decreases size of circles*
-**⌥ M** `[aD]`      Cycle circles         *Cycles though circle themes* 
+**⌥ M** `[aM]`      Cycle circles         *Cycles though circle themes* 
 **⌥ X** `[aX]`  ++Circles Opacity     *Increases density of sphere*
 **⌥ Z** `[aZ]`   --Circles Opacity       *Increases translucency of circle*
 **⌥ R** `[aR]`      Cycle colors          *Cycles thru various color themes*
@@ -130,6 +133,9 @@ The following query parameters are only available for use by adding them manuall
 ## Notes
 
 - To copy the query string, the app much first be paused (space bar) first, otherwise the string gets updated and the selected text is unselected.
+
+In the code there is a call to a websocket client running on the local machine that will make a screenshot for every image.  To enable this feature, you need to install a sever to get the message and make a screenshot.  ‘sserver.py’ is the one I use, which is limited to 1 screenshot per second,. just because I use seconds as the filename.
+
 
 ## Bugs
 
