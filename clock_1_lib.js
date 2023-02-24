@@ -777,7 +777,7 @@ function drawTree(branch_angle, rotation) {
         //@ DEBUG Doesn't exactly do what I want
         let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
 
-        console.log(gen,cycle_colors,colors2)
+//        console.log(gen,cycle_colors,colors2)
         let pathclr = colors2[cycle_colors][gen]
         var newPath_r = document.createElementNS(svgns, 'path');
         var newPath_l = document.createElementNS(svgns, 'path');
@@ -805,7 +805,7 @@ function drawTree(branch_angle, rotation) {
         gradient.setAttribute('r', '.8');
         DATdefs.appendChild(gradient);
 
-        console.log(gen,path_r)
+//        console.log(gen,path_r)
         newPath_r.setAttribute('d', ""+path_r[gen]);
         newPath_r.setAttribute("fill-opacity", "0");
         newPath_r.setAttribute("stroke-width", path_width);
@@ -881,9 +881,6 @@ function drawTree(branch_angle, rotation) {
 
             //? rotate the light source
 
-
-//            ns = branch_angle
-            ns = cycle_in_range(branch_angle,0,60,0)
 
             //? This part cals the angle from the viewport x,y.  Noty used here, but good to save
             //@ let cxr =  Math.sin(deg2rad(point.vx))/3+.5
@@ -1053,15 +1050,14 @@ function drawTree(branch_angle, rotation) {
                 cycle_in_range(tree_counter,40,100,0),//polyColor_3_offset
             ]
 
-            polyColor_1_offset = parseInt(offsets[0])
-            polyColor_2_offset = parseInt(offsets[1])
-            polyColor_3_offset = parseInt(offsets[2])
-
+//            polyColor_1_offset = parseInt(offsets[0])
+//            polyColor_2_offset = parseInt(offsets[1])
+//            polyColor_3_offset = parseInt(offsets[2])
 
             var fillGradient_stops = [
-                {"color":  polyColor_1,"offset":  polyColor_1_offset+"%"},  
-                {"color":  polyColor_2,"offset":  polyColor_2_offset+"%"},
-                {"color":  polyColor_3,"offset":  polyColor_3_offset+"%"},
+                {"color":  polyColor_1,"offset":  offsets[0]+"%"},
+                {"color":  polyColor_2,"offset":  offsets[1]+"%"},
+                {"color":  polyColor_3,"offset":  offsets[2]+"%"},
             ];
 
             for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
@@ -1088,11 +1084,11 @@ function drawTree(branch_angle, rotation) {
             // console.log("alt colors:",altPolyColor_1,altPolyColor_2,altPolyColor_3)
 
 
-            //? user the same offsets
+            //? use the same offsets
             var strokeGradient_stops = [
-                {"color":  altPolyColor_1,"offset":  polyColor_1_offset+"%"},  
-                {"color":  altPolyColor_2,"offset":  polyColor_2_offset+"%"},
-                {"color":  altPolyColor_3,"offset":  polyColor_3_offset+"%"},
+                {"color":  altPolyColor_1,"offset":  offsets[0]+"%"},
+                {"color":  altPolyColor_2,"offset":  offsets[1]+"%"},
+                {"color":  altPolyColor_3,"offset":  offsets[2]+"%"},
             ];
 
             // console.log("---- STROKE -------------------------------------")
