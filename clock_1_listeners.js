@@ -195,9 +195,21 @@
             lastkey[event.key] = false
         });
 
-        eleSvg.addEventListener('mousemove', ({clientX, clientY}) => {
+        eleSvg.addEventListener('mousemove', ({clientX, clientY,screenX, screenY, pageX, pageY}) => {
             point.x = clientX;
             point.y = clientY;
+
+            point.sx = screenX;
+            point.sy = screenY;
+
+            point.px = pageX;
+            point.py = pageY;
+
+                // The cursor point, translated into svg coordinates
+            var cursorpt =  point.matrixTransform(eleSvg.getScreenCTM().inverse());
+            point.vx =  Math.round(cursorpt.x)
+            point.vy =  Math.round(cursorpt.y)
+
         })
         eleSvg.addEventListener('wheel', function(event) {
             if (event.deltaY < 0) {

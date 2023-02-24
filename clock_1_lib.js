@@ -308,8 +308,14 @@ function writeMenu() {
         //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
         rnum = 0;
         //? report mouse x/y position on teh screen
-        writGrid([_,_,_,_,"x="+point.x+" y="+point.y]);rnum++
-        writGrid([_,_,_,_,"x="+gMin_x+":"+gMax_x+" y="+gMin_y+":"+gMax_y])
+//        writGrid([_,_,_,_,"x="+gMin_x+":"+gMax_x+" y="+gMin_y+":"+gMax_y]);rnum++
+//        writGrid([_,_,_,_,"x="+point.x+" y="+point.y]);rnum++
+//        writGrid([_]);rnum++;
+//        writGrid([_,_,_,_,"x="+point.sx+" y="+point.sy]);rnum++
+//        writGrid([_]);rnum++;
+//        writGrid([_,_,_,_,"x="+point.px+" y="+point.py]);rnum++
+//        writGrid([_]);rnum++;
+        writGrid([_,_,_,_,"x="+point.vx+" y="+point.vy]);rnum++
     }
 }
 //! ┌───────────────────────────────────────────────
@@ -346,7 +352,7 @@ function makeQs(qs) {
     if (cycle_circles   != DEF_cycle_circles)   {qs = qs + "&aM=" + cycle_circles;}
     if (merge_count     != DEF_merge_count)     {qs = qs + "&aS=" + merge_count;}
     if (zoomin          != DEF_zoomin)          {qs = qs + "&aT=" + zoomin;}
-    if (screensave      != DEF_screensave)      {qs = qs + "&aT=" + screensave;}
+    if (screensave      != DEF_screensave)      {qs = qs + "&aP=" + screensave;}
     //@ ARGS
     return(qs)
 }
@@ -771,8 +777,8 @@ function drawTree(branch_angle, rotation) {
         //@ DEBUG Doesn't exactly do what I want
         let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
 
+        console.log(gen,cycle_colors,colors2)
         let pathclr = colors2[cycle_colors][gen]
-//        console.log(xgen,pathclr)
         var newPath_r = document.createElementNS(svgns, 'path');
         var newPath_l = document.createElementNS(svgns, 'path');
 
@@ -857,8 +863,8 @@ function drawTree(branch_angle, rotation) {
             mCIRgradient[order] = document.createElementNS(svgns, 'radialGradient');
             mCIRcircle[order] = document.createElementNS(svgns, 'circle');
 
-            if (cycle_circles == 1) {mCIRcolor[order] = "white"} 
-            if (cycle_circles == 2) {mCIRcolor[order] = colors2[cycle_colors][order].toString()} 
+            if (cycle_circles == 1) {mCIRcolor[order] = colors2[cycle_colors][order].toString()}
+            if (cycle_circles == 2) {mCIRcolor[order] = "white"}
             if (cycle_circles == 3) {mCIRcolor[order] = generateRandomColor()} 
 
             mCIRstops[order] = [
@@ -873,9 +879,26 @@ function drawTree(branch_angle, rotation) {
                 mCIRgradient[order].appendChild(stop);
             }
 
+            //? rotate the light source
+
+
+//            ns = branch_angle
+            ns = cycle_in_range(branch_angle,0,60,0)
+
+            //? This part cals the angle from the viewport x,y.  Noty used here, but good to save
+            //@ let cxr =  Math.sin(deg2rad(point.vx))/3+.5
+            //@ let cyr =  Math.cos(deg2rad(point.vy))/3+.5
+            //@ let cxa = rad2deg(Math.atan2(point.vy,point.vx))
+            //@ console.log("cxr",cxr,"cyr",cyr)
+
+            //? This part converts branch_angle to angle of 'light source'
+            let cxr =  Math.cos(branch_angle)/3+.5
+            let cyr =  Math.sin(branch_angle)/3+.5
+//            console.log("cxr",cxr,"cyr",cyr)
+
             mCIRgradient[order].id = 'Gradient'+order;
-            mCIRgradient[order].setAttribute('cx', '0.3');
-            mCIRgradient[order].setAttribute('cy', '0.3');
+            mCIRgradient[order].setAttribute('cx', cxr.toString());//'0.3');
+            mCIRgradient[order].setAttribute('cy', cyr.toString());//'0.3');
             mCIRgradient[order].setAttribute('r', '1');
             mCIRdefs[order].appendChild(mCIRgradient[order]);
             //? end of prep  ----------------------------------
@@ -907,81 +930,79 @@ function drawTree(branch_angle, rotation) {
         //?
         //? ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
                                                                                           
-
-        var poly_arr = false
-        //? ──────────────────────────────────────────────── "cos/sin-10"
-        if (cycle_poly == 1) {
-            poly_arr = [
-                [nx2, ny2],
-                [
-                    (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                    (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
-                ],
-                [
-                    (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                    (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
-                ],
-            ];
-        }
-        //? ──────────────────────────────────────────────── "CiN(cos*sin)-10"
-        if (cycle_poly == 2) {  
-            poly_arr =
+        function makePolyAry(n) {
+            var poly_arr = false
+            if (n==1) {
+                poly_arr = [
+                    [nx2, ny2],
                     [
-                        [nx2, ny2],
-                        [
-                            nx1 ,
-                            cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
-                        ],
-                        [
-                            nx1,
-                            cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
-                        ],
-                    ];
-        }
-        //? ──────────────────────────────────────────────── "DeltasCos(rot)"
-        if (cycle_poly == 3) {
-            poly_arr =
+                        (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                        (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
+                    ],
                     [
-                        [nx2, ny2],
-                        [
-                            nx2 - nx2 * Math.cos(rotation),
-                            ny2 + ny2 * Math.sin(rotation),
-                        ],
-                        [
-                            nx2 + nx2 * Math.cos(rotation),
-                            ny2 + ny2 * Math.sin(rotation),
-                        ],
-                    ];
-        }
-        //? ──────────────────────────────────────────────── "Petal"
-        if (cycle_poly == 4) {
-            // console.log("Usng polugon 4")
-            var petal = [
-                [0, 0]
-                , [nx1 % 10, -ny1 % 10]
-                , [-nx1 % 10, ny1 % 10]
-                , [ny1 % 10, -nx1 % 10]
-                , [-ny1 % 10, nx1 % 10]
-            ]
-            poly_arr = []
-            for (let i = 0; i < petal.length; i++) {
-                xp = petal[i][0] * 10
-                yp = petal[i][1] * 10
-                poly_arr.push({
-                    'x': xp + nx2,
-                    'y': yp + ny2
-                })
+                        (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                        (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
+                    ],
+                ];
             }
-           poly_arr = BezierCurve(poly_arr);
+            if (n == 2) {
+                poly_arr = [
+                    [nx2, ny2],
+                    [
+                        nx1 ,
+                        cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                    ],
+                    [
+                        nx1,
+                        cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                    ],
+                ];
+            }
+            if (n == 3) {
+                poly_arr = [
+                    [nx2, ny2],
+                    [
+                        nx2 - nx2 * Math.cos(rotation),
+                        ny2 + ny2 * Math.sin(rotation),
+                    ],
+                    [
+                        nx2 + nx2 * Math.cos(rotation),
+                        ny2 + ny2 * Math.sin(rotation),
+                    ],
+                ];
+            }
+            if (n == 4) {
+                // console.log("Usng polugon 4")
+                var petal = [
+                    [0, 0]
+                    , [nx1 % 10, -ny1 % 10]
+                    , [-nx1 % 10, ny1 % 10]
+                    , [ny1 % 10, -nx1 % 10]
+                    , [-ny1 % 10, nx1 % 10]
+                ]
+                poly_arr = []
+                for (let i = 0; i < petal.length; i++) {
+                    xp = petal[i][0] * 10
+                    yp = petal[i][1] * 10
+                    poly_arr.push({
+                        'x': xp + nx2,
+                        'y': yp + ny2
+                    })
+                }
+               poly_arr = BezierCurve(poly_arr);
 
-            var parr = []
-            for (let i = 0; i < poly_arr.length; i++) {
-                parr.push([poly_arr[i].x, poly_arr[i].y])
+                var parr = []
+                for (let i = 0; i < poly_arr.length; i++) {
+                    parr.push([poly_arr[i].x, poly_arr[i].y])
+                }
+                poly_arr = parr
             }
-            poly_arr = parr
+            return poly_arr
         }
-        //? ════════════════════════════════════════════════
-        if (cycle_poly > 0) {  
+
+        var poly_arr = makePolyAry(cycle_poly)
+
+        if (cycle_poly > 0) {
             updateListMinMax(poly_arr);
 
             //? ┌───────────────────────────────────────────────
@@ -995,7 +1016,8 @@ function drawTree(branch_angle, rotation) {
             var fillGradient = document.createElementNS(svgns, 'linearGradient');
             //? stops for fillGradient
             //? pick 3 colors...
-            tidx = tree_counter%6 //@ is actually branch_angle
+
+            tidx = 0//tree_counter%6 //@ is actually branch_angle
 
             clrIdx_1 = tidx
             clrIdx_2 = (tidx+2)%6
@@ -1005,25 +1027,35 @@ function drawTree(branch_angle, rotation) {
             let polyColor_1 = colors2[cycle_colors][clrIdx_1]
             let polyColor_2 = colors2[cycle_colors][clrIdx_2]
             let polyColor_3 = colors2[cycle_colors][clrIdx_3]
+
+
             //? for testing
             // let polyColor_1 = "#FF0000"
             // let polyColor_2 = "#00FF00"
             // let polyColor_3 = "#0000FF" 
 
+            //? polyColor_<n>_offset is defined globally
+
             //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
-            offsets = normalize(
-                [
-                    (polyColor_1_offset + 1)%33,
-                    (polyColor_1_offset + polyColor_2_offset+1)%66,
-                    (polyColor_1_offset + polyColor_2_offset + polyColor_3_offset+1)%99
-                ],[1,100]
-            )
-            offsets.sort(sortNumbers);
+            //@ This part was intended to show drift in the gradiant, but not working as imagined
+//            offsets = normalize(
+//                [
+//                    (polyColor_1_offset + 1)%33,
+//                    (polyColor_1_offset + polyColor_2_offset+1)%66,
+//                    (polyColor_1_offset + polyColor_2_offset + polyColor_3_offset+1)%99
+//                ],[1,100]
+//            )
+//            offsets.sort(sortNumbers);  //? make sure the offsets are sorted incrementally
 
+            offsets = [
+                cycle_in_range(tree_counter,0,60,0),//polyColor_1_offset,
+                cycle_in_range(tree_counter,20,80,0),//polyColor_2_offset,
+                cycle_in_range(tree_counter,40,100,0),//polyColor_3_offset
+            ]
 
-            polyColor_1_offset = Math.round(offsets[0])
-            polyColor_2_offset = Math.round(offsets[1])
-            polyColor_3_offset = Math.round(offsets[2])
+            polyColor_1_offset = parseInt(offsets[0])
+            polyColor_2_offset = parseInt(offsets[1])
+            polyColor_3_offset = parseInt(offsets[2])
 
 
             var fillGradient_stops = [
@@ -1031,10 +1063,6 @@ function drawTree(branch_angle, rotation) {
                 {"color":  polyColor_2,"offset":  polyColor_2_offset+"%"},
                 {"color":  polyColor_3,"offset":  polyColor_3_offset+"%"},
             ];
-            // console.log("-------- FILL ---------------------------------")
-
-            // console.log(">>>",offsets)
-            // console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
 
             for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
