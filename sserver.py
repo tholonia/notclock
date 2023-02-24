@@ -28,8 +28,10 @@ async def handler(websocket):
             degrees = dat[2]
             epoch_time = int(time.time())
             fn = f"{counter}_{degrees}_{epoch_time}.png"
-            print(f"Saving Srceen to {fn}...")
+            print(f"Saving Screen to {fn}...")
             savescreen(fn,counter,degrees)
+        if message.find("console") != -1:
+            print(message)
 
 
 async def main():

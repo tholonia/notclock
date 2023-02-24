@@ -250,7 +250,7 @@ function writeMenu() {
         writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
         writGrid([_,'◀▶','-thinner|+wider']);rnum++;
         writGrid([_,'PGUP/PGDN','+zoom in|-zoom out','(' + linelength_adj + ')']);rnum++;
-        writGrid([_,'INS/DEL','+Finer|Courser','(' + deg_adj + ')']);rnum++;
+        writGrid(['de','INS/DEL','+Finer|Courser','(' + deg_adj + ')']);rnum++;
         writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer']);rnum++;
         writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
         writGrid([_]);rnum++;
@@ -350,14 +350,15 @@ function makeQs(qs) {
     //@ ARGS
     return(qs)
 }
-
+//! ┌───────────────────────────────────────────────
+//! │ funcs to track tey min/max xy
+//! └───────────────────────────────────────────────
 function xytrack(x,y) {
     if (x>gMax_x) {gMax_x = x;}
     if (x<gMin_x) {gMin_x = x;}
     if (y>gMax_y) {gMax_y = y;}
     if (y<gMin_y) {gMin_y = y;}
 }
-
 function updateListMinMax(data) {
     //? no need to traxk if zoom is not on
     if (zoomin ==1) {
@@ -374,9 +375,9 @@ function updateObjMinMax(data) {
         }
     }
 }
-
-
-
+//! ┌───────────────────────────────────────────────
+//! │ zoom in the viewbox 
+//! └───────────────────────────────────────────────
 function zoomvb(xmin, xmax, ymin, ymax) {
     let len = Math.round(xmax-xmin);
     let hei = Math.round(ymax-ymin);
@@ -391,7 +392,9 @@ function zoomvb(xmin, xmax, ymin, ymax) {
     let vbstr =  vbMinX.toString()+" "+vbMinY.toString()+" "+vbLen.toString()+" "+vbHei.toString();
     eleSvg.setAttribute("viewBox", vbstr);
 }
-
+//! ┌───────────────────────────────────────────────
+//! │ draw a box around the min/max xy... mainly for debugging
+//! └───────────────────────────────────────────────
 function drawBox(xmin, xmax, ymin, ymax) {
     let len = Math.round(xmax-xmin);
     let hei = Math.round(ymax-ymin);
@@ -418,7 +421,9 @@ function drawBox(xmin, xmax, ymin, ymax) {
 
     zoomvb(xmin, xmax, ymin, ymax);
 }
-
+//! ┌───────────────────────────────────────────────
+//! │ func to alter the colors
+//! └───────────────────────────────────────────────
 //? https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors#:~:text=Just%20pass%20in%20a%20string,number%20(i.e.%20%2D20%20).
 const pSBC=(p,c0,c1,l)=>{
     let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
@@ -498,7 +503,9 @@ const pSBC=(p,c0,c1,l)=>{
 
 
 }
-
+//! ┌───────────────────────────────────────────────
+//! │ user to alter array of gradiant stops
+//! └───────────────────────────────────────────────
 function sortNumbers(a, b) {
   if (a > b) {
     return 1;
@@ -517,7 +524,7 @@ function drawTree(branch_angle, rotation) {
         branch_angle = parseFloat(branch_angle%360);
         branch_angle = branch_angle + 0.00001 //? more that 4 0s and lines begin to disappear
         rotation = rotation%360
-        log(branch_angle)
+//        log(branch_angle)
 
         // branch_angle = branch_angle+0.001s
         // if (branch_angle == 45*0 || 
@@ -532,7 +539,22 @@ function drawTree(branch_angle, rotation) {
         //     branch_angle = branch_angle+0.001
         // }
 
-        //! ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡ CYCLE VARS
+        //% ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+        //%
+        //%                            888                                                 
+        //%                            888                                                 
+        //%                            888                                                 
+        //%  .d8888b 888  888  .d8888b 888  .d88b.      888  888  8888b.  888d888 .d8888b  
+        //% d88P"    888  888 d88P"    888 d8P  Y8b     888  888     "88b 888P"   88K      
+        //% 888      888  888 888      888 88888888     Y88  88P .d888888 888     "Y8888b. 
+        //% Y88b.    Y88b 888 Y88b.    888 Y8b.          Y8bd8P  888  888 888          X88 
+        //%  "Y8888P  "Y88888  "Y8888P 888  "Y8888        Y88P   "Y888888 888      88888P' 
+        //%               888                                                              
+        //%          Y8b d88P                                                              
+        //%           "Y88P"                                                               
+        //%
+        //% ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+
         if (cycle_vars > 0) {
 
             for (i=0;i<6;i++) {
@@ -540,41 +562,38 @@ function drawTree(branch_angle, rotation) {
                 pre_maxlengths[i] = cycle_in_range(Math.round(branch_angle),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
             }
 
-            if (1 == 1) {
-                //? non-deterministic selection
-                cycle_circles   = randint(0, num_of_circles)
-                //? tmp disable
-                // cycle_path      = randint(0,num_of_paths)
-                cycle_dataset   = randint(0,1)
-                cycle_colors    = randint(0,num_of_colors)
-                circle_radius   = randint(5,20)
-                circle_opacity  = randint(1,100)/100
-                if (cycle_vars == 2) { //? don't change poly setting 
-                    cycle_poly = DEF_cycle_poly;
-                } else {
-                    cycle_poly      = randint(0,num_of_polys)  
-                }
+            //? non-deterministic selection
+            cycle_circles   = randint(0, num_of_circles)
+            //? tmp disable
+            cycle_path      = randint(0,num_of_paths)
+            cycle_dataset   = randint(0,1)
+            cycle_colors    = randint(0,num_of_colors)
+            circle_radius   = randint(5,20)
+            circle_opacity  = randint(1,100)/100
+            if (cycle_vars == 2) { //? don't change poly setting 
+                cycle_poly = DEF_cycle_poly;
             } else {
-                //? deterministic selection
-
-                cycle_circles   = (cycle_circles + 1) % num_of_circles
-                //? tmp disable
-                // cycle_path      = (cycle_path + 1) % num_of_paths
-                cycle_dataset   = (cycle_dataset + 1) % 2  //? less than 'num_of_datasets' ... too many
-                circle_opacity  = cycle_in_range(Math.round(branch_angle),0,100,0)/100
-                circle_radius   = cycle_in_range(Math.round(branch_angle),5,20)
-
-                //? don't change poly setting if aC=2
-                if (cycle_vars == 2) { 
-                    cycle_poly  = DEF_cycle_poly;
-                } else {
-                    cycle_poly  = (cycle_poly + 1) % num_of_polys
-                }
-                //? leave colors alone if aC=3
-                if (cycle_vars != 3) { //? don't change poly setting 
-                    cycle_colors    = (cycle_colors + 1) % num_of_colors
-                }
+                cycle_poly      = randint(0,num_of_polys)  
             }
+
+            // //? deterministic selection
+            // cycle_circles   = (cycle_circles + 1) % num_of_circles
+            // //? tmp disable
+            // //? cycle_path      = (cycle_path + 1) % num_of_paths
+            // cycle_dataset   = (cycle_dataset + 1) % 2  //? less than 'num_of_datasets' ... too many
+            // circle_opacity  = cycle_in_range(Math.round(branch_angle),0,100,0)/100
+            // circle_radius   = cycle_in_range(Math.round(branch_angle),5,20)
+
+            // //? don't change poly setting if aC=2
+            // if (cycle_vars == 2) { 
+            //     cycle_poly  = DEF_cycle_poly;
+            // } else {
+            //     cycle_poly  = (cycle_poly + 1) % num_of_polys
+            // }
+            // //? leave colors alone if aC=3
+            // if (cycle_vars != 3) { //? don't change poly setting 
+            //     cycle_colors    = (cycle_colors + 1) % num_of_colors
+            // }
         } 
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
@@ -669,10 +688,19 @@ function drawTree(branch_angle, rotation) {
     var svg = document.getElementById("svg");
 
     gen = 0
- 
     //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-    //* ███████████████████ DATASETS █████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    //*
+    //* 8888888b.         d8888 88888888888        d8888  .d8888b.  8888888888 88888888888  .d8888b.
+    //* 888  "Y88b       d88888     888           d88888 d88P  Y88b 888            888     d88P  Y88b 
+    //* 888    888      d88P888     888          d88P888 Y88b.      888            888     Y88b.      
+    //* 888    888     d88P 888     888         d88P 888  "Y888b.   8888888        888      "Y888b.   
+    //* 888    888    d88P  888     888        d88P  888     "Y88b. 888            888         "Y88b. 
+    //* 888    888   d88P   888     888       d88P   888       "888 888            888           "888 
+    //* 888  .d88P  d8888888888     888      d8888888888 Y88b  d88P 888            888     Y88b  d88P 
+    //* 8888888P"  d88P     888     888     d88P     888  "Y8888P"  8888888888     888      "Y8888P"  
+    //*
     //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+                                                                                              
 
     //? create data sets from original data
 
@@ -706,39 +734,58 @@ function drawTree(branch_angle, rotation) {
         adata_right = sortByKey(adata_right,'x');
         adata_left = sortByKey(adata_left,'y');
     }
-    //* ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-    //* ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡ PATHS ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-    //* ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+
+    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    //*
+    //* 8888888b.         d8888 88888888888 888    888  .d8888b.  
+    //* 888   Y88b       d88888     888     888    888 d88P  Y88b 
+    //* 888    888      d88P888     888     888    888 Y88b.      
+    //* 888   d88P     d88P 888     888     8888888888  "Y888b.   
+    //* 8888888P"     d88P  888     888     888    888     "Y88b. 
+    //* 888          d88P   888     888     888    888       "888 
+    //* 888         d8888888888     888     888    888 Y88b  d88P 
+    //* 888        d88P     888     888     888    888  "Y8888P"
+    // *
+    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
     if (dataform=="buildpath") {
         //? build the paths
-        //@ DEBUG need trigger to turn on/off paths
         paths = buildpath(xfullary_right)
+//        console.log(JSON.stringify(paths),null,2)
+        //? paths is just an array of 2 lists or 6 elements each...
+        //? [["M0,0","M0,0","M0,0","M0,0","M0,0","M0,0"],["M0,0","M0,0","M0,0","M0,0","M0,0","M0,0",]]
+        //? path_r and path_l contains 6 subarrays each
+
         path_r = paths[0]
         path_l = paths[1]
 
+        path_width = 1 //? override previous setting in buildpath()
         //? reset arrays to initial item only
         xfullary_right = [{'g':7,'x':0,'y':0}]
         xfullary_left = [{'g':7,'x':0,'y':0}]
 
+//        let xgen = gen
 
+        //? each gen is a single path... "M 0,0 C 0,0..."
+        //@ DEBUG Doesn't exactly do what I want
+        let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
+
+        let pathclr = colors2[cycle_colors][gen]
+//        console.log(xgen,pathclr)
         var newPath_r = document.createElementNS(svgns, 'path');
         var newPath_l = document.createElementNS(svgns, 'path');
 
-        //@ DEBUG Doesn't exactly do what I want
-        let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
-        // path_width = cycle_in_range(tree_counter, 2,10)
-        // if (tree_counter % limiter == 0) {
-        //     log(tree_counter)
-        //     log(tree_counter%20)
-        //     log(path_width)
-        // }
 
         //? prepare the gradiant stroke for the PATHS
-
         var DATdefs = document.createElementNS(svgns, 'defs');
         var gradient = document.createElementNS(svgns, 'radialGradient');
-        var stops = [{"color": "white","offset": "0%"},{"color": "#000000","offset": "100%"}];
+        var stops = [
+            {"color": colors2[cycle_colors][gen],      "offset": "0%"},
+//            {"color": "#bbbbbb",      "offset": "0%"},
+//            {"color": pathclr,      "offset": "0%"},
+            {"color": "#000000",    "offset": "100%"}
+        ];
 
         for (var i = 0, length = stops.length; i < length; i++) {
             var stop = document.createElementNS(svgns, 'stop');
@@ -749,8 +796,10 @@ function drawTree(branch_angle, rotation) {
         gradient.id = 'datasetGradient';
         gradient.setAttribute('cx', '0.5');
         gradient.setAttribute('cy', '0.3');  //? light is slightly above horizon
-        gradient.setAttribute('r', '1');
+        gradient.setAttribute('r', '.8');
         DATdefs.appendChild(gradient);
+
+        console.log(gen,path_r)
         newPath_r.setAttribute('d', ""+path_r[gen]);
         newPath_r.setAttribute("fill-opacity", "0");
         newPath_r.setAttribute("stroke-width", path_width);
@@ -758,19 +807,20 @@ function drawTree(branch_angle, rotation) {
         svg.appendChild(DATdefs);
         svg.appendChild(newPath_r);
 
-        newpensize = pensize[gen] * line_thickness
+        //% ████████████████ ADJUSTMENT ████████████████
+        // newpensize = pensize[gen] * line_thickness
 
         newPath_l.setAttribute('d', ""+path_l[gen]);
         newPath_l.setAttribute("fill-opacity", "0");
-        newPath_l.setAttribute("stroke-width", newpensize);//path_width);//@ SD
+        newPath_l.setAttribute("stroke-width", path_width);//path_width);//@ SD
         newPath_l.setAttribute('stroke', 'url(#datasetGradient)');
         svg.appendChild(DATdefs);
         svg.appendChild(newPath_l);
     }
 
-    //* ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
 
     //? loop through the generated data
+    //? length of adata_right is 126
     for (let idx = 0; idx<adata_right.length; idx++) {
         //? set the base data vars
         nx1 = adata_right[idx].x
@@ -783,9 +833,18 @@ function drawTree(branch_angle, rotation) {
         let order = lOrder[gen] //? get the actual gen value from the gens, which goes up to 126
 
         //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-        //@ ███████████████████ CIRCLES ██████████████████████████████████████████████████████████████████████████████████████████████████████████████
+        //@
+        //@  .d8888b.  8888888 8888888b.   .d8888b.  888      8888888888  .d8888b.
+        //@ d88P  Y88b   888   888   Y88b d88P  Y88b 888      888        d88P  Y88b 
+        //@ 888    888   888   888    888 888    888 888      888        Y88b.      
+        //@ 888          888   888   d88P 888        888      8888888     "Y888b.   
+        //@ 888          888   8888888P"  888        888      888            "Y88b. 
+        //@ 888    888   888   888 T88b   888    888 888      888              "888 
+        //@ Y88b  d88P   888   888  T88b  Y88b  d88P 888      888        Y88b  d88P 
+        //@ "Y8888P"  8888888 888   T88b  "Y8888P"  88888888 8888888888  "Y8888P"  
+        //@
         //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-
+                                                                        
         //? add circle
         var totcirc = 3
    
@@ -834,9 +893,20 @@ function drawTree(branch_angle, rotation) {
         //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
 
+
         //? ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-        //? ███████████████████ POLYS ████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+        //?
+        //? 8888888b.   .d88888b.  888      Y88b   d88P  .d8888b.   .d88888b.  888b    888  .d8888b.
+        //? 888   Y88b d88P" "Y88b 888       Y88b d88P  d88P  Y88b d88P" "Y88b 8888b   888 d88P  Y88b 
+        //? 888    888 888     888 888        Y88o88P   888    888 888     888 88888b  888 Y88b.      
+        //? 888   d88P 888     888 888         Y888P    888        888     888 888Y88b 888  "Y888b.   
+        //? 8888888P"  888     888 888          888     888  88888 888     888 888 Y88b888     "Y88b. 
+        //? 888        888     888 888          888     888    888 888     888 888  Y88888       "888 
+        //? 888        Y88b. .d88P 888          888     Y88b  d88P Y88b. .d88P 888   Y8888 Y88b  d88P 
+        //? 888         "Y88888P"  88888888     888      "Y8888P88  "Y88888P"  888    Y888  "Y8888P"
+        //?
         //? ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+                                                                                          
 
         var poly_arr = false
         //? ──────────────────────────────────────────────── "cos/sin-10"
@@ -1129,9 +1199,17 @@ function drawTree(branch_angle, rotation) {
          // if (branch_angle == 90) {debugger}
         gen++;
     };
-
         //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-        //! ███████████████████ SOUND ████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+        //!
+        //! .d8888b.   .d88888b.  888     888 888b    888 8888888b.  
+        //! d88P  Y88b d88P" "Y88b 888     888 8888b   888 888  "Y88b 
+        //! Y88b.      888     888 888     888 88888b  888 888    888 
+        //!  "Y888b.   888     888 888     888 888Y88b 888 888    888 
+        //!     "Y88b. 888     888 888     888 888 Y88b888 888    888 
+        //!       "888 888     888 888     888 888  Y88888 888    888 
+        //! Y88b  d88P Y88b. .d88P Y88b. .d88P 888   Y8888 888  .d88P 
+        //!  "Y8888P"   "Y88888P"   "Y88888P"  888    Y888 8888888P"
+        //!
         //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
     if (sound_initialized == 1) {
 
@@ -1877,6 +1955,7 @@ function buildpath(xfr) {
     //! load all data. 64 points total (1+2+4+8+16=31 * 2 = 64)
     //? push the 6 elemnts 
     var idxs = [6,5,4,3,2,1,0]
+    //? assign sqary_r
     for (k = 0; k<xfr.length; k++) {
         g = xfr[k]['g']
         alt_g = idxs[g]
@@ -1892,8 +1971,133 @@ function buildpath(xfr) {
             }
         }
     }
-    //? CUBIC CURVE - not curvy at all
-    function makepath_CS(q) {
+    //? not sur what I did, but the array is massive and needs to be cleaned up
+    var fixed_ary = [ [],[],[],[],[],[] ]
+    for (k=0;k<6;k++) {
+        for (i=0;i<64;i++) {
+            fixed_ary[k].push(sqary_r[k][i*4])
+        }
+    }
+    sqary_r=fixed_ary
+
+    //? join all 6*64 arrays together
+
+    //? CUBIC CURVE v5 - TRUE CURVE - OPEN          #1 True Curve Open
+    function makepath_CS1(q) {
+        path_width = 2
+        path_ary = []
+        path=[0,0,0,0,0,0]
+        let x = ""
+        for (k=0;k< sqary_r.length;k++) {
+            let s = sqary_r[k]
+            x = x + "M 0 0 "
+            j=0
+            for (i=1; i<64;i+=1) {
+                x = x + "S " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
+                i= i+j
+            }
+            path[k]=x
+        }
+        return path
+    }
+
+    //? CUBIC CURVE v5 - TRUE CURVE - CLOSED        #2 True Curve Closed
+    function makepath_CS2(q) {
+        path_width = 2
+        path_ary = []
+        path=[0,0,0,0,0,0]
+        let x = ""
+        for (k=0;k< sqary_r.length;k++) {
+            let s = sqary_r[k]
+            x = x + "M 0 0 "
+            j=0
+            for (i=1; i<64;i+=1) {
+                x = x + "S " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
+                i= i+j
+            }
+            x = x + "S 0 0 0 0z";
+            path[k]=x
+        }
+        return path
+    }
+
+    //? CUBIC CURVE v3                              #4 Complex Curve 2
+    function makepath_CS3(q) {
+        path_width = 2
+        path_ary = []
+        path=[0,0,0,0,0,0]
+
+        let x = ""
+        for (k=0;k< sqary_r.length;k++) {
+            let s = sqary_r[k]
+            x = x + "M "+s[0].x*q+","+s[0].y+" "
+            j=0
+            for (i=1; i<28;i++) {
+                x = x + "C " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                // i=i+j
+                i=j
+            }
+            path[k]=x
+        }
+        return path
+    }
+
+    //? CUBIC CURVE v4                              #6 Complex Curve 3
+    function makepath_CS4(q) {
+        path_ary = []
+        path=[0,0,0,0,0,0]
+        path_width=2  //? this is a very dense and busy path, so thinner lines
+
+        let x = ""
+        for (k=0;k< sqary_r.length;k++) {
+            let s = sqary_r[k]
+
+            x = x + "M "+s[0].x*q+","+s[0].y+" "
+            j=0
+            for (i=1; i<26;i++) {
+                x = x + "C " +s[i+j+j].x*q+","+s[i+j-j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+                // i=i+j
+                i=j
+            }
+            path[k]=x
+        }
+        return path
+    }
+
+    //? CUBIC CURVE - cmplex                        #2 Complex Curve 4
+    function makepath_CS5(q) {
         path_width = 2
         path_ary = []
         path=[0,0,0,0,0,0]
@@ -1906,179 +2110,102 @@ function buildpath(xfr) {
             for (i=3; i<64-2;i++) {
                 x = x + ""  +s[i].x*q+" "+s[i].y+","
             }
-            x = x + "S "+s[64].x*q+" "+s[64].y+","
-            x = x + ""  +s[64].x*q+" "+s[64].y+" "
+            x = x + "S "+s[63].x*q+" "+s[63].y+","
+            x = x + " "  +s[63].x*q+" "+s[63].y+" "
             path[k]=x
         }    
         return path
     }
 
+    //? CUBIC CURVE v5 - TRUE CURVE call combined- OPEN          #1 True Curve all
+    function makepath_CS6(q) {
+        var bigary = []
+        for (k=0;k<6;k++) {
+            for (i=0;i<64;i++) {
+                bigary.push(sqary_r[k][i])
+            }
+        }
+        path_width = 1
+//        path_ary = []
+        path=[]
+
+        let x = ""
+        let s = bigary
+        x = x + "M 0 0 "
+        j=0
+//        console.log(s.length)
+        for (i=1; i<128;i+=1) {
+//        console.log(i,s[i+j].x)
+            x = x + "S " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
+            x = x + "  " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
+//            i= i+j
+        }
+        for (i=1; i<6;i+=1) {
+            path.push(x)
+        }
+//        console.log(path)
+        return path
+    }
+
+{
     //? QUADRATIC CURVE = not very curvy
-    function makepath_QT(q) {
-        path_width=3
-        path_ary = []
-        path=[0,0,0,0,0,0]
-
-        let x = ""
-        for (k=0;k< sqary_r.length;k++) {
-            let s = sqary_r[k]
-            x = x + "M "+s[0].x*q+","+s[1].y+" "
-            j=0
-            for (i=1; i<64;i++) {
-                x = x + "Q " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "T " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                i= i+j
-            }
-            path[k]=x
-        }    
-        return path
-    }
-
+//    function makepath_QT(q) {
+//        path_width=3
+//        path_ary = []
+//        path=[0,0,0,0,0,0]
+//
+//        let x = ""
+//        for (k=0;k< sqary_r.length;k++) {
+//            let s = sqary_r[k]
+//            x = x + "M "+s[0].x*q+","+s[1].y+" "
+//            j=0
+//            for (i=1; i<51;i++) {
+//                x = x + "Q " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+//                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+//                x = x + "T " +s[i+j].x*q+","+s[i+j].y+" ";j++;
+//                i= i+j
+//            }
+//            path[k]=x
+//        }
+//        return path
+//    }
     //? ARC PATHS - sorta useless
-    function makepath_LA(q) {
-        path_width=3
-        path_ary = []
-        path=[0,0,0,0,0,0]
-        for (k=0;k< sqary_r.length;k++) {
-            let s = sqary_r[k]
-            let x = ""
-            x = x + "M "+s[0].x*q+","+s[1].y+" "
-            j=0
-            for (i=1; i<64;i = i++) {
-                //A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-                x = x + "L " +s[i+j].x*q+","+s[i+j].y+" ";j++
-                x = x + "A 90 90 0 0 0 " +s[i+j].x*q+","+s[i+j].y+" ";j++
-                x = x + "L " +s[i+j].x*q+","+s[i+j].y+" ";j++
-                x = x + "A 90 90 0 0 1 " +s[i+j].x*q+","+s[i+j].y+" ";j++
-                x = x + "L " +s[i+j].x*q+","+s[i+j].y+" ";j++
-                i = i+j
-            }
-            path[k]=x
-        }    
-        return path
-    }
-    //? CUBIC CURVE v2 - mosty curvy
-    function makepath_CS2(q) {
-        path_ary = []
-        path=[0,0,0,0,0,0]
-        path_width=4  
+//    function makepath_LA(q) {
+//        path_width=3
+//        path_ary = []
+//        path=[0,0,0,0,0,0]
+//        for (k=0;k< sqary_r.length;k++) {
+//            let s = sqary_r[k]
+//            let x = ""
+//            x = x + "M "+s[0].x*q+","+s[1].y+" "
+//            j=0
+//            for (i=1; i<51;i = i++) {
+//                //A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+//                x = x + "L " +s[i+j].x*q+","+s[i+j].y+" ";j++
+//                x = x + "A 60 60 0 0 0 " +s[i+j].x*q+","+s[i+j].y+" ";j++
+//                x = x + "L " +s[i+j].x*q+","+s[i+j].y+" ";j++
+//                x = x + "A 60 60 0 0 1 " +s[i+j].x*q+","+s[i+j].y+" ";j++
+//                x = x + "L " +s[i+j].x*q+","+s[i+j].y+" ";j++
+//                i = i+j
+//            }
+//            path[k]=x
+//        }
+//        return path
+//    }
+}
 
-        let x = ""
-        for (k=0;k< sqary_r.length;k++) {
-            let s = sqary_r[k]
-            x = x + "M "+s[0].x*q+","+s[0].y+" "
-            j=0
-            for (i=1; i<64;i++) {
-                x = x + "C " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                i= i+j
-            }
-            path[k]=x
-        }    
-        return path
-    }
-    //? CUBIC CURVE v3
-    function makepath_CS3(q) {
-        path_width = 2
-        path_ary = []
-        path=[0,0,0,0,0,0]
-
-        let x = ""
-        for (k=0;k< sqary_r.length;k++) {
-            let s = sqary_r[k]
-            x = x + "M "+s[0].x*q+","+s[0].y+" "
-            j=0
-            for (i=1; i<64;i++) {
-                x = x + "C " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                // i=i+j
-                i=j
-            }
-            path[k]=x
-        }    
-        return path
-    }
- 
-    //? CUBIC CURVE v4
-    function makepath_CS4(q) {
-        path_width=2
-        path_ary = []
-        path=[0,0,0,0,0,0]
-        path_width=2  //? this is a very dense and bust path, so thinner lines
-
-        let x = ""
-        for (k=0;k< sqary_r.length;k++) {
-            let s = sqary_r[k]
-
-            x = x + "M "+s[0].x*q+","+s[0].y+" "
-            j=0
-            for (i=1; i<64;i++) {
-                x = x + "C " +s[i+j+j].x*q+","+s[i+j-j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "S " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
-                // i=i+j
-                i=j
-            }
-            path[k]=x
-        }    
-        return path
-    }
- 
     updateObjMinMax(sqary_r);
+    var rs = false;
 
+    if (cycle_path == 1) { rs=[makepath_CS1(1),makepath_CS1(-1)]}  //? true curve open
+    if (cycle_path == 2) { rs=[makepath_CS2(1),makepath_CS2(-1)]}  //? true curve closed
+//    if (cycle_path == 3) { rs=[makepath_CS3(1),makepath_CS3(-1)]}  //? complex l.1
+    if (cycle_path == 3) { rs=[makepath_CS3(1),makepath_CS3(-1)]}  //? complex l.2
+    if (cycle_path == 4) { rs=[makepath_CS4(1),makepath_CS4(-1)]}  //? complex l.3
+    if (cycle_path == 5) { rs=[makepath_CS5(1),makepath_CS5(-1)]}  //? complex l.4
+    if (cycle_path == 6) { rs=[makepath_CS6(1),makepath_CS6(-1)]}  //? super complex
 
-
-    if (cycle_path == 1) {
-        path_r = makepath_CS2(1); path_l = makepath_CS2(-1); //? works
-    }
-    if (cycle_path == 2) {
-        path_r = makepath_CS(1); path_l = makepath_CS(-1);  //? works
-    }
-    if (cycle_path == 3) {
-        path_r = makepath_QT(1); path_l = makepath_QT(-1);  //? works
-    }
-    if (cycle_path == 4) {
-        path_r = makepath_LA(1); path_l = makepath_LA(-1);  //? works
-    }
-    if (cycle_path == 5) {
-        path_r = makepath_CS3(1); path_l = makepath_CS3(-1);  //? works
-    }
-    if (cycle_path == 6) {
-        path_r = makepath_CS4(1); path_l = makepath_CS4(-1);  //? works
-    }
-
-    return [path_r, path_l]        
+    return rs
 }
 
 
