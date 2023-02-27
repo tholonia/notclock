@@ -8,7 +8,8 @@ class Node {
         this.y = b;
     }
     toString() {
-        return "(" + this.x.toFixed(2) + ", " + this.y.toFixed(2) + ")";
+        return "(" + this.x + ", " + this.y + ")";
+//        return "(" + this.x.toFixed(2) + ", " + this.y.toFixed(2) + ")";
     }
 }
 //! ┌───────────────────────────────────────────────
@@ -167,15 +168,15 @@ function writGrid(args) {
     let mCols = menuCols
     var fclrs = false
     if (bg_color == "black") {
-        fclrs = ['grey','yellow','white','green','white'] 
+        fclrs = ['#dddddd','yellow','white','#00ff00','white']
     } else {
-        fclrs = ['grey','blue','black','orange','black']         
+        fclrs = ['grey','blue','black','green','black']
     }
     let fwght = ['300','600','500','400','300'] 
 
 
     for (let i=0;i<args.length; i++) {
-        if (args[0] != '✅') {       //? if first arg is '✅', use overrides
+        if (args[0] != '✅' && args[0] != '>') {       //? if first arg is '✅', use overrides
             menu_fontclr = fclrs[i]
             menu_fontweight=fwght[i]
         } else {
@@ -239,18 +240,21 @@ function writeMenu() {
     // }
     if (showtext == 0) {return}
     if (fullscreen == 0) {
+        //@ ARGS
         menu_fontweight="600";menu_fontclr="#00ffff"; writGrid(['✅',_,_,_,'⌥ = Alt']);
         menu_fontweight="600";menu_fontclr="#00ff00"; writGrid(['✅',_,_,'⇧ = Shift']);
         menu_fontweight="600";menu_fontclr="#ff00ff"; writGrid(['✅',_,'^ = Ctrl'])
-        menu_fontweight="600";menu_fontclr="red"; writGrid(['✅','NOTE:']);rnum++;
-        //? the above are all written on the same line, as they have to "rnum++' at the end.
+        menu_fontweight="600";menu_fontclr="#ffFF00"; writGrid(['✅','⌘ = Meta'])
+        rnum++;
+//        menu_fontweight="600";menu_fontclr="red"; writGrid(['✅','NOTE:']);rnum++;
+        //? the above are all written on the same line, as they have no "rnum++' at the end.
         writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
         menu_fontweight="300"
         writGrid([_,'HOME','Toggle BG (B/W)']);rnum++;
         writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
         writGrid([_,'◀▶','-thinner|+wider']);rnum++;
         writGrid([_,'PGUP/PGDN','+zoom in|-zoom out','(' + linelength_adj + ')']);rnum++;
-        writGrid(['de','INS/DEL','+Finer|Courser','(' + deg_adj + ')']);rnum++;
+        writGrid(['de','INS/DEL','+Finer°|Courser°','(' + deg_adj + '°)']);rnum++;
         writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer']);rnum++;
         writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
         writGrid([_]);rnum++;
@@ -263,27 +267,22 @@ function writeMenu() {
         writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+') '+names_of_polys[cycle_poly]]);rnum++;
         writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
         writGrid(['aC','⌥ C','Cycle Vars','(' + cycle_vars+') '+names_of_vars[cycle_vars]]);rnum++;
+        writGrid(['aY','⌥ Y','Cycle Ratios','(' + cycle_ratios+') '+names_of_ratios[cycle_ratios]]);rnum++;
         writGrid([_]);rnum++;
-        writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius+')']);rnum++;
+        writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius.toFixed(2)+')']);rnum++;
         writGrid(['aX','⌥ (X|Z)','Circle opacity +/-',   '(' +circle_opacity+')']);rnum++;
         writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
         writGrid(['aS','⌥ (S|W)','Merge Count   +/-',   '(' + merge_count + ')']);rnum++;
         writGrid(['aT','⌥ T','Dynamic Zoom on/off',   '(' + zoomin + ')']);rnum++;
-
-        writGrid([_,'⌥ J','Jump fwd 5°']);rnum++;
+        writGrid(['aJ','(⌥|⌘) J','Jump fwd/back '+jump_delta+'°']);rnum++;
         writGrid([_]);rnum++;
         writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
         writGrid(['ca0','^⌥ 0','Show/Hide All Lines','(' + show_all_lines + ') '+names_of_show_all_lines[show_all_lines]]);rnum++;
         writGrid([_]);rnum++;
-        writGrid([_,'^⇧Z','Show/Hide this menu']);rnum++;
+        writGrid([_,'⌥ Q','Show/Hide this menu']);rnum++;
         writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
         writGrid(['aP','⌥ P','Screen Save','(' + screensave + ')']);rnum++;
         writGrid([_,'SPACE','Pause/Run']);rnum++;
-        writGrid([_]);rnum++;
-        writGrid([_]);rnum++;
-        writGrid([_]);rnum++; 
-        writGrid([_]);rnum++;
-        writGrid([_]);rnum++;
         writGrid([_]);rnum++;
         writGrid([_]);rnum++;
         if (loop_delay < 4) {
@@ -294,15 +293,18 @@ function writeMenu() {
         }
         writGrid([_]);rnum++;
         writGrid([_]);rnum++;
-        //@ ARGS
         writGrid(['Query String']);rnum++;
         let qs = makeQs(href).match(/.{1,140}/g);  //? limit chars to line to 140, return array of lines
-        let ba = (branch_angle % 360).toFixed(2)
-        for (i=0;i<qs.length;i++) {
-            writGrid([qs[i]]);rnum++;
+        let ba = (branch_angle % 360)//.toFixed(2)
+        for (let i=0;i<qs.length;i++) {
+            menu_fontweight="600";menu_fontclr="RED";
+            writGrid(['>',qs[i]]);rnum++;
         }
-        writGrid([_]);rnum++;
-        writGrid(['TIME PER CYCLE: '+cycletime+'/ Current Angle: '+ba]);rnum++;
+        rnum++;
+//        writGrid([_]);rnum++;
+        menu_fontweight="600";menu_fontclr="RED";
+        writGrid(['>',"x="+point.vx+" y="+point.vy+"  a="+(point.va).toFixed(12)+"°"]);rnum++
+        writGrid(['TIME PER CYCLE: ['+cycletime+']/ sec: '+seconds+' / Bifurcation: '+ba+"° / Count: "+tree_counter]);rnum++;
         writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
         //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
         //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
@@ -315,7 +317,7 @@ function writeMenu() {
 //        writGrid([_]);rnum++;
 //        writGrid([_,_,_,_,"x="+point.px+" y="+point.py]);rnum++
 //        writGrid([_]);rnum++;
-        writGrid([_,_,_,_,"x="+point.vx+" y="+point.vy]);rnum++
+//        writGrid([_,_,_,_,"x="+point.vx+" y="+point.vy+"  a="+(point.va).toFixed(2)+"°"]);rnum++
     }
 }
 //! ┌───────────────────────────────────────────────
@@ -353,6 +355,9 @@ function makeQs(qs) {
     if (merge_count     != DEF_merge_count)     {qs = qs + "&aS=" + merge_count;}
     if (zoomin          != DEF_zoomin)          {qs = qs + "&aT=" + zoomin;}
     if (screensave      != DEF_screensave)      {qs = qs + "&aP=" + screensave;}
+    if (cycle_ratios    != DEF_cycle_ratios)    {qs = qs + "&aY=" + cycle_ratios;}
+    if (jump_delta    != DEF_jump_delta)    {qs = qs + "&aJ=" + jump_delta;}
+    if (linemode    != DEF_linemode)    {qs = qs + "&li=" + linemode;}
     //@ ARGS
     return(qs)
 }
@@ -360,23 +365,23 @@ function makeQs(qs) {
 //! │ funcs to track tey min/max xy
 //! └───────────────────────────────────────────────
 function xytrack(x,y) {
-    if (x>gMax_x) {gMax_x = x;}
-    if (x<gMin_x) {gMin_x = x;}
-    if (y>gMax_y) {gMax_y = y;}
-    if (y<gMin_y) {gMin_y = y;}
+    if ((x+circle_radius) > gMax_x) {gMax_x = (x+circle_radius);}
+    if ((x-circle_radius) < gMin_x) {gMin_x = (x-circle_radius);}
+    if ((y+circle_radius) > gMax_y) {gMax_y = (y+circle_radius);}
+    if ((y-circle_radius) < gMin_y) {gMin_y = (y-circle_radius);}
 }
 function updateListMinMax(data) {
     //? no need to traxk if zoom is not on
     if (zoomin ==1) {
-        for (i=0;i<data.length;i++) {
+        for (let i=0;i<data.length;i++) {
             xytrack(data[i][0],data[i][1]);
             // console.log("xytrack("+data[i][0]+","+data[i][1]+")=>"+gMax_x+","+gMin_y)
         }
     }
 }
 function updateObjMinMax(data) {
-    for (i=0;i<data.length;i++) {
-        for (j=0;j<data[i].length;j++){
+    for (let i=0;i<data.length;i++) {
+        for (let j=0;j<data[i].length;j++){
             xytrack(data[i][j].x,data[i][j].y);
         }
     }
@@ -527,10 +532,9 @@ function sortNumbers(a, b) {
 function drawTree(branch_angle, rotation) {
         //FIXME for some reason, these angles do not appear when integers!  Javascript really sucks!!
         //@ AND!!! is a do a toFixed(2), branch_angle becomes rotation !!!!!!!
-        branch_angle = parseFloat(branch_angle%360);
+        branch_angle = branch_angle%360;
         branch_angle = branch_angle + 0.00001 //? more that 4 0s and lines begin to disappear
         rotation = rotation%360
-//        log(branch_angle)
 
         // branch_angle = branch_angle+0.001s
         // if (branch_angle == 45*0 || 
@@ -562,45 +566,100 @@ function drawTree(branch_angle, rotation) {
         //% ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
         if (cycle_vars > 0) {
-
-            for (i=0;i<6;i++) {
-                pensize[i] = cycle_in_range(Math.round(branch_angle),0,DEF_pensize[i],0) //? use initialial values of pensize[]
-                pre_maxlengths[i] = cycle_in_range(Math.round(branch_angle),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+            if (cycle_vars == 1) {
+                //? no PATH lines
+                for (let i=0;i<6;i++) {
+                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                }
+                cycle_circles   = randint(0, num_of_circles-1)
+                circle_radius   = randint(5,20)
+                cycle_colors    = randint(0,num_of_colors-1)
+                circle_opacity  = randint(1,10)/10  //@ does nothing to lines, only circles
+                cycle_poly      = randint(0,num_of_polys-1)
+                cycle_dataset   = randint(0,1)
+                cycle_ratios    = randint(0,num_of_ratios-1)
             }
-
-            //? non-deterministic selection
-            cycle_circles   = randint(0, num_of_circles)
-            //? tmp disable
-            cycle_path      = randint(0,num_of_paths)
-            cycle_dataset   = randint(0,1)
-            cycle_colors    = randint(0,num_of_colors)
-            circle_radius   = randint(5,20)
-            circle_opacity  = randint(1,100)/100
-            if (cycle_vars == 2) { //? don't change poly setting 
-                cycle_poly = DEF_cycle_poly;
-            } else {
-                cycle_poly      = randint(0,num_of_polys)  
+            //? paths, colors, lines
+            if (cycle_vars == 2) {
+                for (let i=0;i<6;i++) {
+                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                }
+                cycle_path      = randint(0,num_of_paths-1)
+                cycle_colors    = randint(0,num_of_colors-1)
+                cycle_ratios    = randint(0,num_of_ratios-1)
             }
+            //? PATHs and linemode only
+            if (cycle_vars == 3) {
+                show_all_lines = 0
+                linemode=2
 
-            // //? deterministic selection
-            // cycle_circles   = (cycle_circles + 1) % num_of_circles
-            // //? tmp disable
-            // //? cycle_path      = (cycle_path + 1) % num_of_paths
-            // cycle_dataset   = (cycle_dataset + 1) % 2  //? less than 'num_of_datasets' ... too many
-            // circle_opacity  = cycle_in_range(Math.round(branch_angle),0,100,0)/100
-            // circle_radius   = cycle_in_range(Math.round(branch_angle),5,20)
+                for (let i=0;i<6;i++) {
+                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                }
+                cycle_path      = randint(0,num_of_paths-1)
+                cycle_colors    = randint(0,num_of_colors-1)
 
-            // //? don't change poly setting if aC=2
-            // if (cycle_vars == 2) { 
-            //     cycle_poly  = DEF_cycle_poly;
-            // } else {
-            //     cycle_poly  = (cycle_poly + 1) % num_of_polys
-            // }
-            // //? leave colors alone if aC=3
-            // if (cycle_vars != 3) { //? don't change poly setting 
-            //     cycle_colors    = (cycle_colors + 1) % num_of_colors
-            // }
-        } 
+            }
+            //? no lines or paths
+            if (cycle_vars == 4) {
+                show_all_lines = 0
+                linemode=2
+
+                for (let i=0;i<6;i++) {
+                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                }
+                cycle_circles   = randint(0, num_of_circles-1)
+                circle_radius   = randint(5,20)
+                cycle_colors    = randint(0,num_of_colors-1)
+                circle_opacity  = randint(1,10)/10  //@ does nothing to lines, only circles
+                cycle_poly      = randint(0,num_of_polys-1)
+                cycle_dataset   = randint(0,1)
+                cycle_ratios    = randint(0,num_of_ratios-1)
+
+            }
+            //? no cycling vars
+            if (cycle_vars == 5) {
+                show_all_lines = 1
+                linemode=1
+
+                // OK if (cycle_path==0) {cycle_path=1}
+                if (cycle_circles==0) {cycle_circles=1}  //? 1=color, 2-white
+
+                if (nowsecs()%2 == 0 && wait_flag == false) {cycle_path = randint(1,num_of_paths-1);}
+//                //? the '-1' is to eliminate the random colors which are always the last in the array
+                let cr = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,2]
+                if (nowsecs()%2 == 0 && wait_flag == false) {cycle_circles = cr[randint(0,cr.length-1)];}
+                if (nowsecs()%2 == 0 && wait_flag == false) {cycle_colors = randint(0,num_of_colors-1);}
+                if (nowsecs()%2 == 0 && wait_flag == false) {cycle_ratios = randint(0,num_of_ratios-1);}
+                wait_flag = true
+
+                for (let i=0;i<6;i++) {
+                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                    //? ADDING 1000 JUST T IT DOES NOT START AS A MICRODOT
+                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter+100),0,pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                }
+                circle_radius   = cycle_in_range(tree_counter,0,80,0)/3
+                circle_opacity  = cycle_in_range(tree_counter,0,10,0)/10  //@ does nothing to lines, only circles
+
+                for (let i=0;i<6;i++) {
+                    let c = xdlAry[i][cycle_in_range(tree_counter,0,100,0)]
+                    opacities[i] = cycle_in_range(c,0,100,0)/100
+                    console.log("opacities["+i+"]:"+opacities[i] )
+               }
+
+
+
+
+//                cycle_poly      = randint(0,num_of_polys)
+//                cycle_dataset   = randint(0,1)
+//                cycle_ratios    = randint(0,num_of_ratios-1)
+
+            }
+        }
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
     if (preset_changed == true) {
@@ -639,9 +698,12 @@ function drawTree(branch_angle, rotation) {
                 case 'aM': cycle_circles   = qsary[key]; break;
                 case 'aS': merge_counts    = qsary[key]; break;
                 case 'FS': fullscreen      = qsary[key]; break;
-                case 'aA':  cycle_preset   = qsary[key]; break;  //? it makes no sense to use this one
-                case 'aT':  zoomin         = qsary[key]; break;  //? it makes no sense to use this one
-                case 'aP':  screensave     = qsary[key]; break;  //? it makes no sense to use this one
+                case 'aA':  cycle_preset   = qsary[key]; break;
+                case 'aT':  zoomin         = qsary[key]; break;
+                case 'aP':  screensave     = qsary[key]; break;
+                case 'aY':  cycle_ratios   = qsary[key]; break;
+                case 'aJ':  jump_delta   = qsary[key]; break;
+                case 'li':  linemode   = qsary[key]; break;
             }
         }
         preset_changed = false
@@ -670,7 +732,7 @@ function drawTree(branch_angle, rotation) {
     }
     if (cycle_colors == 2) {  //? random colors
         for (let i = 0; i < 7; i++) {
-            colors2[2][i] = generateRandomColor()
+            colors2[num_of_colors-1][i] = generateRandomColor() //? last in array
         }
     }
     //? ────────────────────────────────────────────────
@@ -766,7 +828,6 @@ function drawTree(branch_angle, rotation) {
         path_r = paths[0]
         path_l = paths[1]
 
-        path_width = 1 //? override previous setting in buildpath()
         //? reset arrays to initial item only
         xfullary_right = [{'g':7,'x':0,'y':0}]
         xfullary_left = [{'g':7,'x':0,'y':0}]
@@ -778,18 +839,45 @@ function drawTree(branch_angle, rotation) {
         let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
 
 //        console.log(gen,cycle_colors,colors2)
-        let pathclr = colors2[cycle_colors][gen]
         var newPath_r = document.createElementNS(svgns, 'path');
         var newPath_l = document.createElementNS(svgns, 'path');
 
+        //? normal gradient settings for linemode
+        var lcx = 0.5
+        var lcy = 0.3
+        var lr = 0.8
+//        console.log("gen",gen,cycle_colors)
+//        jstr(colors2[cycle_colors])
+        var lineclr = false
+//        try {
+            lineclr = colors2[cycle_colors][gen]
+//        } catch {
+//            lineclr = "white"
+//            console.log("*VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
+//            console.log("colors2", colors2)
+//            console.log("cycle_colors", cycle_colors)
+//            console.log("gen", gen)
+//            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+//
+//        }
+        path_width = 1 //? override previous setting in buildpath()
+        //? override for linemode when viewiun just lines
+
+
+
+        if (linemode > 0) {
+           path_width = linemode //? override previous setting in buildpath()
+           lineclr = "white"
+           lcx = 0.5
+           lcy = 0.5
+           lr = 1
+        }
 
         //? prepare the gradiant stroke for the PATHS
         var DATdefs = document.createElementNS(svgns, 'defs');
         var gradient = document.createElementNS(svgns, 'radialGradient');
         var stops = [
-            {"color": colors2[cycle_colors][gen],      "offset": "0%"},
-//            {"color": "#bbbbbb",      "offset": "0%"},
-//            {"color": pathclr,      "offset": "0%"},
+            {"color": lineclr,      "offset": "0%"},
             {"color": "#000000",    "offset": "100%"}
         ];
 
@@ -800,12 +888,13 @@ function drawTree(branch_angle, rotation) {
             gradient.appendChild(stop);
         }
         gradient.id = 'datasetGradient';
-        gradient.setAttribute('cx', '0.5');
-        gradient.setAttribute('cy', '0.3');  //? light is slightly above horizon
-        gradient.setAttribute('r', '.8');
+        gradient.setAttribute('cx', lcx);
+        gradient.setAttribute('cy', lcy);  //? light is slightly above horizon
+        gradient.setAttribute('r', lr);
         DATdefs.appendChild(gradient);
 
 //        console.log(gen,path_r)
+
         newPath_r.setAttribute('d', ""+path_r[gen]);
         newPath_r.setAttribute("fill-opacity", "0");
         newPath_r.setAttribute("stroke-width", path_width);
@@ -882,15 +971,14 @@ function drawTree(branch_angle, rotation) {
             //? rotate the light source
 
 
-            //? This part cals the angle from the viewport x,y.  Noty used here, but good to save
+            //? This part calcs the angle from the viewport x,y.  Not used here, but good to save
             //@ let cxr =  Math.sin(deg2rad(point.vx))/3+.5
             //@ let cyr =  Math.cos(deg2rad(point.vy))/3+.5
-            //@ let cxa = rad2deg(Math.atan2(point.vy,point.vx))
-            //@ console.log("cxr",cxr,"cyr",cyr)
 
             //? This part converts branch_angle to angle of 'light source'
-            let cxr =  Math.cos(branch_angle)/3+.5
-            let cyr =  Math.sin(branch_angle)/3+.5
+            //? +90° to adjust the coords to top=0°, then +180° to place teh light src at top when top=0°
+            let cxr =  Math.cos(deg2rad(branch_angle+90+180))/3+.5
+            let cyr =  Math.sin(deg2rad(branch_angle+90+180))/3+.5
 //            console.log("cxr",cxr,"cyr",cyr)
 
             mCIRgradient[order].id = 'Gradient'+order;
@@ -941,6 +1029,8 @@ function drawTree(branch_angle, rotation) {
                         (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
                     ],
                 ];
+                xytrack(poly_arr[1][0],poly_arr[1][1],)
+                xytrack(poly_arr[2][0],poly_arr[2][1],)
             }
             if (n == 2) {
                 poly_arr = [
@@ -954,6 +1044,8 @@ function drawTree(branch_angle, rotation) {
                         cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
                     ],
                 ];
+                xytrack(poly_arr[1][0],poly_arr[1][1],)
+                xytrack(poly_arr[2][0],poly_arr[2][1],)
             }
             if (n == 3) {
                 poly_arr = [
@@ -967,8 +1059,11 @@ function drawTree(branch_angle, rotation) {
                         ny2 + ny2 * Math.sin(rotation),
                     ],
                 ];
+                xytrack(poly_arr[1][0],poly_arr[1][1],)
+                xytrack(poly_arr[2][0],poly_arr[2][1],)
+
             }
-            if (n == 4) {
+            if (n == 4) { //? currently not workng
                 // console.log("Usng polugon 4")
                 var petal = [
                     [0, 0]
@@ -1249,7 +1344,7 @@ function drawTree(branch_angle, rotation) {
         //@ g=3: playSound_2()  long and short together
         //@ g=4: playSound_3()  varible length
 
-        //@ var num_of_audios = 5
+
         //@ &g=
         let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
         //? Play sound #1 (playSound_0 = LONG SOUND) (g=0)
@@ -1311,15 +1406,19 @@ function drawTree(branch_angle, rotation) {
 
 //@ SD 
     // console.log("drawBox("+gMin_x+","+gMax_x+","+gMin_y+","+gMax_y+")")
-    // drawBox(gMin_x, gMax_x, gMin_y, gMax_y)
+//     drawBox(gMin_x, gMax_x, gMin_y, gMax_y)
     //? this only works here (not in listeners)
     if (zoomin == 1) {
+        was_zoomed = 1
         zoomvb(gMin_x, gMax_x, gMin_y, gMax_y)  
         showtext=0; //? turn off the menu, as it is unreadable
     } else {
         if (gMin_x+gMax_x+gMin_y+gMax_y != 0) {
-            zoomvb(-960, 960, -512, 512)  
-            showtext = 1 //? turn menu back up
+            zoomvb(-960, 960, -512, 512)
+            if (was_zoomed == 1) {
+                showtext = 1 //? turn menu back up
+                was_zoomed = 0
+            }
         }
     }
 }
@@ -1448,28 +1547,60 @@ function generateRandomColor() {
 //! │          3, 4, 4, 5, 5, 6, 6, 7, 6, 6, 5, 5, 4, 4, 3, 4, 4, 5... <- return value 
 //! └───────────────────────────────────────────────
 function cycle_in_range(number, amin, amax, invert = 0) {
+    //@ e.g, cycle_in_range(45, 3, 20, invert = 0)
     try {
-        mod_num = number % amax
+        mod_num = number % amax  //? get number within range... 45 % 20 = 5
     } catch {
         mod_num = 0
     }
 
     try {
-        mod_num2 = number % (amax * 2)
+        mod_num2 = number % (amax * 2) //? get next val - 45 % 40 = 5
     } catch {
         mod_num2 = 0
     }
 
-    new_val1 = Math.abs(mod_num2 - (mod_num * 2))
+    new_val1 = Math.abs(mod_num2 - (mod_num * 2)) //? 5 - 10 = -5 = 5
 
     old_min = 0
     old_min = 0
-    old_max = amax
-    new_max = amax
-    new_min = amin
+    old_max = amax //? 20
+    new_max = amax //? 20
+    new_min = amin //? 3
 
-    try {
-        new_value = ((new_val1 - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
+//    //? create array for curve
+//    curveAry = []
+//    for (let i = amin; i<amax;i++) { curveAry.push(amin) }
+//    for (let i = amin; i<amax;i++) { curveAry.push(i) }
+//    for (let i = amin; i<amax;i++) { curveAry.push(amax) }
+//
+////        console.log(curveAry.length)
+//    cary = []
+//    for (let i = 0; i<curveAry.length-4;i++) {
+//        avg = (curveAry[i]+ curveAry[i+1]+ curveAry[i+2]+ curveAry[i+3]+ curveAry[i+4]+ curveAry[i+5])/6;
+//        if (i%3==0) {
+//            cary.push(avg)
+//         }
+//    }
+//    cary2 = []
+//    for (let i = 0 ; i<cary.length/2 ; i++) {
+//        cary2.push(cary[i])
+//    }
+//    for (let i=cary.length/2 ; i<cary.length ; i++) {
+//        cary2.push(parseInt(cary[i]))
+//    }
+//    console.log(cary2)
+
+//@ e.g, cycle_in_range(45, 3, 20, invert = 0)
+//@                    ((5-0) / (20-0 )) * (20-3) + 3
+//@                    (5 / 20 ) * 17 + 3
+//@                    0.25 * 17 + 3
+//@                    4.25 + 3
+//@                    7.25
+//@                    7
+
+try {
+       new_value = ((new_val1 - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
     } catch {
         new_value = 0
     }
@@ -1477,6 +1608,24 @@ function cycle_in_range(number, amin, amax, invert = 0) {
         new_value = amax - new_value
     }
     return (Math.round(new_value))
+
+    return cary[Math.round(new_value)]
+
+}
+
+
+
+function cycle_in_range2(number, nmin,nmax,amin, amax, invert = 0) {
+    //? create array of amax elements
+    rary = []
+
+    for (let i=nmin;i<nmax;i++) {
+        rary.push(i)
+    }
+    newnums = normalize(rary,[amin,amax])
+
+    newval = newnums[number]+amin
+    return newval
 }
 //! ┌───────────────────────────────────────────────
 //! │ Used in Bezier Curve
@@ -1629,7 +1778,7 @@ function clearCanvas() {
 //! │ ??? reverse engineer the generation level based on the points generated
 //! └───────────────────────────────────────────────
 function getLevel(p) {
-    for (n = 12; n >= 0; n--) {
+    for (let n = 12; n >= 0; n--) {
         if (p >= 2 ** n) {
             return (n)
         }
@@ -1739,6 +1888,37 @@ function cycletimes(loop_delay, deg_adj, leftary, rightary) {
 //! │ general loop timer with variable delay
 //! └───────────────────────────────────────────────
 var timer = {
+    running: false,
+    iv: 5000,
+    timeout: false,
+    cb: function () {},
+    start: function (cb, iv) {
+        var elm = this;
+        clearInterval(this.timeout);
+        this.running = true;
+        if (cb)
+            this.cb = cb;
+        if (iv)
+            this.iv = iv;
+        this.timeout = setTimeout(function () {
+            elm.execute(elm)
+        }, this.iv);
+    },
+    execute: function (e) {
+        if (!e.running)
+            return false;
+        e.cb();
+        e.start();
+    },
+    stop: function () {
+        this.running = false;
+    },
+    set_interval: function (iv) {
+        clearInterval(this.timeout);
+        this.start(false, iv);
+    }
+};
+var timer2 = {
     running: false,
     iv: 5000,
     timeout: false,
@@ -1980,25 +2160,25 @@ function buildpath(xfr) {
     //? push the 6 elemnts 
     var idxs = [6,5,4,3,2,1,0]
     //? assign sqary_r
-    for (k = 0; k<xfr.length; k++) {
+    for (let k = 0; k<xfr.length; k++) {
         g = xfr[k]['g']
         alt_g = idxs[g]
         x = parseFloat(xfr[k]['x'])
         y = parseFloat(xfr[k]['y'])
 
-        for (i = 0; i<6; i++) {
+        for (let i = 0; i<6; i++) {
             //? there is only 1 value in level 0, we fill in the 64 with v0 
             //? there are only 2 values in level 1, we fill in the first 32 with v0 and teh 2nd 32 with v2
             //? there are 4 values, in level 2, 8 vals in L3, 16 in l4 and 32 in L5
-            for (j = 0; j<xfr.length; j = j+(2**j)) {
+            for (let j = 0; j<xfr.length; j = j+(2**j)) {
                 sqary_r[i].push({x,y})
             }
         }
     }
     //? not sur what I did, but the array is massive and needs to be cleaned up
     var fixed_ary = [ [],[],[],[],[],[] ]
-    for (k=0;k<6;k++) {
-        for (i=0;i<64;i++) {
+    for (let k=0;k<6;k++) {
+        for (let i=0;i<64;i++) {
             fixed_ary[k].push(sqary_r[k][i*4])
         }
     }
@@ -2012,11 +2192,11 @@ function buildpath(xfr) {
         path_ary = []
         path=[0,0,0,0,0,0]
         let x = ""
-        for (k=0;k< sqary_r.length;k++) {
+        for (let k=0;k< sqary_r.length;k++) {
             let s = sqary_r[k]
             x = x + "M 0 0 "
             j=0
-            for (i=1; i<64;i+=1) {
+            for (let i=1; i<64;i+=1) {
                 x = x + "S " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
                 x = x + "  " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
                 i= i+j
@@ -2032,11 +2212,11 @@ function buildpath(xfr) {
         path_ary = []
         path=[0,0,0,0,0,0]
         let x = ""
-        for (k=0;k< sqary_r.length;k++) {
+        for (let k=0;k< sqary_r.length;k++) {
             let s = sqary_r[k]
             x = x + "M 0 0 "
             j=0
-            for (i=1; i<64;i+=1) {
+            for (let i=1; i<64;i+=1) {
                 x = x + "S " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
                 x = x + "  " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
                 i= i+j
@@ -2054,11 +2234,11 @@ function buildpath(xfr) {
         path=[0,0,0,0,0,0]
 
         let x = ""
-        for (k=0;k< sqary_r.length;k++) {
+        for (let k=0;k< sqary_r.length;k++) {
             let s = sqary_r[k]
             x = x + "M "+s[0].x*q+","+s[0].y+" "
             j=0
-            for (i=1; i<28;i++) {
+            for (let i=1; i<28;i++) {
                 x = x + "C " +s[i+j].x*q+","+s[i+j].y+" ";j++;
                 x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
                 x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
@@ -2101,12 +2281,12 @@ function buildpath(xfr) {
         path_width=2  //? this is a very dense and busy path, so thinner lines
 
         let x = ""
-        for (k=0;k< sqary_r.length;k++) {
+        for (let k=0;k< sqary_r.length;k++) {
             let s = sqary_r[k]
 
             x = x + "M "+s[0].x*q+","+s[0].y+" "
             j=0
-            for (i=1; i<26;i++) {
+            for (let i=1; i<26;i++) {
                 x = x + "C " +s[i+j+j].x*q+","+s[i+j-j].y+" ";j++;
                 x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
                 x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
@@ -2126,12 +2306,12 @@ function buildpath(xfr) {
         path_ary = []
         path=[0,0,0,0,0,0]
         j=0
-        for (k=0;k< sqary_r.length;k++) {
+        for (let k=0;k< sqary_r.length;k++) {
             let s = sqary_r[k]
             let x = ""
             x = x + "M "+s[0].x*q+" "+s[0].y+" "
             x = x + "C "+s[1].x*q+" "+s[1].y+","
-            for (i=3; i<64-2;i++) {
+            for (let i=3; i<64-2;i++) {
                 x = x + ""  +s[i].x*q+" "+s[i].y+","
             }
             x = x + "S "+s[63].x*q+" "+s[63].y+","
@@ -2141,11 +2321,11 @@ function buildpath(xfr) {
         return path
     }
 
-    //? CUBIC CURVE v5 - TRUE CURVE call combined- OPEN          #1 True Curve all
+    //? CUBIC CURVE v5 - TRUE CURVE call combined- OPEN          #6 super complex
     function makepath_CS6(q) {
         var bigary = []
-        for (k=0;k<6;k++) {
-            for (i=0;i<64;i++) {
+        for (let k=0;k<6;k++) {
+            for (let i=0;i<64;i++) {
                 bigary.push(sqary_r[k][i])
             }
         }
@@ -2157,17 +2337,14 @@ function buildpath(xfr) {
         let s = bigary
         x = x + "M 0 0 "
         j=0
-//        console.log(s.length)
-        for (i=1; i<128;i+=1) {
-//        console.log(i,s[i+j].x)
+        for (let i=1; i<128;i+=1) {
             x = x + "S " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
             x = x + "  " +s[i+j].x*q+" "+s[i+j].y+" ";j++;
-//            i= i+j
+//            i = i+j
         }
-        for (i=1; i<6;i+=1) {
+        for (let i=1; i<6;i+=1) {
             path.push(x)
         }
-//        console.log(path)
         return path
     }
 
@@ -2179,11 +2356,11 @@ function buildpath(xfr) {
 //        path=[0,0,0,0,0,0]
 //
 //        let x = ""
-//        for (k=0;k< sqary_r.length;k++) {
+//        for (let k=0;k< sqary_r.length;k++) {
 //            let s = sqary_r[k]
 //            x = x + "M "+s[0].x*q+","+s[1].y+" "
 //            j=0
-//            for (i=1; i<51;i++) {
+//            for (let i=1; i<51;i++) {
 //                x = x + "Q " +s[i+j].x*q+","+s[i+j].y+" ";j++;
 //                x = x + "  " +s[i+j].x*q+","+s[i+j].y+" ";j++;
 //                x = x + "T " +s[i+j].x*q+","+s[i+j].y+" ";j++;
@@ -2198,12 +2375,12 @@ function buildpath(xfr) {
 //        path_width=3
 //        path_ary = []
 //        path=[0,0,0,0,0,0]
-//        for (k=0;k< sqary_r.length;k++) {
+//        for (let k=0;k< sqary_r.length;k++) {
 //            let s = sqary_r[k]
 //            let x = ""
 //            x = x + "M "+s[0].x*q+","+s[1].y+" "
 //            j=0
-//            for (i=1; i<51;i = i++) {
+//            for (let i=1; i<51;i = i++) {
 //                //A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 //                x = x + "L " +s[i+j].x*q+","+s[i+j].y+" ";j++
 //                x = x + "A 60 60 0 0 0 " +s[i+j].x*q+","+s[i+j].y+" ";j++
