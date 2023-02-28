@@ -108,12 +108,12 @@ const sq2d2 = Math.sqrt(2)/2
             ]
 
 
-            //? make the lengths all metal-ratio based
-            const mratios = [
-                [0.5,0.5,0.5,0.5,0.5,0.5],
-                [1,GoldRat,GoldRat**2,GoldRat**3,GoldRat**4,GoldRat**5,GoldRat**6],
-//                [1,SilvRat,SilvRat**2,SilvRat**3,SilvRat**4,SilvRat**5,SilvRat**6],
-                [0,GoldRat,GoldRat**2,GoldRat**3,GoldRat**4,GoldRat**5,GoldRat**6],
+             //? make the lengths all metal-ratio based
+             var transRatios = []
+             const DEF_mratios = [
+                  [0.5,0.5,0.5,0.5,0.5,0.5],
+                [1,GoldRat,GoldRat**2,GoldRat**3,GoldRat**4,GoldRat**5],
+                [0,GoldRat,GoldRat**2,GoldRat**3,GoldRat**4,GoldRat**5],
                 [(23/23)*.8,(17/23)*.8,(13/23)*.8,(11/23)*.8,(7/23)*.8,(5/23)*.8],
                 [1,
                 GoldRat,
@@ -127,6 +127,7 @@ const sq2d2 = Math.sqrt(2)/2
                 [1,sq2d2,sq2d2**2,sq2d2**3,sq2d2**4,sq2d2**5,sq2d2**6],
                 [1/2.818 ,2/2.818, 1/2.818 ,0.414/2.818, 0.707/2.818, 0.5/2.818],
                 [2.828/2.818, 2/2.818, 1/2.818 ,0.414/2.818, 0.707/2.818, 0.5/2.818],
+//?                [false,false,false,false,false,false], //? reserved for transitional data
             ]
 
 

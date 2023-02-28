@@ -138,11 +138,11 @@
             }
 
 
-            //? ──────────────────────────────────────────────── SNAPSHOT
-            if (isKey && lastkey['Backspace']) {
-                snapshot=1
-                log("Snaphot")
-            }
+//            //? ──────────────────────────────────────────────── SNAPSHOT
+//            if (isKey && lastkey['Backspace']) {
+//                snapshot=1
+//                log("Snaphot")
+//            }
             //? ──────────────────────────────────────────────── BACKGROUND
             if (isKey && lastkey['Home']) {homekey();log("Changing BG color")}
             //? ──────────────────────────────────────────────── PAUSE

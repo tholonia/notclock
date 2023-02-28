@@ -309,7 +309,18 @@
             var mLINEcolor       = [false,false,false,false,false,false]
 
 
-            pause                = 0
+            var pause                = 0
+
+            var transCounter = 0
+//            var transRatios = false
+            var next_ratio = 0
+//            var inTransition = 0
+            var last_cycle_ratios = -1
+            var mratios = DEF_mratios
+            var triggered = 0
+            var divs = 10
+
+
 
             var show_message     = false
             var showtext         = true
@@ -378,9 +389,11 @@
                 iangle = nowsecs()%360;
             }
 
-            branch_angle = iangle
+            var branch_angle = iangle
 
-            path_width = 1
+            var path_width = 1
+            var path_opacity = 1
+
             //? create global audiocontext
             var context = false //new AudioContext()
             //? initial 'scale'
@@ -452,8 +465,14 @@
             timer2.start(function() {
                 wait_flag = false
                 seconds +=1
-                console.log("wait_flag",wait_flag)
+//                console.log("wait_flag",wait_flag)
             },1000);
+
+            var base_length = 130
+            for (let i = 0; i<6; i++) {
+                pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
+            }
+
 
             //! ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ START LOOP ▄▄▄▄▄▄▄
             drawTree(branch_angle, rotation);
@@ -463,13 +482,19 @@
                 }
 
                 //? rebuild ratio lengths
-                base_length = 130
 //                console.log("cycle_ratios",cycle_ratios)
 //                console.log("mratios["+cycle_ratios+"]",mratios[cycle_ratios])
-                for (let i = 0; i<6; i++) {
-                    pre_maxlengths[i] = base_length * mratios[cycle_ratios][i]
+                if (transCounter == 0) {
+                    for (let i = 0; i<6; i++) {
+                        pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
+    //                    console.log("pre_mjaxlengths[i]",i,pre_maxlengths[i])
+                    }
+                } else {
+                    for (let i = 0; i<6; i++) {
+                        pre_maxlengths[i] = (base_length * mratios[transCounter][i])||1 //? 0s not allowed
+    //                    console.log("pre_mjaxlengths[i]",i,pre_maxlengths[i])
+                    }
                 }
-
                 branch_angle = branch_angle + deg_adj;
                 //? build tree
                 drawTree(branch_angle,rotation);
@@ -483,6 +508,7 @@
                 gMax_x = 0;
                 gMin_y = 0;
                 gMax_y = 0
+//                mratios = DEF_mratios //? reset to clear transRatios
 
                 if (screensave == 1) {msgsend("saveScreen:"+branch_angle+":"+rotation)}
 //                consoleMsg("console:")
