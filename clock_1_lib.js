@@ -263,7 +263,7 @@ function writeMenu() {
         writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+') ' +names_of_colors[cycle_colors]]);rnum++;
         writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+') '+names_of_audios[cycle_audio]]);rnum++;
         writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+') '+names_of_datasets[cycle_dataset]]);rnum++;
-        writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+') '+names_of_paths[cycle_path]]);rnum++;
+        writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+') ['+path_opacity+':'+path_width+'] '+names_of_paths[cycle_path]]);rnum++;
         writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+') '+names_of_polys[cycle_poly]]);rnum++;
         writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
         writGrid(['aC','⌥ C','Cycle Vars','(' + cycle_vars+') '+names_of_vars[cycle_vars]]);rnum++;
@@ -295,7 +295,7 @@ function writeMenu() {
         writGrid([_]);rnum++;
         writGrid(['Query String']);rnum++;
         let qs = makeQs(href).match(/.{1,140}/g);  //? limit chars to line to 140, return array of lines
-        let ba = (branch_angle % 360)//.toFixed(2)
+        let ba = (branch_angle % 360).toFixed(2)
         for (let i=0;i<qs.length;i++) {
             menu_fontweight="600";menu_fontclr="RED";
             writGrid(['>',qs[i]]);rnum++;
@@ -304,7 +304,7 @@ function writeMenu() {
 //        writGrid([_]);rnum++;
         menu_fontweight="600";menu_fontclr="RED";
         writGrid(['>',"x="+point.vx+" y="+point.vy+"  a="+(point.va).toFixed(12)+"°"]);rnum++
-        writGrid(['TIME PER CYCLE: ['+cycletime+']/ sec: '+seconds+' / Bifurcation: '+ba+"° / Count: "+tree_counter]);rnum++;
+        writGrid(['TIME PER CYCLE: ['+cycletime+']/ sec: '+seconds+' / Bifurcation: '+ba+"° / Count: "+tree_counter+' / opwave:'+opwave.toFixed(2)]);rnum++;
         writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
         //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
         //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
@@ -357,7 +357,7 @@ function makeQs(qs) {
     if (screensave      != DEF_screensave)      {qs = qs + "&aP=" + screensave;}
     if (cycle_ratios    != DEF_cycle_ratios)    {qs = qs + "&aY=" + cycle_ratios;}
     if (jump_delta    != DEF_jump_delta)    {qs = qs + "&aJ=" + jump_delta;}
-    if (linemode    != DEF_linemode)    {qs = qs + "&li=" + linemode;}
+    if (path_mode    != DEF_path_mode)    {qs = qs + "&li=" + path_mode;}
     //@ ARGS
     return(qs)
 }
@@ -631,23 +631,33 @@ function drawTree(branch_angle, rotation) {
                 cycle_colors    = randint(0,num_of_colors-1)
                 cycle_ratios    = randint(0,num_of_ratios-1)
             }
-            //? PATHs and linemode only
+            //? PATHs and path_mode only
             if (cycle_vars == 3) {
                 show_all_lines = 0
-                linemode=2
+                path_mode=2
 
                 for (let i=0;i<6;i++) {
-                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
-                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                    pensize[i] = cycle_in_range(
+                        Math.round(tree_counter),
+                        1,
+                        DEF_pensize[i],
+                        0
+                    ) //? use initial values of pensize[]
+                    pre_maxlengths[i] = cycle_in_range(
+                        Math.round(tree_counter),
+                        1,
+                        DEF_pre_maxlengths[i],
+                        0
+                    ) //? use initial values of pre_maxlengths[]
                 }
-                cycle_path      = randint(0,num_of_paths-1)
+                cycle_path      = randint(1,num_of_paths-1)
                 cycle_colors    = randint(0,num_of_colors-1)
 
             }
             //? no lines or paths
             if (cycle_vars == 4) {
                 show_all_lines = 0
-                linemode=2
+                path_mode=2
 
                 for (let i=0;i<6;i++) {
                     pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
@@ -664,54 +674,93 @@ function drawTree(branch_angle, rotation) {
             }
             //? no cycling vars
             if (cycle_vars == 5) {
+
+                //? opwave is meant to be a wandering curve
+                let ang1 = Math.sin(deg2rad(randang1))
+                let mod2 = randang2 + cycle_in_range(tree_counter04,0,3599,0)/10
+                let ang2 = Math.cos(deg2rad(mod2))
+                opwave = Math.abs(ang1+ang2) * 100
+
+                // * ──────── LINE setting ────────────────────────────────────────
                 show_all_lines = 1
-
-//                linemode=1  //? show lines as white, and of linewidth 1
-//                linemode = cycle_in_range(tree_counter%5,0,5,0)
-                if (cycle_path==0) {cycle_path=1}
-                if (cycle_circles==0) {cycle_circles=1}  //? 1=color, 2-white
-                path_width = cycle_in_range(tree_counter%500,0,10,0)/1;
-                if (nowsecs()%60 == 0 && wait_flag == false) {cycle_path = randintEx(1,num_of_paths-1,cycle_path);}
-                //? the '-2' is to eliminate the random colors which are always the last in the array
-                if (circle_opacity == 0) {
-                    if (nowsecs()%4 == 0 && wait_flag == false) {cycle_circles = randintEx(0,num_of_circles-2,cycle_circles);}
-//                    cycle_circles = randintEx(0,num_of_circles-2,cycle_circles);
-                }
-
-//              if (nowsecs()%4 == 0 && wait_flag == false) {cycle_circles = randintEx(0,num_of_circles-2,cycle_circles);}
-                if (nowsecs()%6 == 0 && wait_flag == false) {cycle_colors  = randintEx(0,num_of_colors-2,cycle_colors);}
-
-                //? need to transition the ratios
-                if (nowsecs()%(divs+15) == 0 && wait_flag == false) {
-                    next_ratio =  randintEx(0,num_of_ratios-1,next_ratio)
-                    cycle_ratios = next_ratio;
-                }
-                wait_flag = true
-
-                for (let i=0;i<6;i++) {
-                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initial values of pensize[]
-                }
+                //? set PENLENGTH by counter
                 for (let i=0;i<6;i++) {
                     //? adding 1000 so it doesn't start as a microdot
                     pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter+100),0,pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+//                    pre_maxlengths[i] = cycle_in_range(Math.round(opwave+100),0,pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
                 }
-                circle_radius   = cycle_in_range(tree_counter,0,80,0)/3
-                circle_opacity  = cycle_in_range(tree_counter,0,10,0)/10  //@ does nothing to lines, only circles
-//                path_opacity = cycle_in_range(tree_counter,0,100,0)/100
-
+                //? set PENSIZE by counter
                 for (let i=0;i<6;i++) {
-                    let c = xdlAry[i][cycle_in_range(tree_counter,0,100,0)]
-                    opacities[i] = cycle_in_range(c,0,100,0)/100
-                    // pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter+100),30,pre_maxlengths[i],0)*(c/100)  //? use initialial values of pre_maxlengths[]
+                    pensize[i] = cycle_in_range(Math.round(tree_counter04),0,DEF_pensize[i],0) //? use initial values of pensize[]
                 }
 
+                //? estimate when form is smallest
+                let totlengths = pre_maxlengths[0]+pre_maxlengths[1]+pre_maxlengths[2]+pre_maxlengths[3]+pre_maxlengths[4]+pre_maxlengths[5]
+//                console.log("boxSize",boxSize)
+
+                //? when form is smallest, set RAIIO by time
+//                if (totlengths<80 && nowsecs() > next_ratio_change) {
+                if ((boxSize<40000 || totlengths<50) && nowsecs() > next_ratio_change) {
+                    next_ratio_change = nowsecs()+15
+                    next_ratio =  randintEx(0,num_of_ratios-1,next_ratio)
+                    cycle_ratios = next_ratio;
+                }
+
+                //? set LINE opacity by counter and xdlAry[]
+                for (let i=0;i<6;i++) {
+                    let c = xdlAry[i][cycle_in_range(tree_counter10,0,99,0)]
+                    let x= cycle_in_range(c,0,1000,0)/1000
+                }
+                // * ──────── PATH setting ────────────────────────────────────────
+                //? turn on PATHS
+                if (cycle_path==0) {cycle_path=1}
+                path_mode = 0
+                 path_color = colors360[tree_counter10%360]//"green"
+                //? set PATH style by time
+                if (nowsecs()%60 == 0 && wait_flag == false) {cycle_path = randintEx(1,num_of_paths-1,cycle_path);}
+
+                if (bg_color == "black") {
+                    // opwave = Math.round(Math.sin(deg2rad(point.va))+Math.cos(deg2rad(point.va-90))*100)+100
+                    path_opacity = cycle_in_range(opwave,0,100,0)/100 //? op at > 1.0 is op = 1.0
+                    if (path_opacity < 0.2) {path_opacity = 0.2}
+                    // path_opacity = opwave//cycle_in_range(opwave,20,120,0)/100 //? op at > 1.0 is op = 1.0
+                    path_width = cycle_in_range(tree_counter10%500,1,6,0)/1;
+//                    console.log("opwave",opwave,"path_opacity",path_opacity,"path_width",path_width)
+                }
+                if (bg_color == "white") {
+                    path_opacity = cycle_in_range(opwave,000,800,0)/999 //? op at > 1.0 is op = 1.0
+                    // path_opacity = 1
+                    path_width = cycle_in_range(tree_counter%500,1,4,0)/1;
+                }
+
+                // * ──────── CIRCLE setting ────────────────────────────────────────
+                //? set circles to SPHERES
+                if (cycle_circles==0) {cycle_circles=1}  //? 1=color, 2-white
+                //? the '-2' is to eliminate the random colors which are always the last in the array
+                //? set CIRCLE color by random when circles are invisible
+                if (circle_opacity == 0) {
+                    cycle_colors  = randintEx(0,num_of_colors-2,cycle_colors);
+                }
+                //? set CIRCIE radius by counter
+                circle_radius   = cycle_in_range(tree_counter,0,80,0)/3
+                //? set CIRCIE  OPACITY by counter
+                circle_opacity  = cycle_in_range(tree_counter04,0,100,0)/100  //@ does nothing to lines, only circles
+
+                // * ════════════════════════════════════════════════                
+
+                wait_flag = true
                 last_cycle_ratios = cycle_ratios
 
-
-//                cycle_poly      = randint(0,num_of_polys)
-//                cycle_dataset   = randint(0,1)
-//                cycle_ratios    = randint(0,num_of_ratios-1)
-
+                //? not used here
+                // cycle_poly      = randint(0,num_of_polys)
+                // cycle_dataset   = randint(0,1)
+                // cycle_ratios    = randint(0,num_of_ratios-1)
+                //? filter by seconds example
+                // if (nowsecs()%(divs+15) == 0 && wait_flag == false) {
+                //? makes fadeouts smoother
+                // preop = path_opacity
+                // if (path_width == 1) {path_opacity = .6} else {path_opacity = preop}
+                // if (path_width == 2) {path_opacity = .86} else {path_opacity = preop}
             }
         }
 
@@ -757,7 +806,7 @@ function drawTree(branch_angle, rotation) {
                 case 'aP':  screensave     = qsary[key]; break;
                 case 'aY':  cycle_ratios   = qsary[key]; break;
                 case 'aJ':  jump_delta   = qsary[key]; break;
-                case 'li':  linemode   = qsary[key]; break;
+                case 'li':  path_mode   = qsary[key]; break;
             }
         }
         preset_changed = false
@@ -896,32 +945,19 @@ function drawTree(branch_angle, rotation) {
         var newPath_r = document.createElementNS(svgns, 'path');
         var newPath_l = document.createElementNS(svgns, 'path');
 
-        //? normal gradient settings for linemode
+        //? normal gradient settings for path_mode
         var lcx = 0.5
         var lcy = 0.3
         var lr = 0.8
-//        console.log("gen",gen,cycle_colors)
-//        jstr(colors2[cycle_colors])
-        var lineclr = false
-//        try {
-            lineclr = colors2[cycle_colors][gen]
-//        } catch {
-//            lineclr = "white"
-//            console.log("*VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV")
-//            console.log("colors2", colors2)
-//            console.log("cycle_colors", cycle_colors)
-//            console.log("gen", gen)
-//            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-//
-//        }
-//        path_width = 1 //? override previous setting in buildpath()
-        //? override for linemode when viewiun just lines
+        if (path_color == 0) {
+            path_color = colors2[cycle_colors][gen]
+        }
+        //? override for path_mode when viewiun just lines
 
 
 
-        if (linemode > 0) {
-           path_width = linemode //? override previous setting in buildpath()
-           lineclr = "white"
+        if (path_mode > 0) {
+           path_width = path_mode //? override previous setting in buildpath()
            lcx = 0.5
            lcy = 0.5
            lr = 1
@@ -931,7 +967,7 @@ function drawTree(branch_angle, rotation) {
         var DATdefs = document.createElementNS(svgns, 'defs');
         var gradient = document.createElementNS(svgns, 'radialGradient');
         var stops = [
-            {"color": lineclr,      "offset": "0%"},
+            {"color": path_color,      "offset": "0%"},
             {"color": "#000000",    "offset": "100%"}
         ];
 
@@ -966,7 +1002,6 @@ function drawTree(branch_angle, rotation) {
         svg.appendChild(DATdefs);
         svg.appendChild(newPath_l);
     }
-
 
     //? loop through the generated data
     //? length of adata_right is 126
@@ -1458,8 +1493,11 @@ function drawTree(branch_angle, rotation) {
     }
         //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
 
-    // console.log("drawBox("+gMin_x+","+gMax_x+","+gMin_y+","+gMax_y+")")
-    // drawBox(gMin_x, gMax_x, gMin_y, gMax_y)
+//    console.log("drawBox("+gMin_x+","+gMax_x+","+gMin_y+","+gMax_y+"  w/h:"+(gMax_y-gMin_y)+"/"+(gMax_x-gMin_x)+")")
+    boxWidth = Math.round(gMax_y-gMin_y)
+    boxHeight = Math.round(gMax_x-gMin_x)
+    boxSize = boxWidth * boxHeight
+//    drawBox(gMin_x, gMax_x, gMin_y, gMax_y)
     //? this only works here (not in listeners)
     if (zoomin == 1) {
         was_zoomed = 1
