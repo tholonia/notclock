@@ -60,7 +60,7 @@ class Tree {
 
         //% █████████████ ADJUSTMENTS █████████████
         let newlinelength = maxlengths[realgen] * linelength_adj
-        //% newlinelength = newlinelength + (cycle_in_range(parseInt(tree_counter/gens), -500,500, 0)/10) 
+        //% newlinelength = newlinelength + (CiR(parseInt(tree_counter/gens), -500,500, 0)/10) 
 
         if (gens > 0) {
 
@@ -136,7 +136,7 @@ class Tree {
     }
 }
 
-function putPoly(x,y,idx) {//@ loop
+function putPoly(x,y,idx,offset=0) {//@ loop
 
     let gen = lOrder[idx]
     var svg = document.getElementById("svg");
@@ -145,20 +145,46 @@ function putPoly(x,y,idx) {//@ loop
     var poly_varr_R = []
 
     let leaf_type = cycle_flowers;
-    let poly_opacity = 0.7
+    let poly_opacity = 1
 
     // % █████████ TRIS
     if (leaf_type == 1) {
+//        poly_varr_R = [
+//             [0,0],
+//             [-10,+20],
+//             [+10,+20],
+//             [0,0],
+//             [+20,-10],
+//             [+10,-20],
+//             [+0,0],
+//             [-10,-20],
+//             [-20,10],
+//             [-0,0],
+//        ]
+        let v10 =CiR(tc[10]*2,1,10)
+        let v20 =CiR(tc[10] *2,1,10)
+//        poly_varr_R = [
+//             [0,0],
+//             [-(CiR(tc[1],-v10,+v10,1)),+(CiR(tc[1],+v20,-v20,1))],
+//             [+(CiR(tc[1],+v10,-v10,1)),+(CiR(tc[1],+v20,-v20,1))],
+//             [0,0],
+//             [+(CiR(tc[1],+v20,-v20,0)),(CiR(tc[1],-v10,+v10,0))],
+//             [+(CiR(tc[1],+v10,-v10,0)),-(CiR(tc[1],-v20,+v20,0))],
+//             [+0,0],
+//             [-(CiR(tc[1],-v10,+v10,0)),(CiR(tc[1],-v20,+v20,0))],
+//             [-(CiR(tc[1],-v20,+v20,0)),+(CiR(tc[1],+v10,-v10,0))],
+//             [-0,0],
+//        ]
         poly_varr_R = [
              [0,0],
-             [-10,+20],
-             [+10,+20],
+             [-v10,+v20],
+             [+v10,+v20],
              [0,0],
-             [+20,-10],
-             [+10,-20],
+             [+v20,-v10],
+             [+v10,-v20],
              [+0,0],
-             [-10,-20],
-             [-20,10],
+             [-v10,-v20],
+             [-v20,+v10],
              [-0,0],
         ]
     }
@@ -188,18 +214,18 @@ function putPoly(x,y,idx) {//@ loop
     }
     // % █████████ BIGTHORN
     if (leaf_type == 4) {
-        ploy_opacity = 0.4
-         let v = cycle_in_range(branch_angle,10,60,0)
-       poly_varr_R = [
+        ploy_opacity = 0.1
+        let v = CiR(branch_angle,10,60,0)
+        poly_varr_R = [
              [0,0],
-             [-(cycle_in_range(nowsecs(),-v,v,0))*-1,cycle_in_range(tree_counter,-v,v,0)],
-             [cycle_in_range(tc[10],-v,v,0),cycle_in_range(tc[4],-v,v,0)],
+             [-(CiR(nowsecs(),-v,v,0))*-1,CiR(tree_counter,-v,v,0)],
+             [CiR(tc[10],-v,v,0),CiR(tc[4],-v,v,0)],
              [0,0],
-             [cycle_in_range(tree_counter,-v,v,0),cycle_in_range(branch_angle,-v,v,0)*-1],
-             [cycle_in_range(nowsecs(),-v,v,0),(cycle_in_range(nowsecs(),-v,v,0))*-1],
+             [CiR(tree_counter,-v,v,0),CiR(branch_angle,-v,v,0)*-1],
+             [CiR(nowsecs(),-v,v,0),(CiR(nowsecs(),-v,v,0))*-1],
              [+0,0],
-             [(cycle_in_range(nowsecs(),-v,v,0))*-1,(cycle_in_range(nowsecs(),-v,v,0))*-1],
-             [cycle_in_range(branch_angle,-v,v,0)*-1,cycle_in_range(branch_counter,-v,v,0)],
+             [(CiR(nowsecs(),-v,v,0))*-1,(CiR(nowsecs(),-v,v,0))*-1],
+             [CiR(branch_angle,-v,v,0)*-1,CiR(branch_counter,-v,v,0)],
              [-0,0],
         ]
     }
@@ -236,12 +262,27 @@ function putPoly(x,y,idx) {//@ loop
             [-0.2,0.73],
             [-0,0],
         ]
+        let v1= CiR(tc[12],1,12)
+        let v2= CiR(tc[8],1,12)
 
-            for (let i = 0; i<poly_varr_R.length;i++) {
-                poly_varr_R[i][0] = poly_varr_R[i][0] * 5
-                poly_varr_R[i][1] = poly_varr_R[i][1] * 10
-            }
+        console.log(v1,v2)
+
+        for (let i = 0; i<poly_varr_R.length;i++) {
+            poly_varr_R[i][0] = poly_varr_R[i][0] * v1
+            poly_varr_R[i][1] = poly_varr_R[i][1] * v2
+        }
     }
+    // % █████████ THORNS
+    if (leaf_type == 6) {
+        for (let j=2; j>=0; j--) {
+            for (let i=2; i>=0; i--) {
+                poly_varr_R.push([randint(-20,20),randint(-20,20)]);
+            }
+        }
+        poly_varr_R.push([0,0])
+    }
+
+    //?------------------------------------------------------------------------------------
 
     poly_varr_L = poly_varr_R.reverse();
 
@@ -252,20 +293,34 @@ function putPoly(x,y,idx) {//@ loop
     }
 
     leaf_morph = 0
+
     for (let i=0;i<poly_varr.length;i++) {
         let nx = poly_varr[i][0]
         let ny = poly_varr[i][1]
 
 
-        //? STANDARD leaf
+       //? STANDARD leaf
         if (leaf_morph == 0) {
             //? rotate
             rby = (tree_counter%360)/10
-            xny = ( (ny * Math.cos(rby)) + (nx * Math.sin(rby)) )
+            srby = Math.sin(rby)
+            crby = Math.cos(rby)
+
+            xny = (ny*crby) + (nx*srby)
+
+
+//            if (y < 0) {
+//                xny = (((ny*crby) - (nx*srby))+offset) * -1
+//            } else {
+//                xny = ((ny*crby) - (nx*srby)) + offset
+//            }
+
+
+
             if (x < 0) {
-                xnx = ( (nx * Math.cos(rby)) - (ny * Math.sin(rby)) ) * -1
+                xnx = (((nx*crby) - (ny*srby))+offset) * -1
             } else {
-                xnx = ( (nx * Math.cos(rby)) - (ny * Math.sin(rby)) )
+                xnx = ((nx*crby) - (ny*srby)) + offset
             }
             px = x + xnx
             py = y + xny
@@ -282,13 +337,18 @@ function putPoly(x,y,idx) {//@ loop
     tidx = 0//tree_counter%6 //@ is actually branch_angle
 
     clrIdx_1 = tidx
-    clrIdx_2 = (tidx+2)%6
-    clrIdx_3 = (tidx+4)%6
+    clrIdx_2 = (tidx+2)%5
+    clrIdx_3 = (tidx+4)%5
 
     // //? select 3 colors from the colors2 array
-     let polyColor_1 = colors2[cycle_colors][clrIdx_1]
-     let polyColor_2 = colors2[cycle_colors][clrIdx_2]
-     let polyColor_3 = colors2[cycle_colors][clrIdx_3]
+    this_color_1 = (randintEx(0,5,this_color_1))
+    this_color_2 = (randintEx(0,5,this_color_2))
+    this_color_3 = (randintEx(0,5,this_color_3))
+
+//    console.log("this_color",this_color)
+     let polyColor_1 = colors2[this_color_1][clrIdx_1]
+     let polyColor_2 = colors2[this_color_2][clrIdx_2]
+     let polyColor_3 = colors2[this_color_3][clrIdx_3]
 
 
     //? for testing
@@ -298,9 +358,9 @@ function putPoly(x,y,idx) {//@ loop
 
 
     offsets = [
-        cycle_in_range(tree_counter,0,60,0),//polyColor_1_offset,
-        cycle_in_range(tree_counter,20,80,0),//polyColor_2_offset,
-        cycle_in_range(tree_counter,40,100,0),//polyColor_3_offset
+        CiR(tree_counter,0,60,0),//polyColor_1_offset,
+        CiR(tree_counter,20,80,0),//polyColor_2_offset,
+        CiR(tree_counter,40,100,0),//polyColor_3_offset
     ]
 
     var polyfill_Gradient_stops = [
@@ -322,9 +382,9 @@ function putPoly(x,y,idx) {//@ loop
     var polystroke_defs = document.createElementNS(svgns, 'defs');
     var polystroke_Gradient = document.createElementNS(svgns, 'linearGradient');
 
-    let altPolyColor_1 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_1+1)%6])
-    let altPolyColor_2 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_2+1)%6])
-    let altPolyColor_3 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_3+1)%6])
+    let altPolyColor_1 = pSBC(-0.6,colors2[this_color_1][(clrIdx_1+1)%6])
+    let altPolyColor_2 = pSBC(-0.6,colors2[this_color_2][(clrIdx_2+1)%6])
+    let altPolyColor_3 = pSBC(-0.6,colors2[this_color_3][(clrIdx_3+1)%6])
 
 
     //? use the same offsets
@@ -374,9 +434,24 @@ function putPoly(x,y,idx) {//@ loop
 }
 
 
-function putCircle(x,y,idx) { //@ loop
+function putCircle(x,y,idx,offset=0) { //@ loop
 //    console.log("putCircle",x,y,idx)
     var svg = document.getElementById("svg");
+
+
+
+    if (x < 0) {
+        x = (x-offset)
+    } else {
+        x = (x+offset)
+    }
+    if (y < 0) {
+        y = (y-offset)
+    } else {
+        y = (y+offset)
+    }
+
+
     porder=idx
     //? prepare the gradient for the circle
     pcir_defs[porder] = document.createElementNS(svgns, 'defs');
@@ -592,7 +667,7 @@ function writeMenu() {
         let ba = (branch_angle % 360).toFixed(2)
         for (let i=0;i<qs.length;i++) {
             menu_fontweight="600";menu_fontclr="RED";
-            writGrid(['>',qs[i]]);rnum++;
+            writGrid([qs[i]]);rnum++;
         }
         rnum++;
 //        writGrid([_]);rnum++;
@@ -654,6 +729,7 @@ function makeQs(qs) {
     if (path_mode    != DEF_path_mode)    {qs = qs + "&li=" + path_mode;}
     if (cycle_flowers  != DEF_cycle_flowers)    {qs = qs + "&mF=" + cycle_flowers;}
     if (cycle_fruit  != DEF_cycle_fruit)    {qs = qs + "&mT=" + cycle_fruit;}
+    qs = qs + "&ia=" + branch_angle;
     //@ ARGS
     return(qs)
 }
@@ -883,9 +959,15 @@ function drawTree(branch_angle, rotation) {
         if (cycle_vars > 0) {
             if (cycle_vars == 1) {
                 //? no PATH lines
+
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+                cycle_flowers = randint(-3,num_of_flowers-1);
+                // % ────────────────────────────────────────────────────────────────────────
+
                 for (let i=0;i<6;i++) {
-                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
-                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
                 }
                 cycle_circles   = randint(0, num_of_circles-1)
                 circle_radius   = randint(5,20)
@@ -904,9 +986,13 @@ function drawTree(branch_angle, rotation) {
  // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝
                     //? paths, colors, lines
             if (cycle_vars == 2) {
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+//                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+//                cycle_flowers = randint(-3,num_of_flowers-1);
+                // % ────────────────────────────────────────────────────────────────────────
                 for (let i=0;i<6;i++) {
-                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
-                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
                 }
                 cycle_path      = randint(0,num_of_paths-1)
                 cycle_colors    = randint(0,num_of_colors-1)
@@ -923,13 +1009,13 @@ function drawTree(branch_angle, rotation) {
                 path_mode=2
 
                 for (let i=0;i<6;i++) {
-                    pensize[i] = cycle_in_range(
+                    pensize[i] = CiR(
                         Math.round(tree_counter),
                         1,
                         DEF_pensize[i],
                         0
                     ) //? use initial values of pensize[]
-                    pre_maxlengths[i] = cycle_in_range(
+                    pre_maxlengths[i] = CiR(
                         Math.round(tree_counter),
                         1,
                         DEF_pre_maxlengths[i],
@@ -948,12 +1034,16 @@ function drawTree(branch_angle, rotation) {
  // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝         ╚═╝
             //? no lines or paths
             if (cycle_vars == 4) {
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+                cycle_flowers = randint(-3,num_of_flowers-1);
+                // % ────────────────────────────────────────────────────────────────────────
                 show_all_lines = 0
                 path_mode=2
 
                 for (let i=0;i<6;i++) {
-                    pensize[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
-                    pre_maxlengths[i] = cycle_in_range(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
                 }
                 cycle_circles   = randint(0, num_of_circles-1)
                 circle_radius   = randint(5,20)
@@ -973,9 +1063,13 @@ function drawTree(branch_angle, rotation) {
             if (cycle_vars == 5) {
                 //? opwave is meant to be a wandering curve
                 let ang1 = Math.sin(deg2rad(randang1))
-                let mod2 = randang2 + cycle_in_range(tc[4],0,3599,0)/10
+                let mod2 = randang2 + CiR(tc[4],0,3599,0)/10
                 let ang2 = Math.cos(deg2rad(mod2))
                 opwave = Math.abs(ang1+ang2) * 100
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+                cycle_flowers = randint(-3,num_of_flowers-1);
+                // % ────────────────────────────────────────────────────────────────────────
 
                 // % ──────── RATIO setting ────────────────────────────────────────
                 //? when form is smallest, set RATIO by time
@@ -1009,8 +1103,8 @@ function drawTree(branch_angle, rotation) {
                 //? set LINE opacity by counter and xdlAry[]
                 if (cv6inherit == false) {
                     for (let i=0;i<6;i++) {
-                        let c = xdlAry[i][cycle_in_range(tc[4],0,99,0)]
-                        let x= cycle_in_range(c,0,1000,0)/1000
+                        let c = xdlAry[i][CiR(tc[4],0,99,0)]
+                        let x= CiR(c,0,1000,0)/1000
                         opacities[i] = 1
                     }
                 }
@@ -1021,25 +1115,25 @@ function drawTree(branch_angle, rotation) {
                 let tcx_bez = []
                 let tcx_flat = []
                 for (let i=0;i<6;i++) {
-                    let v =   cycle_in_range(tc[i+1],40,100,0)
-                            - cycle_in_range(tc[i+2],0,20,0)
-                            + cycle_in_range(tc[i+3],0,20,0) ;
+                    let v =   CiR(tc[i+1],40,100,0)
+                            - CiR(tc[i+2],0,20,0)
+                            + CiR(tc[i+3],0,20,0) ;
                     tcx.push(v);
                 }
 
                 for (let i=0;i<6;i++) {
-                    let v = cycle_in_range(tcx[i],0,DEF_pre_maxlengths[i],0);
+                    let v = CiR(tcx[i],0,DEF_pre_maxlengths[i],0);
                     pre_maxlengths[i] = v;
-                    pensize[i] = cycle_in_range(tcx[i],-(1+4),i+4,0);
+                    pensize[i] = CiR(tcx[i],-(1+4),i+4,0);
                 }
 
                 // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-                if (nowsecs()%17 == 0) {
-                    cycle_fruit = randint(0,num_of_fruit-1);
-                }
-                if (nowsecs()%23 == 0) {
-                    cycle_flowers = randint(0,num_of_flowers-1);
-                }
+//                if (nowsecs()%17 == 0) {
+//                    cycle_fruit = randint(0,num_of_fruit-1);
+//                }
+//                if (nowsecs()%23 == 0) {
+//                    cycle_flowers = randint(0,num_of_flowers-1);
+//                }
 
                 // % ──────── PATH setting ────────────────────────────────────────
                 //? turn on PATHS
@@ -1054,18 +1148,18 @@ function drawTree(branch_angle, rotation) {
                 if (bg_color == "black") {
                     if (cv6inherit == false) {
                         // opwave = Math.round(Math.sin(deg2rad(point.va))+Math.cos(deg2rad(point.va-90))*100)+100
-//                        path_opacity = cycle_in_range(opwave,0,100,0)/100 //? op at > 1.0 is op = 1.0
-                        path_opacity = 1//cycle_in_range(tc[5],0,100,0)/100 //? op at > 1.0 is op = 1.0
+//                        path_opacity = CiR(opwave,0,100,0)/100 //? op at > 1.0 is op = 1.0
+                        path_opacity = 1//CiR(tc[5],0,100,0)/100 //? op at > 1.0 is op = 1.0
                         if (path_opacity < 0.2) {path_opacity = 0.2}
-                        // path_opacity = opwave//cycle_in_range(opwave,20,120,0)/100 //? op at > 1.0 is op = 1.0
-                        path_width = cycle_in_range(tc[10]%500,1,6,0)/1;
+                        // path_opacity = opwave//CiR(opwave,20,120,0)/100 //? op at > 1.0 is op = 1.0
+                        path_width = CiR(tc[10]%500,1,6,0)/1;
     //                    console.log("opwave",opwave,"path_opacity",path_opacity,"path_width",path_width)
                     }
                 }
                 if (bg_color == "white") {
-                    path_opacity = cycle_in_range(opwave,000,800,0)/999 //? op at > 1.0 is op = 1.0
+                    path_opacity = CiR(opwave,000,800,0)/999 //? op at > 1.0 is op = 1.0
                     // path_opacity = 1
-                    path_width = cycle_in_range(tree_counter%500,1,4,0)/1;
+                    path_width = CiR(tree_counter%500,1,4,0)/1;
                 }
 
                 // % ──────── CIRCLE setting ────────────────────────────────────────
@@ -1077,10 +1171,10 @@ function drawTree(branch_angle, rotation) {
                     cycle_colors  = randintEx(0,num_of_colors-2,cycle_colors);
                 }
                 //? set CIRCLE radius by counter
-                circle_radius   = cycle_in_range(tcx[0],0,17,0)
+                circle_radius   = CiR(tcx[0],0,17,0)
                 //? set CIRCIE  OPACITY by counter
                 if (cv6inherit == false) {
-                    circle_opacity  = cycle_in_range(tc[4],0,200,0)/100  //@ does nothing to lines, only circles
+                    circle_opacity  = CiR(tc[4],0,200,0)/100  //@ does nothing to lines, only circles
                 }
 
                 // % ════════════════════════════════════════════════
@@ -1198,7 +1292,7 @@ function drawTree(branch_angle, rotation) {
     //? ──────────────────────────────────────────────── CYCLE COLORS
     if (cycle_colors == 1) {  //? shift spectrum of 7 color
         for (let i = 0; i < 7; i++) {
-            colors2[1][i] = generateColor(cycle_in_range(tree_counter + (i * 45), 0, 360, 0))
+            colors2[1][i] = generateColor(CiR(tree_counter + (i * 45), 0, 360, 0))
         }
     }
     if (cycle_colors == 2) {  //? random colors
@@ -1505,11 +1599,11 @@ function drawTree(branch_angle, rotation) {
                     [nx2, ny2],
                     [
                         nx1 ,
-                        cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                        CiR(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
                     ],
                     [
                         nx1,
-                        cycle_in_range(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                        CiR(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
                     ],
                 ];
                 xytrack(poly_arr[1][0],poly_arr[1][1],)
@@ -1608,9 +1702,9 @@ function drawTree(branch_angle, rotation) {
 //            offsets.sort(sortNumbers);  //? make sure the offsets are sorted incrementally
 
             offsets = [
-                cycle_in_range(tree_counter,0,60,0),//polyColor_1_offset,
-                cycle_in_range(tree_counter,20,80,0),//polyColor_2_offset,
-                cycle_in_range(tree_counter,40,100,0),//polyColor_3_offset
+                CiR(tree_counter,0,60,0),//polyColor_1_offset,
+                CiR(tree_counter,20,80,0),//polyColor_2_offset,
+                CiR(tree_counter,40,100,0),//polyColor_3_offset
             ]
 
 //            polyColor_1_offset = parseInt(offsets[0])
@@ -1700,7 +1794,7 @@ function drawTree(branch_angle, rotation) {
 
         //% █████████████ ADJUSTMENTS █████████████
         newpensize = pensize[order] * line_thickness
-        //% newpensize = cycle_in_range((tree_counter-order)/10*(order+1),1,10,0)
+        //% newpensize = CiR((tree_counter-order)/10*(order+1),1,10,0)
 
 
 //=========================================================================
@@ -1717,7 +1811,7 @@ function drawTree(branch_angle, rotation) {
         mLINEgradient[order]= document.createElementNS(svgns, 'radialGradient');
         mLINEline[order]    = document.createElementNS(svgns, 'line');
 
-        // let c1 = mLINEcolor[cycle_in_range(Math.abs(order+1),0,5,0)]
+        // let c1 = mLINEcolor[CiR(Math.abs(order+1),0,5,0)]
         let c1 = mLINEcolor[(Math.abs(order+1))%6]
 
         // let c1 = mLINEcolor[order]
@@ -2033,8 +2127,8 @@ function generateRandomColor() {
 //! │          0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16,17... <- for input number
 //! │          3, 4, 4, 5, 5, 6, 6, 7, 6, 6, 5, 5, 4, 4, 3, 4, 4, 5... <- return value 
 //! └───────────────────────────────────────────────
-function cycle_in_range(number, amin, amax, invert = 0) {
-    //@ e.g, cycle_in_range(45, 3, 20, invert = 0)
+function CiR(number, amin, amax, invert = 0) {
+    //@ e.g, CiR(45, 3, 20, invert = 0)
     try {
         mod_num = number % amax  //? get number within range... 45 % 20 = 5
     } catch {
@@ -2078,7 +2172,7 @@ function cycle_in_range(number, amin, amax, invert = 0) {
 //    }
 //    console.log(cary2)
 
-//@ e.g, cycle_in_range(45, 3, 20, invert = 0)
+//@ e.g, CiR(45, 3, 20, invert = 0)
 //@                    ((5-0) / (20-0 )) * (20-3) + 3
 //@                    (5 / 20 ) * 17 + 3
 //@                    0.25 * 17 + 3
@@ -2102,7 +2196,7 @@ try {
 
 
 
-function cycle_in_range2(number, nmin,nmax,amin, amax, invert = 0) {
+function CiR2(number, nmin,nmax,amin, amax, invert = 0) {
     //? create array of amax elements
     rary = []
 

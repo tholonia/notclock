@@ -304,7 +304,7 @@
             var sel_bg            = 0         //? toggle background color... 1= white 0=black
             var bg_color          = "black"   //? default bg color
             var tree_counter      = 0         //? just a simple +1 tree_counter
-            var tc=[0,0,0,0,0,0,0,0,0,0,0]
+            var tc=[0,0,0,0,0,0,0,0,0,0,0,0,0]
             var branch_counter    = 0         //? just a simple +1 tree_counter
 //            var degjump           = 5         //? jumep foward by 5 degrees
             var sound_initialized = 0
@@ -418,6 +418,10 @@
             var idx5 = tree_counter*33%360
             var idx6 = tree_counter*66%360
 
+            var this_color_1 = 0;
+            var this_color_2 = 0;
+            var this_color_3 = 0;
+
             //? calculate the duration - currently not working properly
             tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
             var cycletime       = tt['cycletime']
@@ -530,7 +534,7 @@
 //            imax = 10
 //            imin=0
 //            for (let i=0;i<40;i++) {
-//                j = cycle_in_range(i,3,20,0)
+//                j = CiR(i,3,20,0)
 //                console.log(">>>",i,j)
 //            }
 //            debugger

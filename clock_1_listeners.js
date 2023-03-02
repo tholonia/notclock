@@ -108,13 +108,13 @@
             if (!isOn('Alt') && !isOn('Control') &&  isOn('Meta') && !isOn('Shift') ) {isMet = true;}
             if (!isOn('Alt') && !isOn('Control') && !isOn('Meta') &&  isOn('Shift') ) {isSft = true;}
 
-console.log("event.code: ",lastkey[event.code])
-console.log("event.key: ",lastkey[event.key])
-console.log("isAlt: ",isAlt)
-console.log("isCtl: ",isCtl)
-console.log("isKey: ",isKey)
-console.log("isMet: ",isMet)
-console.log("isSft: ",isSft)
+//console.log("event.code: ",lastkey[event.code])
+//console.log("event.key: ",lastkey[event.key])
+//console.log("isAlt: ",isAlt)
+//console.log("isCtl: ",isCtl)
+//console.log("isKey: ",isKey)
+//console.log("isMet: ",isMet)
+//console.log("isSft: ",isSft)
 
             //? CONTROL-ALT
             if ( isOn('Alt') &&  isOn('Control') && !isOn('Meta') && !isOn('Shift')) {
