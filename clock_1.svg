@@ -6,6 +6,7 @@
     viewBox="-960 -512 1920 1024"
     fill="black"
     style="background-color: black;"
+    opacity="1"
     xmlns="http://www.w3.org/2000/svg"
     stroke-linecap="round"
     stroke-linejoin="round"
@@ -14,6 +15,7 @@
     align="center"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+
 
 // <!-- !DOCTYPE html -->
 // <!-- html -->
@@ -53,6 +55,7 @@
     .map {
         pointer-events:none;
     }
+
     </style>
     // *
     // * ─────────────────────────────── old vars ─────────────────
@@ -129,7 +132,13 @@
 
             var genangLEFT = [5,5,5,5,5,5]
             var genangRIGHT = [5,5,5,5,5,5]
-            var wait_flag = false
+            var wait_flag = true
+            var shrink_flag = 0
+            var shrink_val = 0
+            var shrink_steps = 15
+            var grow_flag = 0
+            var grow_val = 0
+            var grow_steps = 15
 
 
 
@@ -264,6 +273,8 @@
             var was_zoomed      = 0 //? need to track when zoom is turned off
             var screensave      = parseInt(qget("aP",  DEF_screensave))
             var cycle_ratios      = parseInt(qget("aY",  DEF_cycle_ratios))
+            var cycle_flowers    = parseInt(qget("mF",  DEF_cycle_flowers))
+            var cycle_fruit     = parseInt(qget("mT",  DEF_cycle_fruit))
             var jump_delta      = parseFloat(qget("aJ",  DEF_jump_delta))
 
             //? param-only
@@ -279,6 +290,7 @@
         //! └───────────────────────────────────────────────
             var _VERSION = 3.57
             var _DEV_MODE = true
+            var fadeout_finished = [false,false,false,false,false,false]
 
             var gMin_x = 0
             var gMax_x = 0
@@ -292,8 +304,7 @@
             var sel_bg            = 0         //? toggle background color... 1= white 0=black
             var bg_color          = "black"   //? default bg color
             var tree_counter      = 0         //? just a simple +1 tree_counter
-            var tree_counter10      = 0         //? just a simple +1 tree_counter but growth every 10
-            var tree_counter04      = 0         //? just a simple +1 tree_counter but growth every 10
+            var tc=[0,0,0,0,0,0,0,0,0,0,0]
             var branch_counter    = 0         //? just a simple +1 tree_counter
 //            var degjump           = 5         //? jumep foward by 5 degrees
             var sound_initialized = 0
@@ -312,11 +323,27 @@
             var num_of_circles  = names_of_circles.length
             //? for random cycling
             var num_of_vars     = names_of_vars.length
+            var num_of_flowers     = names_of_flowers.length
+            var num_of_fruit     = names_of_fruit.length
             //? for preset cycling
             var num_of_presets  = preqs.length;
 
 
 //            var snapshot        = 0
+
+            var pcir_defs        = []
+            var pcir_gradient    = []
+            var pcir_circle      = []
+            var pcir_stops       = []
+            var pcir_color       = []
+
+            for (let i =0; i<116;i++) {
+                pcir_defs.push(false);
+                pcir_gradient.push(false);
+                pcir_circle.push(false);
+                pcir_stops.push(false);
+                pcir_color.push(false);
+            }
 
             var mCIRdefs        = [false,false,false,false,false,false]
             var mCIRgradient    = [false,false,false,false,false,false]
@@ -336,12 +363,19 @@
             var transCounter = 0
 //            var transRatios = false
             var next_ratio = 0
+            var next_fruit = 0
+            var next_flower = 0
+            var next_ratio_change = 0
+            var next_fruit_change = 0
+            var next_flower_change = 0
+
+
 //            var inTransition = 0
             var last_cycle_ratios = -1
             var mratios = DEF_mratios
             var triggered = 0
             var divs = 10
-
+            var vPensize = [0,0,0,0,0,0]
 
 
             var show_message     = false
@@ -408,23 +442,28 @@
             var randang1 = randint(0,359)
             var randang2 = randint(0,359)
 
-            var next_ratio_change = 0
 
              //% █████████████ ADJUSTMENTS █████████████
-            // point.x = nowsecs();
-            // branch_angle = (point.x/2) % 360
+             point.x = nowsecs();
+             branch_angle = (point.x/2) % 360
 
 //            console.log(iangle)
             if (iangle == -1) {
                 iangle = nowsecs()%360;
             }
 
-            var branch_angle = iangle
-            var opwave = 0
+            var branch_angle = iangle;
+            var opwave = 0;
+//            var tctrack = [ [],[],[],[],[],[] ];
+//            var tctrack_bez = [ [],[],[],[],[],[] ];
+//            var crtrack = [ [],[],[],[],[],[] ];
+//            var flaty = 0;
+//            var flatbez = [ [],[],[],[],[],[] ];
 
-            var boxWidth = 0
-            var boxHeight = 0
-            var boxSize = 0
+            var boxWidth = 0;
+            var boxHeight = 0;
+            var boxSize = 0;
+            var cv6inherit = false;
 
             var path_width = 1
             var path_opacity = 1
@@ -535,8 +574,10 @@
                 drawTree(branch_angle,rotation);
                 //? update/reset vars
                 tree_counter++;
-                if (tree_counter%10 == 0) {tree_counter10++}
-                if (tree_counter%4 == 0) {tree_counter04++}
+                tc[1]=tree_counter++;
+                for (let i=2;i<tc.length;i++) {
+                    if (tree_counter%(i) == 0) {tc[i]++}
+                }
                 fullary_right = [];
                 fullary_left = [];
                 xfullary_right = [{'g':7,'x':0,'y':0}];

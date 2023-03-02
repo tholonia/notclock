@@ -69,11 +69,14 @@
             const DEF_zoomin          = 0;
             const DEF_screensave      = 0;
             const DEF_pensize         = [13,11, 7,5, 3, 2, 1]
-            const DEF_pre_maxlengths  = [130,70,50,30,20,10]
+            // const DEF_pre_maxlengths  = [130,70,50,30,20,10]
+            const DEF_pre_maxlengths  = [50,50,50,50,50,50]
             const DEF_path_mode        = 0;
             const DEF_mouse_angle     = 0;
             const DEF_cycle_ratios      = 1;
             const DEF_jump_delta      = 6.0;
+            const DEF_cycle_flowers    = 0;
+            const DEF_cycle_fruit    = 0;
 
 const PlatRat = 1
 const GoldRat = 0.618033989
@@ -87,9 +90,11 @@ const sq2d2 = Math.sqrt(2)/2
             const names_of_paths          =["OFF","True-open","True-closed","complex #1","complex #2","complex #4"]
             const names_of_polys          =["OFF","cos/sin-10","CiN(cos*sin)-10","DeltasCos(rot)","Petal"]
             const names_of_audios         =["OFF","Long","Short","Piano","Long+Short"]
-            const names_of_vars           =["OFF","no-paths","paths & lines","path_mode","no-lines","smooth"]
+            const names_of_vars           =["OFF","no-paths","paths & lines","path_mode","no-lines","smooth","worm"]
             const names_of_show_all_lines =["Hide","Show"]
             const names_of_ratios         =['Platinum','Golden','No-L1','Primes','GoldSilver','123456','654321','sq2d2','etetra']
+            const names_of_flowers         =['OFF','thorns','arrows','bigthorn','datura','xxx']
+            const names_of_fruit         =['OFF','Colored 6px']
 
             //? presets as query strings
             const preqs = []

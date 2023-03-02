@@ -101,11 +101,20 @@
             lastkey[event.code] = true
             lastkey[event.key] = true
 
-            if ( isOn('Alt') && !isOn('Control') && !isOn('Meta') && !isOn('Shift') ) {isAlt = true}
-            if (!isOn('Alt') &&  isOn('Control') && !isOn('Meta') && !isOn('Shift') ) {isCtl = true}
-            if (!isOn('Alt') && !isOn('Control') && !isOn('Meta') && !isOn('Shift') ) {isKey = true}
-            if (!isOn('Alt') && !isOn('Control') &&  isOn('Meta') && !isOn('Shift') ) {isMet = true}
-            if (!isOn('Alt') && !isOn('Control') &&  isOn('Meta') && !isOn('Shift') ) {isSft = true}
+
+            if ( isOn('Alt') && !isOn('Control') && !isOn('Meta') && !isOn('Shift') ) {isAlt = true;}
+            if (!isOn('Alt') &&  isOn('Control') && !isOn('Meta') && !isOn('Shift') ) {isCtl = true;}
+            if (!isOn('Alt') && !isOn('Control') && !isOn('Meta') && !isOn('Shift') ) {isKey = true;}
+            if (!isOn('Alt') && !isOn('Control') &&  isOn('Meta') && !isOn('Shift') ) {isMet = true;}
+            if (!isOn('Alt') && !isOn('Control') && !isOn('Meta') &&  isOn('Shift') ) {isSft = true;}
+
+console.log("event.code: ",lastkey[event.code])
+console.log("event.key: ",lastkey[event.key])
+console.log("isAlt: ",isAlt)
+console.log("isCtl: ",isCtl)
+console.log("isKey: ",isKey)
+console.log("isMet: ",isMet)
+console.log("isSft: ",isSft)
 
             //? CONTROL-ALT
             if ( isOn('Alt') &&  isOn('Control') && !isOn('Meta') && !isOn('Shift')) {
@@ -143,6 +152,10 @@
 //                snapshot=1
 //                log("Snaphot")
 //            }
+//            //? ──────────────────────────────────────────────── FRUITS and FLOWERES
+            if (isMet && lastkey['KeyF']) {cycle_flowers = toggle(cycle_flowers,num_of_flowers);log("Flower:"+cycle_flowers)}
+            if (isMet && lastkey['KeyT']) {cycle_fruit = toggle(cycle_fruit,num_of_fruit);log("Fruit:"+cycle_fruit)}
+
             //? ──────────────────────────────────────────────── BACKGROUND
             if (isKey && lastkey['Home']) {homekey();log("Changing BG color")}
             //? ──────────────────────────────────────────────── PAUSE
@@ -152,11 +165,11 @@
             //? ──────────────────────────────────────────────── SOUND
             if (isCtl && lastkey['KeyY']) {initSound(sound_on);sound_on = toggle(sound_on,2);log("sound system:"+sound_on)}
             //? ──────────────────────────────────────────────── FAST/SLOW
-            if (isKey && lastkey['ArrowUp']) {loop_delay = dnlimit(loop_delay,100,-200);timer.set_interval(loop_delay);log("loop delay: "+loop_delay)}
-            if (isKey && lastkey['ArrowDown'])  {loop_delay = uplimit(loop_delay,100, inf);timer.set_interval(loop_delay);log("loop delay: "+loop_delay)}
+            if (isKey && lastkey['ArrowUp']) {loop_delay = dnlimit(loop_delay,50,-200);timer.set_interval(loop_delay);log("loop delay: "+loop_delay)}
+            if (isKey && lastkey['ArrowDown'])  {loop_delay = uplimit(loop_delay,50, inf);timer.set_interval(loop_delay);log("loop delay: "+loop_delay)}
             //? ──────────────────────────────────────────────── DEG 
-            if (isKey && lastkey['Insert']) {deg_adj = deg_adj*2;log("Degree Adjust: "+deg_adj);let tot_ticks = parseInt(360/deg_adj);}
-            if (isKey && lastkey['Delete']) {deg_adj = deg_adj/2; log("Degree Adjust: "+deg_adj); let tot_ticks = parseInt(360/deg_adj);}
+            if (isKey && lastkey['Insert']) {deg_adj = deg_adj*1.618;log("Degree Adjust: "+deg_adj);let tot_ticks = parseInt(360/deg_adj);}
+            if (isKey && lastkey['Delete']) {deg_adj = deg_adj/1.618; log("Degree Adjust: "+deg_adj); let tot_ticks = parseInt(360/deg_adj);}
             if (isAlt && lastkey['KeyJ']) {branch_angle = branch_angle + jump_delta;log("++jump_delta:"+jump_delta)}
             if (isMet && lastkey['KeyJ']) {branch_angle = branch_angle - jump_delta;log("--jump_delta:"+jump_delta)}
             //? ──────────────────────────────────────────────── FAT/THIN
