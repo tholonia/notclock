@@ -19,6 +19,9 @@ The four main files are:
 - `clock_1_listeners.js`
   - Event handlers
 
+- `clock_1_data.js`
+  - constants, globals, and large arrays
+
 - `clock_1_merge.py`
   - Python script to merge the three files into one file called `notclock.svg`
 
@@ -39,33 +42,25 @@ The latest version of this file is usually [here](https://tholonia.com/Images/SV
 
 Here some interesting configs (live links)
 
-- [Basic Lines, fast](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.234375&l=0&k=0&q=1&a1=1&a2=1&a3=1&a4=1&a5=1&a6=1&n=0&o=1&g=1&p=1&a=0)
-- [Basic Lines w/ polygons](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.0146484375&l=0&k=0&q=1&a1=1&a2=1&a3=1&a4=1&a5=1&a6=1&n=1&o=1&g=1&p=1&a=0)
-- [Asymmetry](https://tholonia.com/Images/SVG/notclock.svg?c=1000&i=7.5&l=2&k=1&q=1&a1=0&a2=0&a3=1&a4=1&a5=1&a6=1&n=0&o=1&g=1&p=1&a=4)
-- [Balls only](https://tholonia.com/Images/SVG/notclock.svg?c=10&i=0.0146484375&l=5&k=0&q=0&n=5&o=1&g=1&p=16&a=0)
-- [Balls with Rays](https://tholonia.com/Images/SVG/notclock.svg?c=-2&i=0.003&l=2&k=1&a1=0&a2=0&a3=0&a4=0&a5=0&a6=0&n=1&o=0.04\)
-- [Connected Balls](https://tholonia.com/Images/SVG/notclock.svg?c=-2&i=0.003&l=2&k=1&a1=0&a2=0&a3=0&a4=0&a5=0&a6=0&n=1&o=0.04\)
+- [Creates better individual images](https://tholonia.com/Images/SVG/notclock.svg?up=550&ia=287&aN=7&aR=16&aV=1&aX=0.7&aC=1&mF=-3&mT=1&aT=1)
+- [Shows the changes as it moves, more like a continuous progression.  Also, more 'arty'](https://tholonia.com/Images/SVG/notclock.svg?up=50&ia=90&de=0.0019199029477404335&aR=17&aV=2&aT-1X=1.8&aK=1&aC=5&aM=1&aY=3&mF=3&ia=91.18759470549595)
 
-Some screenshots
 
-<img src="images/clock_balls.png"/>
+Interface…
 
-<img src="images/clock_basic_lines_w_poly.png"/>
+<img src="images/screen.png"/>
 
-<img src="images/clock_multi1.png"/>
+Some generated images…
 
-<img src="images/clock_multi2.png"/>
-
-<img src="images/clock_multi3.png"/>
-
-<img src="images/clock_polyballs.png"/>
+<img src="images/collection-1.png"/>
 
 ### Key Commands
 In the table below, the key command are symbolized as:
 
 ⌥ = ALT
 ^ = CTRL
-⇧-SHIFT
+⇧=SHIFT
+⌘=Meta (sometimes doesn't work if conflicting with window manager. Untested in Windows)
 
 The characters in brackets [] represent the HTML query string variable name that can used used for that feature.  For example, if you use the URL `notclock.svg?up=1000&de=7.5`, the app with start with the a loop-delay of 100ms and a degree increment of 7.5 degrees.
 
@@ -76,27 +71,30 @@ The characters in brackets [] represent the HTML query string variable name that
 **PGDN**           --Shorter             *Makes all the lines shorter*
 **RIGHT**          ++Fatter             *Makes all the lines wider*
 **LEFT**             --Thinner            *Makes all the lines thinner*
-**INS** (i)            ++Deg\*2           *Doubles the degrees rotated per frame*
-**DEL**                --Deg/2              *Half's the degrees rotated per frame*
+**INS** (i)            ++Deg               *Increases the degrees rotated per frame*
+**DEL**                --Deg               *Reduces the degrees rotated per frame*
 
-**⌥ N** `[aN]`   ++Circles Radius      *Increases size of circles*
-**⌥ B** `[aB]`    --Circles Radius        *Decreases size of circles*
+**⌥ N|B** `[aN]`   Circles Radius      *Increases/decrease size of circles*
+
 **⌥ M** `[aM]`      Cycle circles         *Cycles though circle themes* 
-**⌥ X** `[aX]`  ++Circles Opacity     *Increases density of sphere*
-**⌥ Z** `[aZ]`   --Circles Opacity       *Increases translucency of circle*
+**⌥ X|Z** `[aX]`  Circles Opacity     *Increases/decreases density of sphere*
+**⌥ O|I** `[aO]`   Polygon Opacity     *Increases/decreases density of polygons*
+
 **⌥ R** `[aR]`      Cycle colors          *Cycles thru various color themes*
 **⌥ G** `[aG]`      Cycle audio           *Cycles thru various sound/music themes*
 **⌥ U** `[aU]`      Cycle dataset         *Cycles though transformed datasets* <sup>(see note 1)</sup>
 **⌥ A** `[aA]`      Cycle presets          *Cycles preset configs* <sup>(see note 2)</sup>
 **⌥ C** `[aC]`      Cycle vars              *Cycles various variables through a continuous loop* <sup>(see note 3)</sup>
+**⌥ Y** `[aY]`      Cycle ratios             *Cycles various relative length's of lines* <sup>(see note 6)</sup>
+**⌘ F** `[mF]`      Cycle flowers          *Cycles various 'flowers' that extend from the ends pionts* <sup>(see note 7)</sup>
+**⌘ T** `[mT]`      Cycle fruit              *Toggles on/off a randomly colored sphere on end points 
 
 **⌥ K** `[aK]`      Cycle Connectors/Paths   *Connecting the points in various ways*
 **⌥ V** `[aV]`      Cycle Polygons      *Cycling thru various polygons based on the data*
 **⌥ O** `[aO]`    ++poly opacity         *Increases density of polygon*
 **⌥ I** `[aI]`       --poly opacity         *Increases translucency of polygon*
-**⌥ J**                      Jump fwd 5 deg     *Advance all diverging angles by 5 degrees*
-**⌥ S**                      ++ Merge count     *Increases number of images that can overlay
-**⌥ S**                      -- Merge count       * Decreases number of images that can overlay
+**⌥ J**  `[aJ]`       Jump fwd n° deg     *Advance all diverging angles by 5 degrees*
+**⌥ S|W**                  Merge count          *Increases/decreases number of images that can overlay
 **^ Y**                       Toggle audio           *Start sound system (requires manual initiation)*
 
 **^⌥  1** `[ca1]`   *Toggle show/hide line 1*
@@ -106,7 +104,6 @@ The characters in brackets [] represent the HTML query string variable name that
 **^⌥  5** `[ca5]`   *Toggle show/hide line 5*
 **^⌥  6** `[ca6]`  *Toggle show/hide line 6*
 **^⌥ 0**  `[ca0]` *Toggle show/hide all Lines*
-
 
 **^⇧ F1**   *Shorten line 1*		**^⇧ 1**    *Lengthen Lines 1*
 **^⇧ F2**   *Shorten line 2*		**^⇧ 2**    *Lengthen Lines 2*
@@ -137,6 +134,10 @@ The following query parameters are only available for use by adding them manuall
 ```ma=0|1```
 - Use angle of mouse (relative to center) as the branch_angle. In auto-zoomed mode, these coordinates will bounce around.
 
+```de=n```
+- set the deg adjustment.  `ma=1` override this.
+
+
 
 
 ## Notes
@@ -162,6 +163,9 @@ The following query parameters are only available for use by adding them manuall
 
 ***Note 5:*** As dynamic zoom adjusts the viewbox for every frame, and as the image limits change every frame, there is always some jitter between frames.  For SVG 'paths', the image may extend out-of-frame as the x,y values are being dynamically generated when creating Bezier curves.
 
+***Note 6:*** These rations are: Platinum mean (1), Golden mean (1.618), Removal of line #1, prime numbers (5,7,11,13,17,23), alternate gold/silver mean (1.617, 1,414), incremental (123456), decremental (654321), √2÷2 (0.707), bi-ncremental (135246).
+
+
 ## Tips
 To have a image that only moves according to the mouse position, add the query parameters `up=100&ma=1&ia=0&de=0`.  This will update the screen 10 times a second (`up=100`), start at 0° (`ia=0`), and automatically advance by 0° (`de=0`).  
 
@@ -185,7 +189,7 @@ To have a image that only moves according to the mouse position, add the query p
 
 **Polys**
 
-- none, cos/sin-10, CiN(cos\*sin)-10, DeltasCos(rot), Petal
+- none, cos/sin-10, CiR(cos\*sin)-10, DeltasCos(rot)
 
 **Audios**
 

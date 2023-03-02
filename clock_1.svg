@@ -288,7 +288,7 @@
         //! ┌───────────────────────────────────────────────
         //! │ DEFAULTS
         //! └───────────────────────────────────────────────
-            var _VERSION = 3.57
+            var _VERSION = 3.59
             var _DEV_MODE = true
             var fadeout_finished = [false,false,false,false,false,false]
 

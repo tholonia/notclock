@@ -145,7 +145,7 @@ function putPoly(x,y,idx,offset=0) {//@ loop
     var poly_varr_R = []
 
     let leaf_type = cycle_flowers;
-    let poly_opacity = 1
+    let poly_opacity = .5
 
     // % █████████ TRIS
     if (leaf_type == 1) {
@@ -1067,8 +1067,8 @@ function drawTree(branch_angle, rotation) {
                 let ang2 = Math.cos(deg2rad(mod2))
                 opwave = Math.abs(ang1+ang2) * 100
                 // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
-                cycle_flowers = randint(-3,num_of_flowers-1);
+//                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+//                cycle_flowers = randint(-3,num_of_flowers-1);
                 // % ────────────────────────────────────────────────────────────────────────
 
                 // % ──────── RATIO setting ────────────────────────────────────────
@@ -1128,12 +1128,12 @@ function drawTree(branch_angle, rotation) {
                 }
 
                 // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-//                if (nowsecs()%17 == 0) {
-//                    cycle_fruit = randint(0,num_of_fruit-1);
-//                }
-//                if (nowsecs()%23 == 0) {
-//                    cycle_flowers = randint(0,num_of_flowers-1);
-//                }
+                if (nowsecs()%17 == 0) {
+                    cycle_fruit = randint(0,num_of_fruit-1);
+                }
+                if (nowsecs()%23 == 0) {
+                    cycle_flowers = randint(0,num_of_flowers-1);
+                }
 
                 // % ──────── PATH setting ────────────────────────────────────────
                 //? turn on PATHS
