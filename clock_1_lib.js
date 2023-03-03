@@ -31,27 +31,20 @@ class Edge {
 class Tree {
     constructor(gens, lineLength, x, y, angle, rotation) {
         branch_counter++
-        //? applying this here creates mangled trees
-        //@ **************************************************
-        //@            let _a = angle
-        //@            let _r = rotation
-        //@              
-        //@            rotation = _a
-        //@            angle = _r
-        //@ **************************************************
+
         //? all trees have a base node
-        // call_log("Tree")
+
         this.base_node = new Node(x, y);
-        var srange = normalize([-540, mloc.y, 540], [0, 6]);
-        var genApply = Math.ceil(srange[1]);
+        var srange = normalize([-540, mloc.y, 540], [0, 6]); //? create 6 horizontal regions of the viewbox
+        var genApply = Math.ceil(srange[1]); //@ explain?
         var rel_len = false
-        var realgen = (7 - gens) - 1
+        var realgen = (7 - gens) - 1  //? the 'gens' are indexed as 1-6
 
-        var newangleLEFT
-        var newangleRIGHT
+        var newangleLEFT = ((angle * genangLEFT[realgen]) % 360) + rotation
+        var newangleRIGHT = ((angle * genangRIGHT[realgen]) % 360) - rotation
 
-        newangleLEFT = ((angle * genangLEFT[realgen]) % 360) + rotation
-        newangleRIGHT = ((angle * genangRIGHT[realgen]) % 360) - rotation
+        // console.log(newangleLEFT, angle,genangLEFT[realgen],realgen, rotation)
+        // debugger
 
         maxlengths = [0, 0, 0, 0, 0, 0]  //reset
         for (let i = 0; i < pre_maxlengths.length; i++) {

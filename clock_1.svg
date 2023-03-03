@@ -16,18 +16,28 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     >
 
-
-// <!-- !DOCTYPE html -->
-// <!-- html -->
-// <!-- head></head -->
-// <!-- body id="body" -->
-// <!-- canvas id="canvas" xmlns="http://www.w3.org/1999/xhtml"-->
-
-//    viewBox="-500 -500 1000 1000"
-    // width="99%"
-    // height="99%"
+    // * ─────────────────────────────── old vars ─────────────────
+    // *  viewBox="-960 -540 1920 1080"
+    // * viewBox="-480 -270 960 540"
+    // * viewBox="-540 -960 1080 1920"
+    // * viewBox="-960 -540 1920 1080"
+    // * viewBox="-960 -540 1920 1080"
+    // * transform="translate(0 -0) rotate(-90) "
+    // * transform="translate(450 -400) rotate(-90) "
+    // * transform="rotate(-90 50 100)"
+    // * <rect x="0" y="0" width="400" height="400"  style="stroke: #ffffff; fill:none;"/>
+    // * width="400"
+    // * height="400"
+    // * version="1.1"
+    // * fill-rule="evenodd"
+    // * zoomAndPan="magnify" width="1150" height="767"
+    // * ────────────────────────────────────────────────
+    // * viewBox="-500 -500 1000 1000"
+    // * width="99%"
+    // * height="99%"
     // * stroke="white"
     // * onclick="initSound()"
+    // * ────────────────────────────────────────────────
 
     // For copying
     // ! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -49,31 +59,11 @@
     //@ FIXME
     //: UNDEFINED
 
-
-
     <style>
-    .map {
-        pointer-events:none;
-    }
-
+        .map {pointer-events:none;}
     </style>
+    
     // *
-    // * ─────────────────────────────── old vars ─────────────────
-    // *  viewBox="-960 -540 1920 1080"
-    // * viewBox="-480 -270 960 540"
-    // * viewBox="-540 -960 1080 1920"
-    // * viewBox="-960 -540 1920 1080"
-    // * viewBox="-960 -540 1920 1080"
-    // * transform="translate(0 -0) rotate(-90) "
-    // * transform="translate(450 -400) rotate(-90) "
-    // * transform="rotate(-90 50 100)"
-    // * <rect x="0" y="0" width="400" height="400"  style="stroke: #ffffff; fill:none;"/>
-    // * width="400"
-    // * height="400"
-    // * version="1.1"
-    // * fill-rule="evenodd"
-    // * zoomAndPan="magnify" width="1150" height="767"
-    // * ────────────────────────────────────────────────
 
     //@ FIXME: not sure if I still need this
     <defs>
@@ -81,19 +71,9 @@
             <stop offset="10%" stop-color="gold" />
             <stop offset="95%" stop-color="red" />
         </radialGradient>
-        // <linearGradient id="fillGradient">
-        //     <stop offset="10%" stop-color="gold" />
-        //     <stop offset="95%" stop-color="red" />
-        // </linearGradient>
-        // <linearGradient id="strokeGradient">
-        //     <stop offset="10%" stop-color="gold" />
-        //     <stop offset="95%" stop-color="red" />
-        // </linearGradient>
     </defs>
 
-
-
-    //?  you must wrap scripts in CDATA tags as SVG should be valid XML
+    //?  wrap scripts in CDATA tags as SVG should be valid XML
     //@ %PRAGMA:delete_next_line:0:
     <script type="text/javascript" xlink:href="clock_1_lib.js" xlink:actuatpe="onLoad" xlink:show="other" xlink:type="simple" />
 
@@ -106,15 +86,19 @@
             //@ INSERT FUNCTIONS HERE (and comment out script above)
             //@ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
             //@ %PRAGMA:insert:clock_1_lib.js
+
             //? when used as an object, allow attributes to be changed by params passed in the query string
             var paramList = [];
-            // var paramList = ['UP'];
             var refs = []; //? holds qs name/values
-            //? get everything but the qs
+
+            //? get everything but the qs from the URL
             var href = window.location.protocol+'//'+window.location.hostname+window.location.pathname //document.defaultView.location.href;
+
             //? get everything and extract the qs
             var fullhref = document.defaultView.location.href
             log(fullhref)
+
+            //? parse qs into name/value array
             if ( -1 != fullhref.indexOf("?") ) {
                 paramList = fullhref.split("?")[1].split(/&|;/);
                 for ( let p = 0, pLen = paramList.length; pLen > p; p++ ) {
@@ -126,25 +110,30 @@
                 }
             }
 
-            var cumxy = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
+            // var cumxy = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]//xdel
 
 
+            //? correct settings
+            var genangLEFT  = [5,5,5,5,5,5,5]
+            var genangRIGHT = [5,5,5,5,5,5,5]
 
-            var genangLEFT = [5,5,5,5,5,5]
-            var genangRIGHT = [5,5,5,5,5,5]
-            var wait_flag = true
-            var shrink_flag = 0
-            var shrink_val = 0
-            var shrink_steps = 15
-            var grow_flag = 0
-            var grow_val = 0
-            var grow_steps = 15
+            //@ Changing these vaues has dramatic and interesting effects.
+            //@ All even-number sets rotate the image 90 degrees
+
+            // genangLEFT = genangRIGHT = [0,0,0,0,0,0,0]
+            // genangLEFT = genangRIGHT = [1,1,1,1,1,1,1]
+            // genangLEFT = genangRIGHT = [2,2,2,2,2,2,2]
+            // genangLEFT = genangRIGHT = [3,3,3,3,3,3,3]
+            // genangLEFT = genangRIGHT = [4,4,4,4,4,4,4]
+
+            // var genangLEFT  = [1,3,5,7,9,11,13]
+            // var genangRIGHT = [13,11,9,7,5,3,1]
+
+            // var genangLEFT  = [3,3,3,3,3,3,3]
+            // var genangRIGHT = [5,5,5,5,5,5,5]
 
 
-
-
-            var S= false
-            var V= false
+            var wait_flag = true  //? for timed operations
 
             //? array to hold variable line opacities
             var di =0
@@ -185,43 +174,36 @@
             5:(100) [1, 7, 13, 19, 25, 31, 37, 43, 49, 55, 61, 67, 73, 79,..., 595]
             */
 
-            var svgns = 'http://www.w3.org/2000/svg';
-            var defs = document.createElementNS(svgns, 'defs');
+            const svgns = 'http://www.w3.org/2000/svg';
+            var defs = document.createElementNS(svgns, 'defs');  //@ Global 'defs', do I need/want this?
 
-            //? globals used for polygon gradiant stops
+            //? globals for polygon gradiant stops
             var polyColor_1_offset = 33.33
             var polyColor_2_offset = 33.33*2
             var polyColor_3_offset = 33.33*3
 
-
+            //? In javascript, with objects you can't say a=b and have 2 objects, as a[] is only a reference to b[], 
+            //? and as there is no way to assign-by-value for arrays and object, you have to do this bullshit
             var pensize         = []
-            //? In javascript, you can't say a[]= b=[] and have 2 variables, as a[] is only a reference to b[], and as there
-            //? is no way to assign-by-value for arrays and object, you have to do this bullshit
             for (let i=0;i<DEF_pensize.length;i++) {
                 pensize.push(DEF_pensize[i])
             }
-//            for (i=0;i<DEF_pre_maxlengths.length;i++) {
-//                pre_maxlengths.push(DEF_pre_maxlengths[i])
-//            }
 
+            //? globals for line opacities
             // var opacities       = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]
             var opacities       = [1,1,1,1,1,1]
             var maxlengths      = [0,0,0,0,0,0]
             var mladj           = [0,0,0,0,0,0]
 
-
-            //@ DEBUG
-            // pre_maxlengths  = [1,1,1,1,1,1]
-
+            //? general global vars
             var gens        = 6
             var gen         = 0
             var start_x     = 0
             var start_y     = 0
             var rotation    = -90
-            var inf         = 10e10
-            var ON = true
-            var OFF = false
-
+            var inf         = 10e10  //@ I think JS has an 'infinity' var, but not sure how it works
+            var ON          = true
+            var OFF         = false
             var this_length
             var start_x
             var start_y
@@ -239,19 +221,19 @@
             //        D E F   H                                      <- USED BY BRAVE
             //  A B C       G   I J K   M N O P Q R S T U V W X Y Z  <- USED BY THIS APP
             //%                       L                              <- AVAILABLE
-                        //! ────────────────────────────────────────────────
-            // KeyD only works once... using KeyJ is OK
-            // KeyH seems to not reapond at all
+            //! ────────────────────────────────────────────────
+            //@ ALT-D only works once... using KeyJ is OK
+            //@ ALT-H seems to not reapond at all
+            //@ ALT-G doesn't work in Firefox
 
 
             //@ ARGS
-            //? default consts in clock_1_data.js
             var loop_delay      = parseFloat(qget("up",DEF_loop_delay))
             var iangle          = parseFloat(qget("ia",DEF_iangle))
             var deg_adj         = parseFloat(qget("de",DEF_deg_adj))
             var poly_opacity    = parseFloat(qget("aO",DEF_poly_opacity))
+            var jump_delta      = parseFloat(qget("aJ",DEF_jump_delta))
             var circle_opacity  = parseFloat(qget("aX",DEF_circle_opacity))
-
             var circle_radius   = parseInt(qget("aN",  DEF_circle_radius))
             var cycle_circles   = parseInt(qget("aM" , DEF_cycle_circles))
             var cycle_colors    = parseInt(qget("aR",  DEF_cycle_colors))
@@ -272,17 +254,15 @@
             var zoomin          = parseInt(qget("aT",  DEF_zoomin))
             var was_zoomed      = 0 //? need to track when zoom is turned off
             var screensave      = parseInt(qget("aP",  DEF_screensave))
-            var cycle_ratios      = parseInt(qget("aY",  DEF_cycle_ratios))
-            var cycle_flowers    = parseInt(qget("mF",  DEF_cycle_flowers))
+            var cycle_ratios    = parseInt(qget("aY",  DEF_cycle_ratios))
+            var cycle_flowers   = parseInt(qget("mF",  DEF_cycle_flowers))
             var cycle_fruit     = parseInt(qget("mT",  DEF_cycle_fruit))
-            var jump_delta      = parseFloat(qget("aJ",  DEF_jump_delta))
 
             //? param-only
             var rolling_presets = parseInt(qget("xA", DEF_rolling_presets))
-            var fullscreen      = parseInt(qget("FS",  DEF_fullscreen))
-            var path_mode        = parseInt(qget("li",  DEF_path_mode))
-            var mouse_angle     = parseInt(qget("ma",  DEF_mouse_angle))
-
+            var fullscreen      = parseInt(qget("FS", DEF_fullscreen))
+            var path_mode       = parseInt(qget("li", DEF_path_mode))
+            var mouse_angle     = parseInt(qget("ma", DEF_mouse_angle))
             var preset_changed  = false //? need to keep track when the cycle preset changes for one-off loads
 
         //! ┌───────────────────────────────────────────────
@@ -290,8 +270,8 @@
         //! └───────────────────────────────────────────────
             var _VERSION = 3.59
             var _DEV_MODE = true
-            var fadeout_finished = [false,false,false,false,false,false]
 
+            //? vars for drawing live box
             var gMin_x = 0
             var gMax_x = 0
             var gMin_y = 0
@@ -300,13 +280,12 @@
             var _ = "" //? convenience var for menus
             var last_loop_delay   = loop_delay
             var line_thickness    = 1         //? adjustment factor
-            var linelength_adj    = 1.8         //? adjustment factor
+            var linelength_adj    = 1.8       //? adjustment factor
             var sel_bg            = 0         //? toggle background color... 1= white 0=black
             var bg_color          = "black"   //? default bg color
             var tree_counter      = 0         //? just a simple +1 tree_counter
             var tc=[0,0,0,0,0,0,0,0,0,0,0,0,0]
             var branch_counter    = 0         //? just a simple +1 tree_counter
-//            var degjump           = 5         //? jumep foward by 5 degrees
             var sound_initialized = 0
             var sound_on          = 0
             // var rt_angle        = 1         //? real-time astarting angle based on epoch seconds
@@ -323,14 +302,13 @@
             var num_of_circles  = names_of_circles.length
             //? for random cycling
             var num_of_vars     = names_of_vars.length
-            var num_of_flowers     = names_of_flowers.length
-            var num_of_fruit     = names_of_fruit.length
+            var num_of_flowers  = names_of_flowers.length
+            var num_of_fruit    = names_of_fruit.length
             //? for preset cycling
             var num_of_presets  = preqs.length;
 
 
-//            var snapshot        = 0
-
+            //? for function putCirle()
             var pcir_defs        = []
             var pcir_gradient    = []
             var pcir_circle      = []
@@ -345,12 +323,14 @@
                 pcir_color.push(false);
             }
 
+            //? for array of circles with gradients
             var mCIRdefs        = [false,false,false,false,false,false]
             var mCIRgradient    = [false,false,false,false,false,false]
             var mCIRcircle      = [false,false,false,false,false,false]
             var mCIRstops       = [false,false,false,false,false,false]
             var mCIRcolor       = [false,false,false,false,false,false]
 
+            //? for array of lines with gradients
             var mLINEdefs        = [false,false,false,false,false,false]
             var mLINEgradient    = [false,false,false,false,false,false]
             var mLINEline        = [false,false,false,false,false,false]
@@ -358,24 +338,17 @@
             var mLINEcolor       = [false,false,false,false,false,false]
 
 
-            var pause                = 0
+            var pause                = 0 //@ ?
 
-            var transCounter = 0
-//            var transRatios = false
-            var next_ratio = 0
-            var next_fruit = 0
-            var next_flower = 0
-            var next_ratio_change = 0
-            var next_fruit_change = 0
-            var next_flower_change = 0
+            //? all for transitioning, which never worked, but I'm optimistic
+            var transCounter = 0 
+            var last_cycle_ratios   = -1
+            var mratios             = DEF_mratios
+            var triggered           = 0
+            var divs                = 10
 
 
-//            var inTransition = 0
-            var last_cycle_ratios = -1
-            var mratios = DEF_mratios
-            var triggered = 0
-            var divs = 10
-            var vPensize = [0,0,0,0,0,0]
+            var vPensize            = [0,0,0,0,0,0]
 
 
             var show_message     = false
@@ -495,20 +468,11 @@
             }
 
 
-            //? fill teh default linelengths
+            //? fill the default linelengths
             var pre_maxlengths  = [0,0,0,0,0,0]
-//            for (let i = 0; i<6; i++) {
-//                pre_maxlengths[i] = DEF_pre_maxlengths[i] * mratios[cycle_ratios][i]
-//            }
 
-//            pre_maxlengths[0] = 130
-//            for (let i = 1; i<6; i++) {
-//                pre_maxlengths[i] = (pre_maxlengths[i-1] * mratios[cycle_ratios])
-//            }
-//            for (i=0;i<DEF_pre_maxlengths.length;i++) {
-//                pensize.push(DEF_pre_maxlengths[i])
-//            }
 
+            //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ SOCKET STUFF ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
             //! 0   CONNECTING  Socket has been created. The connection is not yet open.
             //! 1   OPEN        The connection is open and ready to communicate.
             //! 2   CLOSING     The connection is in the process of closing.
@@ -517,83 +481,70 @@
             socket.addEventListener('open', function (event) {
                 socket.send('Connection Established');
             });
-//            socket.addEventListener('message', function (event) {
-//                // console.log("event_data:",event.data);
-//            });
+
             const msgsend = function(mtype) {
                 let _c = tree_counter.toString().padStart(4,'0');
                 let _a = (Math.round(branch_angle)%180).toString().padStart(3,'0');
                 msg = mtype+":"+_c+":"+_a;
                 socket.send(msg);
             }
+
             const consoleMsg = () => {socket.send("console:")}
             if (socket.readyState == 1) {socket.send('msg');}
-            //  else {
-            //     console.log("readyState = ",socket.readyState)
-            // }
-//            imax = 10
-//            imin=0
-//            for (let i=0;i<40;i++) {
-//                j = CiR(i,3,20,0)
-//                console.log(">>>",i,j)
-//            }
-//            debugger
-
             var seconds = 0
             timer2.start(function() {
                 wait_flag = false
                 seconds +=1
-//                console.log("wait_flag",wait_flag)
             },1000);
 
             var base_length = 130
             for (let i = 0; i<6; i++) {
                 pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
             }
+            //! ════════════════════════════════════════════════════════════════════
 
-
-            //! ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄ START LOOP ▄▄▄▄▄▄▄
+            //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+            //! 
+            //! ███████ ████████  █████  ██████  ████████     ██       ██████   ██████  ██████  
+            //! ██         ██    ██   ██ ██   ██    ██        ██      ██    ██ ██    ██ ██   ██ 
+            //! ███████    ██    ███████ ██████     ██        ██      ██    ██ ██    ██ ██████  
+            //!      ██    ██    ██   ██ ██   ██    ██        ██      ██    ██ ██    ██ ██      
+            //! ███████    ██    ██   ██ ██   ██    ██        ███████  ██████   ██████  ██      
+            //! 
+            //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+                                                                                
             drawTree(branch_angle, rotation);
             timer.start(function() {
                 if (mouse_angle == 1) {
-                    branch_angle =       point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360
+                    branch_angle = point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360
                 }
 
                 //? rebuild ratio lengths
-//                console.log("cycle_ratios",cycle_ratios)
-//                console.log("mratios["+cycle_ratios+"]",mratios[cycle_ratios])
                 if (transCounter == 0) {
                     for (let i = 0; i<6; i++) {
                         pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
-    //                    console.log("pre_mjaxlengths[i]",i,pre_maxlengths[i])
                     }
                 } else {
                     for (let i = 0; i<6; i++) {
                         pre_maxlengths[i] = (base_length * mratios[transCounter][i])||1 //? 0s not allowed
-    //                    console.log("pre_mjaxlengths[i]",i,pre_maxlengths[i])
                     }
                 }
                 branch_angle = branch_angle + deg_adj;
+
                 //? build tree
                 drawTree(branch_angle,rotation);
-                //? update/reset vars
+
+                //? update countrers
                 tree_counter++;
                 tc[1]=tree_counter++;
                 for (let i=2;i<tc.length;i++) {
                     if (tree_counter%(i) == 0) {tc[i]++}
                 }
-                fullary_right = [];
-                fullary_left = [];
-                xfullary_right = [{'g':7,'x':0,'y':0}];
-                xfullary_left = [{'g':7,'x':0,'y':0}];
-                gMin_x = 0;
-                gMax_x = 0;
-                gMin_y = 0;
-                gMax_y = 0
-//                mratios = DEF_mratios //? reset to clear transRatios
-
+                //? reset vars
+                fullary_right = fullary_left = [];
+                xfullary_right = xfullary_left = [{'g':7,'x':0,'y':0}];
+                gMin_x = gMax_x = gMin_y = gMax_y = 0;
                 if (screensave == 1) {msgsend("saveScreen:"+branch_angle+":"+rotation)}
-//                consoleMsg("console:")
 
             },loop_delay);
             //! ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
