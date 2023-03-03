@@ -182,18 +182,23 @@
             var polyColor_2_offset = 33.33*2
             var polyColor_3_offset = 33.33*3
 
-            //? In javascript, with objects you can't say a=b and have 2 objects, as a[] is only a reference to b[], 
-            //? and as there is no way to assign-by-value for arrays and object, you have to do this bullshit
-            var pensize         = []
-            for (let i=0;i<DEF_pensize.length;i++) {
-                pensize.push(DEF_pensize[i])
-            }
+            var idx1 = tree_counter%360
+            var idx2 = tree_counter*30%360
+            var idx3 = tree_counter*60%360
+
+            var idx4 = tree_counter%360
+            var idx5 = tree_counter*33%360
+            var idx6 = tree_counter*66%360
+
+            var this_color_1 = 0;
+            var this_color_2 = 0;
+            var this_color_3 = 0;
 
             //? globals for line opacities
             // var opacities       = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]
-            var opacities       = [1,1,1,1,1,1]
-            var maxlengths      = [0,0,0,0,0,0]
-            var mladj           = [0,0,0,0,0,0]
+            var opacities   = [1,1,1,1,1,1]
+            var maxlengths  = [0,0,0,0,0,0]
+            var mladj       = [0,0,0,0,0,0]
 
             //? general global vars
             var gens        = 6
@@ -276,6 +281,9 @@
             var gMax_x = 0
             var gMin_y = 0
             var gMax_y = 0
+            var boxWidth  = 0;
+            var boxHeight = 0;
+            var boxSize   = 0;
 
             var _ = "" //? convenience var for menus
             var last_loop_delay   = loop_delay
@@ -288,8 +296,9 @@
             var branch_counter    = 0         //? just a simple +1 tree_counter
             var sound_initialized = 0
             var sound_on          = 0
-            // var rt_angle        = 1         //? real-time astarting angle based on epoch seconds
-
+            var opwave            = 0;  //@ opwave is dead - probably
+            var cv6inherit        = false;
+            var pause             = 0 //@ ?
 
             //? the count for each of these variable arrays, needed for MOD-cycling
             var num_of_colors   = names_of_colors.length //? not -1 because [0] index is default colors, not "off'
@@ -337,9 +346,6 @@
             var mLINEstops       = [false,false,false,false,false,false]
             var mLINEcolor       = [false,false,false,false,false,false]
 
-
-            var pause                = 0 //@ ?
-
             //? all for transitioning, which never worked, but I'm optimistic
             var transCounter = 0 
             var last_cycle_ratios   = -1
@@ -347,21 +353,16 @@
             var triggered           = 0
             var divs                = 10
 
-
-            var vPensize            = [0,0,0,0,0,0]
-
-
+            var vPensize         = [0,0,0,0,0,0]
             var show_message     = false
             var showtext         = true
-
             var last_pos         = 0
             var mloc             = false
-
             var this_length      = maxlengths[lOrder[gen]]
             var last_angle       = branch_angle
             var rnum             = 0;
 
-
+            //? for menu
             var menu_fontsize       = "18px"
             var menu_spacing        = 22
             var menu_fontweight     ="600"
@@ -369,7 +370,7 @@
             var menuCols            = []
             var menuAltCols         = []
 
-            //? default column positions
+            //? default menu column positions
             menuCols.push(0)                //? qs val
             menuCols.push(menuCols[0]+85)   //? key
             menuCols.push(menuCols[1]+110)  //? desc
@@ -382,19 +383,6 @@
             menuAltCols.push(menuAltCols[2]+100)
             menuAltCols.push(menuAltCols[3]+130)
 
-            // var poly_clr_idx = 0
-            var idx1 = tree_counter%360
-            var idx2 = tree_counter*30%360
-            var idx3 = tree_counter*60%360
-
-            var idx4 = tree_counter%360
-            var idx5 = tree_counter*33%360
-            var idx6 = tree_counter*66%360
-
-            var this_color_1 = 0;
-            var this_color_2 = 0;
-            var this_color_3 = 0;
-
             //? calculate the duration - currently not working properly
             tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
             var cycletime       = tt['cycletime']
@@ -402,60 +390,58 @@
             var tot_images      = tt['tot_images']
 
             //? define SVG element and do some intiial stuff
+            //@ shoudl eleSvg be global?
             const eleSvg        = document.querySelector('svg');
             eleSvg.innerText    = `transform: translate(0,0)`;
             var pt              = eleSvg.createSVGPoint();
             eleSvg.dispatchEvent(new Event('click'));
             let point = eleSvg.createSVGPoint();
 
-            //? these x,y points determine where the angle starts from-
-            point.y = 100 //clientY;
-            point.x = 100 //;
-            point.va = 0
-             point.vx =  0
-            point.vy =  0
-            point.va =0
+            //? these x,y points determine where the angle starts from
+            //? and also store the mouse coodinates for screen, page and viewbox
+            point.y     = 0;
+            point.x     = 0;
+            point.va    = 0;
+            point.vx    = 0;
+            point.vy    = 0;
+            point.va    = 0;
 
             var randang1 = randint(0,359)
             var randang2 = randint(0,359)
 
-
-             //% █████████████ ADJUSTMENTS █████████████
-             point.x = nowsecs();
-             branch_angle = (point.x/2) % 360
-
-//            console.log(iangle)
+            //? initial angle determined by the time in seconds
+            //? if iangle set to on teh query string; 'ia=-1'
             if (iangle == -1) {
-                iangle = nowsecs()%360;
+                iangle = nowsecs() % 360;
+            }
+            var branch_angle = iangle;
+
+            //? In javascript, with objects you can't say a=b and have 2 objects, as a[] is only a reference to b[], 
+            //? and as there is no way to assign-by-value for arrays and object, you have to do this bullshit
+            var pensize         = [0,0,0,0,0,0];
+            var pre_maxlengths  = [0,0,0,0,0,0];
+            for (let i=0;i<6;i++) {pensize[i]=DEF_pensize[i];}
+            for (let i=0;i<6;i++) {pre_maxlengths[i] = DEF_pre_maxlengths[i];}
+            var path_width      = 1
+            var path_opacity    = 1
+            var path_color      = 0
+            //? fill the linelengths
+            var base_length     = 130
+            for (let i = 0; i<6; i++) {
+                pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
             }
 
-            var branch_angle = iangle;
-            var opwave = 0;
-//            var tctrack = [ [],[],[],[],[],[] ];
-//            var tctrack_bez = [ [],[],[],[],[],[] ];
-//            var crtrack = [ [],[],[],[],[],[] ];
-//            var flaty = 0;
-//            var flatbez = [ [],[],[],[],[],[] ];
-
-            var boxWidth = 0;
-            var boxHeight = 0;
-            var boxSize = 0;
-            var cv6inherit = false;
-
-            var path_width = 1
-            var path_opacity = 1
-            var path_color = 0
+            //? ────────────────────────────────────────────────
+            //? SOUND stuff
             //? create global audiocontext
             var context = false //new AudioContext()
             //? initial 'scale'
             var notes = getHarmoniousNotes(54,8)  // 54 comes from the 432 set of frequencies
             notes.reverse() //? reverse to match frequenciesa with levels
             var notes21 = getHarmoniousNotes(54,21)  // 54 comes from the 432 set of frequencies
-
-            var fullary_right = []
-            var fullary_left = []
-            var xfullary_right = [{'g':7,'x':0,'y':0}]
-            var xfullary_left = [{'g':7,'x':0,'y':0}]
+            //? arrays for DATASETS
+            fullary_right = fullary_left = [];
+            xfullary_right = xfullary_left = [{'g':7,'x':0,'y':0}];
 
             notes6 = []
             for (let i = 0; i<notes21.length-3; i=i+3) {
@@ -466,12 +452,7 @@
                     ]
                 )
             }
-
-
-            //? fill the default linelengths
-            var pre_maxlengths  = [0,0,0,0,0,0]
-
-
+            //? ────────────────────────────────────────────────
             //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ SOCKET STUFF ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
             //! 0   CONNECTING  Socket has been created. The connection is not yet open.
             //! 1   OPEN        The connection is open and ready to communicate.
@@ -491,17 +472,13 @@
 
             const consoleMsg = () => {socket.send("console:")}
             if (socket.readyState == 1) {socket.send('msg');}
+            //! ═════════════════════════════════════════════════
+            //? start a seconds times
             var seconds = 0
             timer2.start(function() {
                 wait_flag = false
                 seconds +=1
             },1000);
-
-            var base_length = 130
-            for (let i = 0; i<6; i++) {
-                pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
-            }
-            //! ════════════════════════════════════════════════════════════════════
 
             //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
             //! 
@@ -518,31 +495,24 @@
                 if (mouse_angle == 1) {
                     branch_angle = point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360
                 }
-
                 //? rebuild ratio lengths
-                if (transCounter == 0) {
-                    for (let i = 0; i<6; i++) {
-                        pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
-                    }
-                } else {
-                    for (let i = 0; i<6; i++) {
-                        pre_maxlengths[i] = (base_length * mratios[transCounter][i])||1 //? 0s not allowed
-                    }
+                for (let i = 0; i<6; i++) {
+                    pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
                 }
                 branch_angle = branch_angle + deg_adj;
 
                 //? build tree
                 drawTree(branch_angle,rotation);
 
-                //? update countrers
+                //? update counters
                 tree_counter++;
                 tc[1]=tree_counter++;
                 for (let i=2;i<tc.length;i++) {
                     if (tree_counter%(i) == 0) {tc[i]++}
                 }
                 //? reset vars
-                fullary_right = fullary_left = [];
-                xfullary_right = xfullary_left = [{'g':7,'x':0,'y':0}];
+                fullary_right   = fullary_left = [];
+                xfullary_right  = xfullary_left = [{'g':7,'x':0,'y':0}];
                 gMin_x = gMax_x = gMin_y = gMax_y = 0;
                 if (screensave == 1) {msgsend("saveScreen:"+branch_angle+":"+rotation)}
 
@@ -559,11 +529,7 @@
 
             //@ %PRAGMA:delete_next_line:0
             <script type="text/javascript" xlink:href="clock_1_listeners.js" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple" />
-
-
-            // <script src="canvas2image.js"></script>
         </svg>
-        <!--/canvas-->
     <!-- /body -->
 <!-- /html -->
 
