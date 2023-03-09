@@ -26,20 +26,6 @@ class Edge {
 }
 
 //! ┌───────────────────────────────────────────────
-//! │ TIME: 
-//! └───────────────────────────────────────────────
-function epoch (date) {
-  return Date.parse(date)
-}
-//! ┌───────────────────────────────────────────────
-//! │ TIME: 
-//! └───────────────────────────────────────────────
-function datetime2epoch(dateToday) {
-    //? https://www.epochconverter.com/
-    const timestamp = epoch(dateToday);
-    return(timestamp/1000);
-}
-//! ┌───────────────────────────────────────────────
 //! │ TIME: returns epoch in seconds
 //! └───────────────────────────────────────────────
 function nowsecs(d) {
@@ -53,43 +39,47 @@ function nowsecs(d) {
     return secs
 }
 //! ┌───────────────────────────────────────────────
-//! │ TIME: returns epoch in seconds
+//! │ TIME: returns epoch in seconds for NOW or ARG
 //! └───────────────────────────────────────────────
-
 function getSecsInDay(d) {
   var e = new Date(d);
   return (d - e.setHours(0,0,0,0))/1000;
 }
-
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns epoch in HH:MM:SS format
+//! └───────────────────────────────────────────────
 function toTimeString(totalSeconds) {
   const totalMs = (totalSeconds+14400) * 1000;
   const result = new Date(totalMs).toISOString().slice(11, 19);
-
   return result;
 }
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns epoch in secs for DAY/ARG adjusted for 4AM
+//! └───────────────────────────────────────────────
 function daysecs(somedate) {
     let tsecs = getSecsInDay(somedate); 
     let tsecs_after_4 = tsecs - 14400;  //? set to 4AM
     if (tsecs_after_4 < 0) { tsecs_after_4 = tsecs_after_4 + 86400;}
-    
-    // let h = Math.floor(ts/3600);//? hrs 
-    // let remainder = ts-(h*60*60);
-
-    // let m = Math.floor(remainder/60);
-    // let s = ts-(h*60*60)-(m*60);
-
-    // console.log('tsecs:',tsecs);
-    // console.log('ts:',ts);
-    // console.log('h:',h);
-    // console.log('m:',m);
-    // console.log('s:',s);
-    // let hms = h+":"+m+":"+s;
-
-    // debugger;
-    // return tsecs; 
     return tsecs_after_4; 
 }
-
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns current position of the 86400 steps of a circle
+//! └───────────────────────────────────────────────
+function ttime2steps(t_time) {
+    t_time_step = parseInt(t_time_str,6)*1.851851851
+    return t_time_step;
+}
+//! ┌───────────────────────────────────────────────
+//! │ TIME: concats level vals to string - only used in MANU
+//! └───────────────────────────────────────────────
+function ttimeStr(t_time) {
+    // t_time_str = "";
+    //? updates global var
+    for (let i = 0; i<6;i++) {
+        t_time_str = t_time_str + t_time[i].toString();
+    }
+    return t_time_str;
+}
 //! ┌───────────────────────────────────────────────
 //! │ The main class that creates the x/y coords then calls drawTree
 //! └───────────────────────────────────────────────
@@ -797,19 +787,7 @@ function wTLp(xpos,ypos,str) {
     return (document.getElementById('id-wtP1'));
 }
 
-function ttime2steps(t_time) {
-    t_time_step = parseInt(t_time_str,6)*1.851851851
-    return t_time_step;
-}
 
-function ttimeStr(t_time) {
-    // t_time_str = "";
-    //? updates global var
-    for (let i = 0; i<6;i++) {
-        t_time_str = t_time_str + t_time[i].toString();
-    }
-    return t_time_str;
-}
 //! ┌───────────────────────────────────────────────
 //! │ all the menu and screen text is written here
 //! └───────────────────────────────────────────────
