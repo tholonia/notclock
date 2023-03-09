@@ -24,10 +24,90 @@ class Edge {
         return "[" + this.node_1.toString() + ", " + this.node_2.toString() + "]";
     }
 }
-// >> test
+
+//! ┌───────────────────────────────────────────────
+//! │ TIME: 
+//! └───────────────────────────────────────────────
+function epoch (date) {
+  return Date.parse(date)
+}
+//! ┌───────────────────────────────────────────────
+//! │ TIME: 
+//! └───────────────────────────────────────────────
+function datetime2epoch(dateToday) {
+    //? https://www.epochconverter.com/
+    const timestamp = epoch(dateToday);
+    return(timestamp/1000);
+}
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns epoch in seconds
+//! └───────────────────────────────────────────────
+function nowsecs(d) {
+    var datestamp = 0;
+    if (d==0) {
+        datestamp = new Date.now();
+    } else {
+        datestamp = new Date(d);
+    }
+    var secs = new Date(datestamp).getTime()/1000;
+    return secs
+}
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns epoch in seconds
+//! └───────────────────────────────────────────────
+
+function getSecsInDay(d) {
+  var e = new Date(d);
+  return (d - e.setHours(0,0,0,0))/1000;
+}
+
+function toTimeString(totalSeconds) {
+  const totalMs = (totalSeconds+14400) * 1000;
+  const result = new Date(totalMs).toISOString().slice(11, 19);
+
+  return result;
+}
+function daysecs(somedate) {
+    let tsecs = getSecsInDay(somedate); 
+    let tsecs_after_4 = tsecs - 14400;  //? set to 4AM
+    if (tsecs_after_4 < 0) { tsecs_after_4 = tsecs_after_4 + 86400;}
+    
+    // let h = Math.floor(ts/3600);//? hrs 
+    // let remainder = ts-(h*60*60);
+
+    // let m = Math.floor(remainder/60);
+    // let s = ts-(h*60*60)-(m*60);
+
+    // console.log('tsecs:',tsecs);
+    // console.log('ts:',ts);
+    // console.log('h:',h);
+    // console.log('m:',m);
+    // console.log('s:',s);
+    // let hms = h+":"+m+":"+s;
+
+    // debugger;
+    // return tsecs; 
+    return tsecs_after_4; 
+}
+
 //! ┌───────────────────────────────────────────────
 //! │ The main class that creates the x/y coords then calls drawTree
 //! └───────────────────────────────────────────────
+                                                                                                     
+
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+//%
+//%   ,ad8888ba,   88                                       888888888888                                 
+//%  d8"'    `"8b  88                                            88                                      
+//% d8'            88                                            88                                      
+//% 88             88  ,adPPYYba,  ,adPPYba,  ,adPPYba,          88  8b,dPPYba,   ,adPPYba,   ,adPPYba,  
+//% 88             88  ""     `Y8  I8[    ""  I8[    ""          88  88P'   "Y8  a8P_____88  a8P_____88  
+//% Y8,            88  ,adPPPPP88   `"Y8ba,    `"Y8ba,           88  88          8PP"""""""  8PP"""""""  
+//%  Y8a.    .a8P  88  88,    ,88  aa    ]8I  aa    ]8I          88  88          "8b,   ,aa  "8b,   ,aa  
+//%   `"Y8888Y"'   88  `"8bbdP"Y8  `"YbbdP"'  `"YbbdP"'          88  88           `"Ybbd8"'   `"Ybbd8"'  
+//%
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
 class Tree {
     constructor(gens, lineLength, x, y, angle, rotation) {
         branch_counter++
@@ -35,16 +115,11 @@ class Tree {
         //? all trees have a base node
 
         this.base_node = new Node(x, y);
-        var srange = normalize([-540, mloc.y, 540], [0, 6]); //? create 6 horizontal regions of the viewbox
-        var genApply = Math.ceil(srange[1]); //@ explain?
         var rel_len = false
         var realgen = (7 - gens) - 1  //? the 'gens' are indexed as 1-6
 
-        var newangleLEFT = ((angle * genangLEFT[realgen]) % 360) + rotation
-        var newangleRIGHT = ((angle * genangRIGHT[realgen]) % 360) - rotation
-
-        // console.log(newangleLEFT, angle,genangLEFT[realgen],realgen, rotation)
-        // debugger
+        var newangleLEFT  = ((angle * genangLEFT[realgen])  % 360) + rotation;
+        var newangleRIGHT = ((angle * genangRIGHT[realgen]) % 360) - rotation;
 
         maxlengths = [0, 0, 0, 0, 0, 0]  //reset
         for (let i = 0; i < pre_maxlengths.length; i++) {
@@ -66,11 +141,23 @@ class Tree {
 
             //? determine next node to the RIGHT in the tree with trig -->
 
+            //? determine next node to the LEFT in the tree with trig 
+            this.left_node = new Node(
+                    x + (newlinelength) * Math.cos(toRadians(newangleLEFT)),
+                    y + (newlinelength) * Math.sin(toRadians(newangleLEFT))
+            );
+
 
             this.right_node = new Node(
                     x + (newlinelength) * Math.cos(toRadians(newangleRIGHT)),
                     y + (newlinelength) * Math.sin(toRadians(newangleRIGHT))
-                    );
+            );
+
+            if (clock_mode > 0) {
+                this.right_node = this.left_node;
+            }
+
+
 
             //? push all the x.y values to a simple array
             fullary_right.push({'x':x,'y':y})
@@ -83,11 +170,6 @@ class Tree {
             })
 
 
-            //? determine next node to the LEFT in the tree with trig 
-            this.left_node = new Node(
-                    x + (newlinelength) * Math.cos(toRadians(newangleLEFT)),
-                    y + (newlinelength) * Math.sin(toRadians(newangleLEFT))
-                    );
 
             //? push all the x.y values to a simple array
             fullary_left.push({'x':x,'y':y})
@@ -102,7 +184,9 @@ class Tree {
             this.right_branch = new Edge(this.base_node, this.right_node);
             this.left_branch = new Edge(this.base_node, this.left_node);
 
-            //<!--  generate a tree beginning at the left node, with a lower depth and new start angle -->
+
+            //<!--  generate a tree beginning at the right/left node, with a lower depth and new start angle -->               
+
             this.left_tree = new Tree(
                     gens - 1,
                     maxlengths[realgen],
@@ -110,12 +194,7 @@ class Tree {
                     this.left_node.y,
                     newangleLEFT,
                     rotation
-                    );
-
-//                        var rrange = normalize([-540, mloc.y, 540],[-180,180]);
-//                        var rotApply = Math.ceil(rrange[1]);
-
-            //<!--  generate a tree beginning at the right node, with a lower depth and new start angle -->               
+            );
 
             this.right_tree = new Tree(
                     gens - 1,
@@ -124,10 +203,17 @@ class Tree {
                     this.right_node.y,
                     newangleRIGHT,
                     rotation
-                    );
+            );
+
+            if (clock_mode > 0) {
+                 this.right_tree = this.left_tree;
+            }            
         }
     }
 }
+
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
 function putPoly(x,y,idx,offset=0) {//@ loop
 
@@ -211,13 +297,13 @@ function putPoly(x,y,idx,offset=0) {//@ loop
         let v = CiR(branch_angle,10,60,0)
         poly_varr_R = [
              [0,0],
-             [-(CiR(nowsecs(),-v,v,0))*-1,CiR(tree_counter,-v,v,0)],
+             [-(CiR(nowsecs(0),-v,v,0))*-1,CiR(tree_counter,-v,v,0)],
              [CiR(tc[10],-v,v,0),CiR(tc[4],-v,v,0)],
              [0,0],
              [CiR(tree_counter,-v,v,0),CiR(branch_angle,-v,v,0)*-1],
-             [CiR(nowsecs(),-v,v,0),(CiR(nowsecs(),-v,v,0))*-1],
+             [CiR(nowsecs(0),-v,v,0),(CiR(nowsecs(0),-v,v,0))*-1],
              [+0,0],
-             [(CiR(nowsecs(),-v,v,0))*-1,(CiR(nowsecs(),-v,v,0))*-1],
+             [(CiR(nowsecs(0),-v,v,0))*-1,(CiR(nowsecs(0),-v,v,0))*-1],
              [CiR(branch_angle,-v,v,0)*-1,CiR(branch_counter,-v,v,0)],
              [-0,0],
         ]
@@ -258,7 +344,7 @@ function putPoly(x,y,idx,offset=0) {//@ loop
         let v1= CiR(tc[12],1,12)
         let v2= CiR(tc[8],1,12)
 
-        console.log(v1,v2)
+        // console.log(v1,v2)
 
         for (let i = 0; i<poly_varr_R.length;i++) {
             poly_varr_R[i][0] = poly_varr_R[i][0] * v1
@@ -395,11 +481,6 @@ function putPoly(x,y,idx,offset=0) {//@ loop
         polystroke_Gradient.appendChild(stop);
     }
 
-//        let cxr =  centerpts[0]//Math.cos(deg2rad(branch_angle+90+180))/3+.5
-//        let cyr =  centerpts[1]//Math.sin(deg2rad(branch_angle+90+180))/3+.5
-//        let cxr =  Math.cos(deg2rad(branch_angle+90+180))/3+.5
-//        let cyr =  Math.sin(deg2rad(branch_angle+90+180))/3+.5
-
     polyfill_Gradient.id = 'fillGradient'+idx;
     polyfill_Gradient.setAttribute('cx', "50%");
     polyfill_Gradient.setAttribute('cy', "50%");
@@ -427,8 +508,9 @@ function putPoly(x,y,idx,offset=0) {//@ loop
 }
 
 
-function putCircle(x,y,idx,offset=0) { //@ loop
-//    console.log("putCircle",x,y,idx)
+function putCircle(x,y,idx,offset) { //@ loop
+    // console.log("putCircle",x,y,offset)
+
     var svg = document.getElementById("svg");
 
 
@@ -446,6 +528,8 @@ function putCircle(x,y,idx,offset=0) { //@ loop
 
 
     porder=idx
+    pcir_circle[porder] = document.createElementNS(svgns, 'circle');
+
     //? prepare the gradient for the circle
     pcir_defs[porder] = document.createElementNS(svgns, 'defs');
     pcir_gradient[porder] = document.createElementNS(svgns, 'radialGradient');
@@ -466,8 +550,6 @@ function putCircle(x,y,idx,offset=0) { //@ loop
     }
 
     //? rotate the light source
-
-
     //? This part calcs the angle from the viewport x,y.  Not used here, but good to save
     //@ let cxr =  Math.sin(deg2rad(point.vx))/3+.5
     //@ let cyr =  Math.cos(deg2rad(point.vy))/3+.5
@@ -476,7 +558,6 @@ function putCircle(x,y,idx,offset=0) { //@ loop
     //? +90° to adjust the coords to top=0°, then +180° to place teh light src at top when top=0°
     let cxr =  Math.cos(deg2rad(branch_angle+90+180))/3+.5
     let cyr =  Math.sin(deg2rad(branch_angle+90+180))/3+.5
-    // console.log("cxr",cxr,"cyr",cyr )
 
     pcir_gradient[porder].id = 'pcir_Gradient'+porder;
     pcir_gradient[porder].setAttribute('cx', cxr.toString());//'0.3');
@@ -485,6 +566,7 @@ function putCircle(x,y,idx,offset=0) { //@ loop
     pcir_defs[porder].appendChild(pcir_gradient[porder]);
     //? end of prep  ----------------------------------
 
+    pcir_circle[porder].setAttribute("class", "put_circles"+porder);
     pcir_circle[porder].setAttribute("id", "put_circles"+porder);
     pcir_circle[porder].setAttribute("cx", x.toString());
     pcir_circle[porder].setAttribute("cy", y.toString());
@@ -494,8 +576,104 @@ function putCircle(x,y,idx,offset=0) { //@ loop
     pcir_circle[porder].setAttribute("opacity", 1);
 
     svg.appendChild(pcir_defs[porder]);
+
     svg.appendChild(pcir_circle[porder]);
 }
+
+function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
+    idx=current_level;
+    var svg = document.getElementById("svg");
+
+    //? get angle
+    clock_angle[idx] = ((rad2deg(Math.atan2(y2-y1,x2-x1)))+360+0)%360;
+    pcir_circle[idx] = document.createElementNS(svgns, 'circle');
+
+    let rad =   maxlengths[idx]*2 *.90;//@ why does it need to be adjusted?
+    let pcir_color=colors2[cycle_colors][idx]; 
+
+    clock_time[idx] = parseFloat(x1).toFixed(2)+"  :  "+parseFloat(y1).toFixed(2);
+
+    if (idx == 0) { //? common hours
+        cHour = Math.floor((((clock_angle[idx]+90)%360)/360)*24);
+    }
+    //? tholonic time held in array
+    //? clock_angle has alredy been synced to 4AM as 0-time
+    // let last_t_time_5 = t_time[5];
+    // let last_t_time_4 = t_time[4];
+    // let last_t_time_3 = t_time[3];
+    // let last_t_time_2 = t_time[2];
+    // let last_t_time_1 = t_time[1];
+    // let last_t_time_0 = t_time[0];
+    for (let i = 0;i<6;i++) {
+        if (idx == i) { 
+            t_time[i] = Math.floor((clock_angle[idx]/360)*6); 
+            // console.log(i,t_time[i])
+        }
+    }
+    // console.log(t_time[5],last_t_time_5)
+    // if (t_time[5] != last_t_time_5) {
+    //     tclock_ticker_5 = tclock_ticker_5 + (t_time[5]-last_t_time_5);
+    // }
+    // if (t_time[4] != last_t_time_4) {
+    //     tclock_ticker_4 = tclock_ticker_4 + (t_time[4]-last_t_time_4);
+    // }
+    // if (t_time[3] != last_t_time_3) {
+    //     tclock_ticker_3 = tclock_ticker_3 + (t_time[3]-last_t_time_3);
+    // }
+    // if (t_time[2] != last_t_time_2) {
+    //     tclock_ticker_2 = tclock_ticker_2 + (t_time[2]-last_t_time_2);
+    // }
+    // if (t_time[1] != last_t_time_1) {
+    //     tclock_ticker_1 = tclock_ticker_1 + (t_time[1]-last_t_time_1);
+    // }
+    // if (t_time[0] != last_t_time_0) {
+    //     tclock_ticker_0 = tclock_ticker_0 + (t_time[0]-last_t_time_0);
+    // }
+
+    // tclock_ticker = tclock_ticker_0.toString()+tclock_ticker_1.toString()+tclock_ticker_2.toString()+tclock_ticker_3.toString()+tclock_ticker_4.toString()+tclock_ticker_5.toString();
+
+    pcir_circle[idx].setAttribute("id", "put_clock_circles"+idx);
+    pcir_circle[idx].setAttribute("cx", x1.toString());
+    pcir_circle[idx].setAttribute("cy", y1.toString());
+    pcir_circle[idx].setAttribute("r",rad);
+    pcir_circle[idx].setAttribute("fill", pcir_color);
+    pcir_circle[idx].setAttribute("fill-opacity", "1");
+    pcir_circle[idx].setAttribute("stroke", "gray");
+    pcir_circle[idx].setAttribute("stroke-width", "1");
+    pcir_circle[idx].setAttribute("style","z-index:"+(current_level*10));
+    pcir_circle[idx].setAttribute("style","mix-blend-mode: difference;");
+    // pcir_circle[idx].setAttribute("style","background-blend-mode: difference;");
+    // svg.setAttribute("style","isolation:isolate;");
+
+    pcir_circle[idx].style.zIndex = (current_level*10).toString();
+
+    //? https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "screen");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "darken");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "lighten");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "color-dodge");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "color-burn");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "hard-light");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "soft-light");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "difference");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "exclusion");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "hue");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "saturation");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "color");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "luminosity");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "screen");
+    // pcir_circle[idx].setAttribute("mix-blend-mode", "overlay");
+    // pcir_circle[idx].setAttribute("isolation","isolate");
+
+    xytrack(x1+rad,y1+rad);
+    xytrack(x1-rad,y1-rad);
+
+    // console.log("Appending id ","put_clock_circles"+idx,lOrder[idx])
+    if (cycle_circles == 0) {  //? only put circles if spheres is turned off
+        svg.appendChild(pcir_circle[idx]);
+    }
+}
+
 
 //! ┌───────────────────────────────────────────────
 //! │ sort associative array by key
@@ -586,8 +764,68 @@ function wTL(args) {
     // }
 }
 //! ┌───────────────────────────────────────────────
+//! │ wtite text from left->right in grod format
+//! └───────────────────────────────────────────────
+function wTLp(xpos,ypos,str) {
+    // row,col
+    let fs = menu_fontsize
+    let spacing = menu_spacing
+
+    var svg = document.getElementById("svg");
+    let text = document.createElementNS(svgns, 'text');
+    text.id = "id-wtP2";
+    text.setAttribute("style", "white-space: pre;")
+    text.setAttribute("classname", "wt", );
+    text.setAttribute("x", xpos);
+    text.setAttribute("y", ypos);
+    if (bg_color == "black") {
+        text.setAttribute("fill", menu_fontclr);
+    } else {
+        text.setAttribute("fill", menu_fontclr);    
+    }
+    text.setAttribute("font-size", fs);
+    text.setAttribute("font-family", "monospace, monospace");
+    text.setAttribute("font-weight", menu_fontweight);
+    //text.setAttribute("stroke", args['stroke']);
+    //text.setAttribute("style", args['style']);
+    //text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+
+    let textNode = document.createTextNode(str);
+    text.appendChild(textNode);
+    svg.appendChild(text);
+
+    return (document.getElementById('id-wtP1'));
+}
+
+function ttime2steps(t_time) {
+    t_time_step = parseInt(t_time_str,6)*1.851851851
+    return t_time_step;
+}
+
+function ttimeStr(t_time) {
+    // t_time_str = "";
+    //? updates global var
+    for (let i = 0; i<6;i++) {
+        t_time_str = t_time_str + t_time[i].toString();
+    }
+    return t_time_str;
+}
+//! ┌───────────────────────────────────────────────
 //! │ all the menu and screen text is written here
 //! └───────────────────────────────────────────────
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+//%
+//% 88b           d88  88888888888  888b      88  88        88  
+//% 888b         d888  88           8888b     88  88        88  
+//% 88`8b       d8'88  88           88 `8b    88  88        88  
+//% 88 `8b     d8' 88  88aaaaa      88  `8b   88  88        88  
+//% 88  `8b   d8'  88  88"""""      88   `8b  88  88        88  
+//% 88   `8b d8'   88  88           88    `8b 88  88        88  
+//% 88    `888'    88  88           88     `8888  Y8a.    .a8P  
+//% 88     `8'     88  88888888888  88      `888   `"Y8888Y"'   
+//%
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
 function writeMenu() {
     // if (cycle_vars != 0) {
     //     var longqs = "";
@@ -598,97 +836,181 @@ function writeMenu() {
     //     }
     //     console.log("LATEST QUERY STRING: ",longqs);
     // }
+    //? no menu
     if (showtext == 0) {return}
-    if (fullscreen == 0) {
-        //@ ARGS
-        menu_fontweight="600";menu_fontclr="#00ffff"; writGrid(['✅',_,_,_,'⌥ = Alt']);
-        menu_fontweight="600";menu_fontclr="#00ff00"; writGrid(['✅',_,_,'⇧ = Shift']);
-        menu_fontweight="600";menu_fontclr="#ff00ff"; writGrid(['✅',_,'^ = Ctrl'])
-        menu_fontweight="600";menu_fontclr="#ffFF00"; writGrid(['✅','⌘ = Meta'])
-        rnum++;
-//        menu_fontweight="600";menu_fontclr="red"; writGrid(['✅','NOTE:']);rnum++;
-        //? the above are all written on the same line, as they have no "rnum++' at the end.
-        writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
-        menu_fontweight="300"
-        writGrid([_,'HOME','Toggle BG (B/W)']);rnum++;
-        writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
-        writGrid([_,'◀▶','-thinner|+wider','('+pensize+')']);rnum++;
-        writGrid([_,'PGUP/PGDN','+zoom in|-zoom out','(x '+linelength_adj + ')']);rnum++;
-        writGrid(['de','INS/DEL','+Finer°|Courser°','(' + deg_adj + '°)']);rnum++;
-        writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer','('+ pre_maxlengths+')']);rnum++;
-        writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
+    //? menu
+    if (showtext == 1) {
+        if (fullscreen == 0) {
+            //@ ARGS
+            menu_fontweight="600";menu_fontclr="#00ffff"; writGrid(['✅',_,_,_,'⌥ = Alt']);
+            menu_fontweight="600";menu_fontclr="#00ff00"; writGrid(['✅',_,_,'⇧ = Shift']);
+            menu_fontweight="600";menu_fontclr="#ff00ff"; writGrid(['✅',_,'^ = Ctrl']);
+            menu_fontweight="600";menu_fontclr="#ffFF00"; writGrid(['✅','⌘ = Meta']);
+            rnum++;
+    //        menu_fontweight="600";menu_fontclr="red"; writGrid(['✅','NOTE:']);rnum++;
+            //? the above are all written on the same line, as they have no "rnum++' at the end.
+            writGrid(['°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°']);rnum++;
+            menu_fontweight="300"
+            writGrid([_,'HOME','Toggle BG (B/W)']);rnum++;
+            writGrid(['up','▲ ▼','+fast|-slow','(' + loop_delay / 1000 + 's)']);rnum++;
+            writGrid([_,'◀▶','-thinner|+wider','('+pensize+')']);rnum++;
+            writGrid([_,'PGUP/PGDN','+zoom in|-zoom out','(x '+linelength_adj + ')']);rnum++;
+            writGrid(['de','INS/DEL','+Finer°|Courser°','(' + deg_adj + '°)']);rnum++;
+            writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer','('+ pre_maxlengths+')']);rnum++;
+            writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
+            writGrid([_]);rnum++;
+
+            writGrid(['aM','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+') ' +names_of_circles[cycle_circles]]);rnum++;
+            writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+') ' +names_of_colors[cycle_colors]]);rnum++;
+            writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+') '+names_of_audios[cycle_audio]]);rnum++;
+            writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+') '+names_of_datasets[cycle_dataset]]);rnum++;
+            writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+') ['+path_opacity+':'+path_width+'] '+names_of_paths[cycle_path]]);rnum++;
+            writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+') '+names_of_polys[cycle_poly]]);rnum++;
+            writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
+            writGrid(['aC','⌥ C','Cycle Vars'   ,'(' + cycle_vars+   ') '+    names_of_vars[cycle_vars]]);      rnum++;
+            writGrid(['aY','⌥ Y','Cycle Ratios' ,'(' + cycle_ratios+ ') '+  names_of_ratios[cycle_ratios]]);    rnum++;
+            writGrid(['mF','⌘ F','Cycle Flowers','(' + cycle_flowers+') '+ names_of_flowers[cycle_flowers]]);   rnum++;
+            writGrid(['mT','⌘ T','Cycle Fruit'  ,'(' + cycle_fruit+  ') '+   names_of_fruit[cycle_fruit]]);     rnum++;
+            writGrid([_]);rnum++;
+            writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius.toFixed(2)+')']);rnum++;
+            writGrid(['aX','⌥ (X|Z)','Circle opacity +/-',   '(' +circle_opacity+')']);rnum++;
+            writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
+            writGrid(['aS','⌥ (S|W)','Merge Count   +/-',   '(' + merge_count + ')']);rnum++;
+            writGrid(['aD','⌥ .','GenAng',   names_of_genang[cycle_genang]]);rnum++;
+            writGrid(['aJ','(⌥|⌘) J','Jump fwd/back '+jump_delta+'°']);rnum++;
+            writGrid([_]);rnum++;
+            writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
+            writGrid(['ca0','^⌥ 0','Show/Hide All Lines','(' + show_all_lines + ') '+names_of_show_all_lines[show_all_lines]]);rnum++;
+            writGrid([_]);rnum++;
+            writGrid([_,'⌥ Q','Show/Hide this menu','('+names_of_showtext[showtext]+')']);rnum++;
+            writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
+            writGrid(['aP','⌥ P','Screen Save','(' + screensave + ')']);rnum++;
+            writGrid([_,'SPACE','Pause/Run']);rnum++;
+            writGrid([_]);rnum++;
+            writGrid([_]);rnum++;
+            if (loop_delay < 4) {
+                menu_fontweight="600";menu_fontclr="RED";
+                writGrid(['✅','WARNING',"Too fast: Expect unpredictable results and/or browser crash (eventually)."]);rnum++;
+            } else {
+                writGrid([_]);rnum++;
+            }
+            writGrid([_]);rnum++;
+            writGrid([_]);rnum++;
+            writGrid(['Query String']);rnum++;
+            let qs = makeQs(href).match(/.{1,140}/g);  //? limit chars to line to 140, return array of lines
+            let ba = (branch_angle % 360).toFixed(2)
+            for (let i=0;i<qs.length;i++) {
+                menu_fontweight="600";menu_fontclr="RED";
+                writGrid([qs[i]]);rnum++;
+            }
+            rnum++;
+            menu_fontweight="600";menu_fontclr="RED";
+            writGrid(['>',"x="+point.vx+" y="+point.vy+"  a="+(point.va).toFixed(12)+"°"]);rnum++;
+            writGrid(['TIME PER CYCLE: ['+cycletime+']/ sec: '+seconds+' / Bifurcation: '+ba+"° / Count: "+tree_counter+' / opwave:'+opwave.toFixed(2)]);rnum++;
+            writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
+            rnum = 0;
+        }
+    }
+    //? degrees only
+    if (showtext == 2) {
+        if (loop_delay < 4) {
+            menu_fontweight="800";menu_fontclr="RED";
+            writGrid(["  !  ",_]);
+        }
+        menu_fontweight="300";menu_fontclr="RED";
+        writGrid([_,branch_angle.toFixed(6)]);rnum++;
+        rnum = 0;
+    }
+    //? clock mode
+    if (showtext == 3) {
+        if (loop_delay < 4) {
+            menu_fontweight="800";menu_fontclr="RED";
+            writGrid(["  !  ",_]);
+        }
+        menu_fontweight="300";menu_fontclr="RED";
+        writGrid([_,"CLOCK"]);rnum++
+        //? print x/y of points
+        // for (let i = 0; i<clock_time.length;i++) {
+        //     writGrid([_,"pt "+i,clock_time[i]]);rnum++
+        // }
+        // writGrid([_]);rnum++
+        //? print angles
+        // for (let i = 0; i<clock_time.length;i++) {
+        //     writGrid([_,"ang "+i,clock_angle[i]]);rnum++
+        // }
+
+        writGrid([_]);rnum++;
+        writGrid([_,"cHour",cHour]);rnum++;
         writGrid([_]);rnum++;
 
-        writGrid(['aM','⌥ M','Cycle circles','(' + cycle_circles + '/'+num_of_circles+') ' +names_of_circles[cycle_circles]]);rnum++;
-        writGrid(['aR','⌥ R','Cycle colors','(' + cycle_colors + '/'+num_of_colors+') ' +names_of_colors[cycle_colors]]);rnum++;
-        writGrid(['aG','⌥ G','Cycle audio','(' + cycle_audio  + '/'+num_of_audios+') '+names_of_audios[cycle_audio]]);rnum++;
-        writGrid(['aU','⌥ U','Cycle dataset','(' + cycle_dataset+ '/'+num_of_datasets+') '+names_of_datasets[cycle_dataset]]);rnum++;
-        writGrid(['aK','⌥ K','Cycle paths','(' + cycle_path   + '/'+num_of_paths+') ['+path_opacity+':'+path_width+'] '+names_of_paths[cycle_path]]);rnum++;
-        writGrid(['aV','⌥ V','Cycle Polygons','(' + cycle_poly   + '/'+num_of_polys+') '+names_of_polys[cycle_poly]]);rnum++;
-        writGrid(['aA','⌥ A','Cycle Presets','(' + cycle_preset + '/'+num_of_presets+')']);rnum++;
-        writGrid(['aC','⌥ C','Cycle Vars'   ,'(' + cycle_vars+'   ) '+    names_of_vars[cycle_vars]]);      rnum++;
-        writGrid(['aY','⌥ Y','Cycle Ratios' ,'(' + cycle_ratios+ ') '+  names_of_ratios[cycle_ratios]]);    rnum++;
-        writGrid(['mF','⌘ F','Cycle Flowers','(' + cycle_flowers+') '+ names_of_flowers[cycle_flowers]]);   rnum++;
-        writGrid(['mT','⌘ T','Cycle Fruit'  ,'(' + cycle_fruit+  ') '+   names_of_fruit[cycle_fruit]]);     rnum++;
-        writGrid([_]);rnum++;
-        writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius.toFixed(2)+')']);rnum++;
-        writGrid(['aX','⌥ (X|Z)','Circle opacity +/-',   '(' +circle_opacity+')']);rnum++;
-        writGrid(['aO','⌥ (O|I)','Poly opacity   +/-',   '(' + poly_opacity + ')']);rnum++;
-        writGrid(['aS','⌥ (S|W)','Merge Count   +/-',   '(' + merge_count + ')']);rnum++;
-        writGrid(['aT','⌥ T','Dynamic Zoom on/off',   '(' + zoomin + ')']);rnum++;
-        writGrid(['aJ','(⌥|⌘) J','Jump fwd/back '+jump_delta+'°']);rnum++;
-        writGrid([_]);rnum++;
-        writGrid(['ca1-ca6','^⌥ (1-6)','Toggle Hide lvl 1-6',   '(' + show_0 + show_1 + show_2 + show_3 + show_4 + show_5 + ')']);rnum++;
-        writGrid(['ca0','^⌥ 0','Show/Hide All Lines','(' + show_all_lines + ') '+names_of_show_all_lines[show_all_lines]]);rnum++;
-        writGrid([_]);rnum++;
-        writGrid([_,'⌥ Q','Show/Hide this menu']);rnum++;
-        writGrid([_,'^Y','Toggle audio','(' + sound_initialized + ')']);rnum++;
-        writGrid(['aP','⌥ P','Screen Save','(' + screensave + ')']);rnum++;
-        writGrid([_,'SPACE','Pause/Run']);rnum++;
-        writGrid([_]);rnum++;
-        writGrid([_]);rnum++;
-        if (loop_delay < 4) {
-            menu_fontweight="600";menu_fontclr="RED";
-            writGrid(['✅','WARNING',"Too fast: Expect unpredictable results and/or browser crash (eventually)."]);rnum++;
-        } else {
-            writGrid([_]);rnum++;
+        function ttime2date(tt) {
+            //? each tick is 0.26455026455 s or 264.55026455 ms
+            let tsecs = 0;
+            let ts = 0.26455026455;
+            let secs_per_deg = 240;
+            let secs_in_day = 86400;
+            let D = 360*60*60;
+            let degL=[0,0,0,0,0,0];
+
+
+            degL[0] = (secs_in_day / 6) * tt[0]; 
+            tsecs = tsecs + degL[0];
+            // console.log("degL[0]=",degL[0]);
+
+            degL[1] = (secs_in_day / 6**2) * tt[1]; 
+            tsecs = tsecs + degL[1];
+            // console.log("degL[1]=",degL[1]);
+
+            degL[2] = (secs_in_day / 6**3) * tt[2]; 
+            tsecs = tsecs + degL[2];
+            // console.log("degL[2]=",degL[2]);
+
+            degL[3] = (secs_in_day / 6**4) * tt[3]; 
+            tsecs = tsecs + degL[3];
+            // console.log("degL[3]=",degL[3]);
+
+            degL[4] = (secs_in_day / 6**5) * tt[4]; 
+            tsecs = tsecs + degL[4];
+            // console.log("degL[4]=",degL[4]);
+
+            degL[5] = (secs_in_day / 6**6 ) * tt[5]; 
+            tsecs = tsecs + degL[5];
+            // console.log("degL[5]=",degL[5]);
+
+
+
+                // console.log(tt[i]+" * "+(ts*p)+" = "+degL[i]);
+                // tsecs = tsecs + degL[i];
+
+            // let degL1 = tt[1] * (360/6/6); 
+            // let degL2 = tt[2] * (360/6/6/6); 
+            // let degL3 = tt[3] * (360/6/6/6/6); 
+            // let degL4 = tt[4] * (360/6/6/6/6/6); 
+            // let degL5 = tt[5] * (360/6/6/6/6/6/6); 
+
+            // Lt = degL[0]//0+L1+L2+L3+L4+L5;
+            // alert(Lt)
+
+            // tsecs = Lt;
+            return tsecs;
         }
-        writGrid([_]);rnum++;
-        writGrid([_]);rnum++;
-        writGrid(['Query String']);rnum++;
-        let qs = makeQs(href).match(/.{1,140}/g);  //? limit chars to line to 140, return array of lines
-        let ba = (branch_angle % 360).toFixed(2)
-        for (let i=0;i<qs.length;i++) {
-            menu_fontweight="600";menu_fontclr="RED";
-            writGrid([qs[i]]);rnum++;
+
+        if (zoomin == 0) {
+            writGrid([_,"t_time",t_time + "   ("+"x"+")"]);rnum++;
+            writGrid([_,"T-time",ttimeStr(t_time)]);rnum++;
+            writGrid([_,"T-steps",ttime2steps()]);rnum++;
+            writGrid([_,"T-time",toTimeString(ttime2steps())]);rnum++;
+
+            toTimeString
+            // writGrid([_,"t_ctr",tclock_ticker+"/"+tclock_ticker.toString(6)]);rnum++;
         }
-        rnum++;
-//        writGrid([_]);rnum++;
-        menu_fontweight="600";menu_fontclr="RED";
-        writGrid(['>',"x="+point.vx+" y="+point.vy+"  a="+(point.va).toFixed(12)+"°"]);rnum++
-        writGrid(['TIME PER CYCLE: ['+cycletime+']/ sec: '+seconds+' / Bifurcation: '+ba+"° / Count: "+tree_counter+' / opwave:'+opwave.toFixed(2)]);rnum++;
-        writGrid(['v.'+_VERSION+ " https://github.com/tholonia/notclock"]);rnum++;
-        //wTextLeft({'str':'TIME PER REPEAT: '+tot_cycletime          ,'row':rnum, 'col':0});;rnum++;
-        //wTextLeft({'str':'TOTAL UNIQUE FORMS: '+tot_images.toLocaleString("en-US")          ,'row':rnum, 'col':0});;rnum++;                
         rnum = 0;
-        //? report mouse x/y position on teh screen
-//        writGrid([_,_,_,_,"x="+gMin_x+":"+gMax_x+" y="+gMin_y+":"+gMax_y]);rnum++
-//        writGrid([_,_,_,_,"x="+point.x+" y="+point.y]);rnum++
-//        writGrid([_]);rnum++;
-//        writGrid([_,_,_,_,"x="+point.sx+" y="+point.sy]);rnum++
-//        writGrid([_]);rnum++;
-//        writGrid([_,_,_,_,"x="+point.px+" y="+point.py]);rnum++
-//        writGrid([_]);rnum++;
-//        writGrid([_,_,_,_,"x="+point.vx+" y="+point.vy+"  a="+(point.va).toFixed(2)+"°"]);rnum++
     }
 }
 //! ┌───────────────────────────────────────────────
 //! │ build the query string
 //! └───────────────────────────────────────────────
 function makeQs(qs) {
-    // let qs = "https://tholonia.com/Images/SVG/notclock.svg"
-    // let qs = "file:///home/jw/store/src/music/clock_1.svg"
-    // log("Makeqs: "+loop_delay)
     qs = qs + "?"
     if (loop_delay      != DEF_loop_delay)      {qs = qs + "up="  + loop_delay;}
     if (iangle          != DEF_iangle)          {qs = qs + "&ia=" + iangle;}
@@ -698,12 +1020,12 @@ function makeQs(qs) {
 
     if (show_all_lines  != DEF_show_all_lines)  {qs = qs + "&ca0=" + show_all_lines;}
 
-    if (show_0 != DEF_show_0) {qs = qs + "&ca0=" + show_0;}
-    if (show_1 != DEF_show_1) {qs = qs + "&ca1=" + show_1;}
-    if (show_2 != DEF_show_2) {qs = qs + "&ca2=" + show_2;}
-    if (show_3 != DEF_show_3) {qs = qs + "&ca3=" + show_3;}
-    if (show_4 != DEF_show_4) {qs = qs + "&ca4=" + show_4;}
-    if (show_5 != DEF_show_5) {qs = qs + "&ca5=" + show_5;}
+    if (show_0 != DEF_show_0) {qs = qs + "&ca1=" + show_0;}
+    if (show_1 != DEF_show_1) {qs = qs + "&ca2=" + show_1;}
+    if (show_2 != DEF_show_2) {qs = qs + "&ca3=" + show_2;}
+    if (show_3 != DEF_show_3) {qs = qs + "&ca4=" + show_3;}
+    if (show_4 != DEF_show_4) {qs = qs + "&ca5=" + show_4;}
+    if (show_5 != DEF_show_5) {qs = qs + "&ca6=" + show_5;}
 
     if (cycle_poly      != DEF_cycle_poly)      {qs = qs + "&aV=" + cycle_poly;}
     if (poly_opacity    != DEF_poly_opacity)    {qs = qs + "&aO=" + poly_opacity;}
@@ -718,10 +1040,13 @@ function makeQs(qs) {
     if (zoomin          != DEF_zoomin)          {qs = qs + "&aT=" + zoomin;}
     if (screensave      != DEF_screensave)      {qs = qs + "&aP=" + screensave;}
     if (cycle_ratios    != DEF_cycle_ratios)    {qs = qs + "&aY=" + cycle_ratios;}
-    if (jump_delta    != DEF_jump_delta)    {qs = qs + "&aJ=" + jump_delta;}
-    if (path_mode    != DEF_path_mode)    {qs = qs + "&li=" + path_mode;}
-    if (cycle_flowers  != DEF_cycle_flowers)    {qs = qs + "&mF=" + cycle_flowers;}
-    if (cycle_fruit  != DEF_cycle_fruit)    {qs = qs + "&mT=" + cycle_fruit;}
+    if (jump_delta      != DEF_jump_delta)      {qs = qs + "&aJ=" + jump_delta;}
+    if (path_mode       != DEF_path_mode)       {qs = qs + "&li=" + path_mode;}
+    if (cycle_flowers   != DEF_cycle_flowers)   {qs = qs + "&mF=" + cycle_flowers;}
+    if (cycle_fruit     != DEF_cycle_fruit)     {qs = qs + "&mT=" + cycle_fruit;}
+    if (cycle_genang    != DEF_cycle_genang)    {qs = qs + "&aD=" + cycle_genang;}
+    if (clock_mode      != DEF_clock_mode)    {qs = qs + "&cm=" + clock_mode;}
+    if (showtext        != DEF_showtext)    {qs = qs + "&aQ=" + showtext;}
     qs = qs + "&ia=" + branch_angle;
     //@ ARGS
     return(qs)
@@ -740,6 +1065,7 @@ function updateListMinMax(data) {
     if (zoomin ==1) {
         for (let i=0;i<data.length;i++) {
             xytrack(data[i][0],data[i][1]);
+
             // console.log("xytrack("+data[i][0]+","+data[i][1]+")=>"+gMax_x+","+gMin_y)
         }
     }
@@ -758,15 +1084,18 @@ function zoomvb(xmin, xmax, ymin, ymax) {
     let len = Math.round(xmax-xmin);
     let hei = Math.round(ymax-ymin);
 
-    vbMaxX = xmax+100
-    vbMaxY = ymax+100
-    vbMinX = xmin-100
-    vbMinY = ymin-100
-    vbLen = vbMaxX-vbMinX
-    vbHei = vbMaxY-vbMinY
+    vbMaxX = xmax+100;
+    vbMaxY = ymax+100;
+    vbMinX = xmin-100;
+    vbMinY = ymin-100;
+    vbLen = vbMaxX-vbMinX;
+    vbHei = vbMaxY-vbMinY;
 
     let vbstr =  vbMinX.toString()+" "+vbMinY.toString()+" "+vbLen.toString()+" "+vbHei.toString();
     eleSvg.setAttribute("viewBox", vbstr);
+
+    wTLp(vbMinX,vbMinY+20,ttimeStr(t_time) + "   ("+new Date()+")");
+    
 }
 //! ┌───────────────────────────────────────────────
 //! │ draw a box around the min/max xy... mainly for debugging
@@ -785,12 +1114,12 @@ function drawBox(xmin, xmax, ymin, ymax) {
     box.setAttribute("stroke-width", '1');
     eleSvg.appendChild(box);
 
-    vbMaxX = xmax+100
-    vbMaxY = ymax+100
-    vbMinX = xmin-100
-    vbMinY = ymin-100
-    vbLen = vbMaxX-vbMinX
-    vbHei = vbMaxY-vbMinY
+    vbMaxX = xmax+100;
+    vbMaxY = ymax+100;
+    vbMinX = xmin-100;
+    vbMinY = ymin-100;
+    vbLen = vbMaxX-vbMinX;
+    vbHei = vbMaxY-vbMinY;
 
     // let vbstr =  vbMinX.toString()+" "+vbMinY.toString()+" "+vbLen.toString()+" "+vbHei.toString();
     // eleSvg.setAttribute("viewBox", vbstr);
@@ -902,54 +1231,72 @@ function cpList(list) {
 //! ┌───────────────────────────────────────────────
 //! │ recursive collection of nodes and edges that form a tree
 //! └───────────────────────────────────────────────
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+//%
+//%          88                                                                                             d8'  `8b    
+//%          88                                                ,d                                          d8'    `8b   
+//%          88                                                88                                         d8'      `8b  
+//%  ,adPPYb,88  8b,dPPYba,  ,adPPYYba,  8b      db      d8  MM88MMM  8b,dPPYba,   ,adPPYba,   ,adPPYba,  88        88  
+//% a8"    `Y88  88P'   "Y8  ""     `Y8  `8b    d88b    d8'    88     88P'   "Y8  a8P_____88  a8P_____88  88        88  
+//% 8b       88  88          ,adPPPPP88   `8b  d8'`8b  d8'     88     88          8PP"""""""  8PP"""""""  Y8,      ,8P  
+//% "8a,   ,d88  88          88,    ,88    `8bd8'  `8bd8'      88,    88          "8b,   ,aa  "8b,   ,aa   Y8,    ,8P   
+//%  `"8bbdP"Y8  88          `"8bbdP"Y8      YP      YP        "Y888  88           `"Ybbd8"'   `"Ybbd8"'    Y8,  ,8P    
+//%
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+                                                                                                                    
+
 function drawTree(branch_angle, rotation) {
-        var svg = document.getElementById("svg");
-        //FIXME for some reason, these angles do not appear when integers!  Javascript really sucks!!
-        //@ AND!!! is a do a toFixed(2), branch_angle becomes rotation !!!!!!!
-        branch_angle = branch_angle%360;
-        branch_angle = branch_angle + 0.00001 //? more that 4 0s and lines begin to disappear
-        rotation = rotation%360
+    //rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
+    var svg = document.getElementById("svg");
+    //FIXME for some reason, these angles do not appear when the andhglew are integers, only floats!?
+    branch_angle = branch_angle%360;
+    branch_angle = branch_angle + 0.00001; //? more that 4 0s and lines begin to disappear
+    // rotation = DEF_rotation * mratios[cycle_ratios][]
 
-        // branch_angle = branch_angle+0.001s
-        // if (branch_angle == 45*0 || 
-        //     branch_angle == 45*1 ||
-        //     branch_angle == 45*2 ||
-        //     branch_angle == 45*3 ||
-        //     branch_angle == 45*4 ||
-        //     branch_angle == 45*5 ||
-        //     branch_angle == 45*6 ||
-        //     branch_angle == 45*7 
-        //     ) {
-        //     branch_angle = branch_angle+0.001
-        // }
+               // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ");
+               //  console.log("branch_angle:",branch_angle);
+               //  console.log("rotation:",rotation);
 
-        //% ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-        //%
-        //%                            888                                                 
-        //%                            888                                                 
-        //%                            888                                                 
-        //%  .d8888b 888  888  .d8888b 888  .d88b.      888  888  8888b.  888d888 .d8888b  
-        //% d88P"    888  888 d88P"    888 d8P  Y8b     888  888     "88b 888P"   88K      
-        //% 888      888  888 888      888 88888888     Y88  88P .d888888 888     "Y8888b. 
-        //% Y88b.    Y88b 888 Y88b.    888 Y8b.          Y8bd8P  888  888 888          X88 
-        //%  "Y8888P  "Y88888  "Y8888P 888  "Y8888        Y88P   "Y888888 888      88888P' 
-        //%               888                                                              
-        //%          Y8b d88P                                                              
-        //%           "Y88P"                                                               
-        //%
-        //% ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    genangLEFT  = genang[cycle_genang][0];
+    genangRIGHT = genang[cycle_genang][1];
 
 
 
+
+
+    // for (let i=0;i<genang.length-1;i++){
+    //     genangLEFT[i]  = genangLEFT[i] * 1.001
+    //     genangRIGHT[i] = genangRIGHT[i] * 1.001
+    // }
+
+
+    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    //%                            888                                                 
+    //%                            888                                                 
+    //%                            888                                                 
+    //%  .d8888b 888  888  .d8888b 888  .d88b.      888  888  8888b.  888d888 .d8888b  
+    //% d88P"    888  888 d88P"    888 d8P  Y8b     888  888     "88b 888P"   88K      
+    //% 888      888  888 888      888 88888888     Y88  88P .d888888 888     "Y8888b. 
+    //% Y88b.    Y88b 888 Y88b.    888 Y8b.          Y8bd8P  888  888 888          X88 
+    //%  "Y8888P  "Y88888  "Y8888P 888  "Y8888        Y88P   "Y888888 888      88888P' 
+    //%               888                                                              
+    //%          Y8b d88P                                                              
+    //%           "Y88P"                                                               
+    //%
+    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+
+
+
+
+
+    if (cycle_vars > 0) {
 // *    ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗     ██╗
 // *   ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ███║
 // *   ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗    ╚██║
 // *   ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║     ██║
 // *   ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║     ██║
 // *    ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝     ╚═╝
-
-
-        if (cycle_vars > 0) {
             if (cycle_vars == 1) {
                 //? no PATH lines
 
@@ -959,16 +1306,16 @@ function drawTree(branch_angle, rotation) {
                 // % ────────────────────────────────────────────────────────────────────────
 
                 for (let i=0;i<6;i++) {
-                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
-                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
                 }
-                cycle_circles   = randint(0, num_of_circles-1)
-                circle_radius   = randint(5,20)
-                cycle_colors    = randint(0,num_of_colors-1)
-                circle_opacity  = randint(1,10)/10  //@ does nothing to lines, only circles
-                cycle_poly      = randint(0,num_of_polys-1)
-                cycle_dataset   = randint(0,1)
-                cycle_ratios    = randint(0,num_of_ratios-1)
+                cycle_circles   = randint(0, num_of_circles-1);
+                circle_radius   = randint(5,20);
+                cycle_colors    = randint(0,num_of_colors-1);
+                circle_opacity  = randint(1,10)/10;  //@ does nothing to lines, only circles
+                cycle_poly      = randint(0,num_of_polys-1);
+                cycle_dataset   = randint(0,1);
+                cycle_ratios    = randint(0,num_of_ratios-1);
             }
 
 // *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██████╗
@@ -977,29 +1324,31 @@ function drawTree(branch_angle, rotation) {
 // * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ██╔═══╝
 // * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ███████╗
  // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝
-                    //? paths, colors, lines
+
+            //? paths, colors, lines
             if (cycle_vars == 2) {
                 // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
 //                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
 //                cycle_flowers = randint(-3,num_of_flowers-1);
                 // % ────────────────────────────────────────────────────────────────────────
                 for (let i=0;i<6;i++) {
-                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
-                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
                 }
-                cycle_path      = randint(0,num_of_paths-1)
-                cycle_colors    = randint(0,num_of_colors-1)
-                cycle_ratios    = randint(0,num_of_ratios-1)
+                cycle_path      = randint(0,num_of_paths-1);
+                cycle_colors    = randint(0,num_of_colors-1);
+                cycle_ratios    = randint(0,num_of_ratios-1);
             }
  // * ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██████╗
 // * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ╚════██╗
 // * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗     █████╔╝
 // * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║     ╚═══██╗
 // * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ██████╔╝
+
             //? PATHs and path_mode only
             if (cycle_vars == 3) {
-                show_all_lines = 0
-                path_mode=2
+                show_all_lines = 0;
+                path_mode=2;
 
                 for (let i=0;i<6;i++) {
                     pensize[i] = CiR(
@@ -1015,8 +1364,8 @@ function drawTree(branch_angle, rotation) {
                         0
                     ) //? use initial values of pre_maxlengths[]
                 }
-                cycle_path      = randint(1,num_of_paths-1)
-                cycle_colors    = randint(0,num_of_colors-1)
+                cycle_path      = randint(1,num_of_paths-1);
+                cycle_colors    = randint(0,num_of_colors-1);
 
             }
 // *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██╗  ██╗
@@ -1025,26 +1374,27 @@ function drawTree(branch_angle, rotation) {
 // * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ╚════██║
 // * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║         ██║
  // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝         ╚═╝
+
             //? no lines or paths
             if (cycle_vars == 4) {
                 // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
                 cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
                 cycle_flowers = randint(-3,num_of_flowers-1);
                 // % ────────────────────────────────────────────────────────────────────────
-                show_all_lines = 0
-                path_mode=2
+                show_all_lines = 0;
+                path_mode=2;
 
                 for (let i=0;i<6;i++) {
-                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0) //? use initialial values of pensize[]
-                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0)  //? use initialial values of pre_maxlengths[]
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
                 }
-                cycle_circles   = randint(0, num_of_circles-1)
-                circle_radius   = randint(5,20)
-                cycle_colors    = randint(0,num_of_colors-1)
-                circle_opacity  = randint(1,10)/10  //@ does nothing to lines, only circles
-                cycle_poly      = randint(0,num_of_polys-1)
-                cycle_dataset   = randint(0,1)
-                cycle_ratios    = randint(0,num_of_ratios-1)
+                cycle_circles   = randint(0, num_of_circles-1);
+                circle_radius   = randint(5,20);
+                cycle_colors    = randint(0,num_of_colors-1);
+                circle_opacity  = randint(1,10)/10;  //@ does nothing to lines, only circles
+                cycle_poly      = randint(0,num_of_polys-1);
+                cycle_dataset   = randint(0,1);
+                cycle_ratios    = randint(0,num_of_ratios-1);
 
             }
 // *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ███████╗
@@ -1053,12 +1403,13 @@ function drawTree(branch_angle, rotation) {
 // * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ╚════██║
 // * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ███████║
  // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝
+
             if (cycle_vars == 5) {
                 //? opwave is meant to be a wandering curve
                 let ang1 = Math.sin(deg2rad(randang1))
                 let mod2 = randang2 + CiR(tc[4],0,3599,0)/10
                 let ang2 = Math.cos(deg2rad(mod2))
-                opwave = Math.abs(ang1+ang2) * 100
+                // opwave = Math.abs(ang1+ang2) * 100
                 // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
 //                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
 //                cycle_flowers = randint(-3,num_of_flowers-1);
@@ -1066,40 +1417,19 @@ function drawTree(branch_angle, rotation) {
 
                 // % ──────── RATIO setting ────────────────────────────────────────
                 //? when form is smallest, set RATIO by time
-                // if (nowsecs()%14 == 0 && wait_flag == false) {
-                    trt = 5
-                // if (nowsecs()%(trt*5) == 0) {
-                //     console.log("trasitining")
-                //     for (let i=0;i<6;i++){
-                //         setTimeout(function () {
-                //             svg.setAttribute("opacity",(1-(i/4)).toString());
-                //             svg.setAttribute("transition","opacity 500ms linear 100ms")
-                //             fadeout_finished[i] = true;
-                //         }, i*500)
-                //     }
-                //     if (fadeout_finished[5] == true) {
-                //         fadeout_finished = [false,false,false,false,false,false]
-                //         for (let i=0;i<6;i++){
-                //             setTimeout(function () {
-                //                 svg.setAttribute("opacity",(i/4).toString());
-                //                 svg.setAttribute("transition","opacity 500ms linear 100ms")
-                //             }, i*100)
-                //         }
-                //     }
-                // }
-                if (nowsecs()%15 == 0) {
-                    next_ratio_change = nowsecs()+15
+                trt = 5
+
+                if (nowsecs(0)%15 == 0) {
+                    next_ratio_change = nowsecs(0)+15
                     next_ratio =  randintEx(0,num_of_ratios-1,next_ratio)
                     cycle_ratios = next_ratio;
                 }
 
                 //? set LINE opacity by counter and xdlAry[]
-                if (cv6inherit == false) {
-                    for (let i=0;i<6;i++) {
-                        let c = xdlAry[i][CiR(tc[4],0,99,0)]
-                        let x= CiR(c,0,1000,0)/1000
-                        opacities[i] = 1
-                    }
+                for (let i=0;i<6;i++) {
+                    let c = xdlAry[i][CiR(tc[4],0,99,0)]
+                    let x= CiR(c,0,1000,0)/1000
+                    opacities[i] = 1
                 }
                 // % ──────── LINE setting ────────────────────────────────────────
                 show_all_lines = 1
@@ -1121,39 +1451,34 @@ function drawTree(branch_angle, rotation) {
                 }
 
                 // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-                if (nowsecs()%17 == 0) {
+                if (nowsecs(0)%17 == 0) {
                     cycle_fruit = randint(0,num_of_fruit-1);
                 }
-                if (nowsecs()%23 == 0) {
+                if (nowsecs(0)%23 == 0) {
                     cycle_flowers = randint(0,num_of_flowers-1);
                 }
 
                 // % ──────── PATH setting ────────────────────────────────────────
                 //? turn on PATHS
-                if (cycle_path==0) {cycle_path=1}
+                // if (cycle_path==0) {cycle_path=1}
                 path_mode = 0
-                path_color = colors360[tc[10]%360]//"green"
+                path_color = colors360[tc[10]%360];
+                // path_color = "white";
                 //? set PATH style by time
-                if (nowsecs()%60 == 0) {
+                if (nowsecs(0)%60 == 0) {
                     cycle_path = randintEx(1,num_of_paths-1,cycle_path);
                 }
 
                 if (bg_color == "black") {
-                    if (cv6inherit == false) {
-                        // opwave = Math.round(Math.sin(deg2rad(point.va))+Math.cos(deg2rad(point.va-90))*100)+100
-//                        path_opacity = CiR(opwave,0,100,0)/100 //? op at > 1.0 is op = 1.0
-                        path_opacity = 1//CiR(tc[5],0,100,0)/100 //? op at > 1.0 is op = 1.0
-                        if (path_opacity < 0.2) {path_opacity = 0.2}
-                        // path_opacity = opwave//CiR(opwave,20,120,0)/100 //? op at > 1.0 is op = 1.0
-                        path_width = CiR(tc[10]%500,1,6,0)/1;
-    //                    console.log("opwave",opwave,"path_opacity",path_opacity,"path_width",path_width)
-                    }
+                    path_opacity = 1//CiR(tc[5],0,100,0)/100 //? op at > 1.0 is op = 1.0
+                    if (path_opacity < 0.2) {path_opacity = 0.2} //? limit opacitry to 0.2
+                    path_width = CiR(tc[10]%500,1,5,0)/1; //? width incremennet by 100ths (even though fractions are prob not supported)
                 }
-                if (bg_color == "white") {
-                    path_opacity = CiR(opwave,000,800,0)/999 //? op at > 1.0 is op = 1.0
-                    // path_opacity = 1
-                    path_width = CiR(tree_counter%500,1,4,0)/1;
-                }
+                // if (bg_color == "white") {
+                //     path_opacity = CiR(opwave,000,800,0)/999 //? op at > 1.0 is op = 1.0
+                //     // path_opacity = 1
+                //     path_width = CiR(tree_counter%500,1,4,0)/1;
+                // }
 
                 // % ──────── CIRCLE setting ────────────────────────────────────────
                 //? set circles to SPHERES
@@ -1166,9 +1491,7 @@ function drawTree(branch_angle, rotation) {
                 //? set CIRCLE radius by counter
                 circle_radius   = CiR(tcx[0],0,17,0)
                 //? set CIRCIE  OPACITY by counter
-                if (cv6inherit == false) {
-                    circle_opacity  = CiR(tc[4],0,200,0)/100  //@ does nothing to lines, only circles
-                }
+                circle_opacity  = CiR(tc[4],0,200,0)/100  //@ does nothing to lines, only circles
 
                 // % ════════════════════════════════════════════════
 
@@ -1180,41 +1503,15 @@ function drawTree(branch_angle, rotation) {
                 // cycle_dataset   = randint(0,1)
                 // cycle_ratios    = randint(0,num_of_ratios-1)
                 //? filter by seconds example
-                // if (nowsecs()%(divs+15) == 0 && wait_flag == false) {
+                // if (nowsecs(0)%(divs+15) == 0 && wait_flag == false) {
                 //? makes fadeouts smoother
                 // preop = path_opacity
                 // if (path_width == 1) {path_opacity = .6} else {path_opacity = preop}
                 // if (path_width == 2) {path_opacity = .86} else {path_opacity = preop}
             }
-// *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ███████╗
-// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ██╔════╝
-// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗    ███████╗
-// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ██═══██║
-// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ███████║
- // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝
-            //? no cycling vars
-            if (cycle_vars == 6) {
-                cv6inherit = true
-                cycle_dataset = 1
-                cycle_vars = 5
-                opacities=[1,1,1,1,1,1]
-                circle_opacity = 1
-                path_opacity=1
-                path_width=1
-            }
 
         }
-// *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ███████ 
-// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝         ██         
-// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗         ██ 
-// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║         ██ 
-// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║         ██ 
- // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝            
-        //? no cycling vars
-        // if (cycle_vars == 7){
-        // debugger
-        //     // console.log(nx1,ny1,gen)
-        // }
+
 
 
     //% █████████████████████████ LOAD PRESETS ███████████████████████
@@ -1258,10 +1555,13 @@ function drawTree(branch_angle, rotation) {
                 case 'aT':  zoomin         = qsary[key]; break;
                 case 'aP':  screensave     = qsary[key]; break;
                 case 'aY':  cycle_ratios   = qsary[key]; break;
-                case 'aJ':  jump_delta   = qsary[key]; break;
-                case 'li':  path_mode   = qsary[key]; break;
-                case 'mF':  cycle_flowers   = qsary[key]; break;
-                case 'mT':  cycle_fruit  = qsary[key]; break;
+                case 'aJ':  jump_delta     = qsary[key]; break;
+                case 'li':  path_mode      = qsary[key]; break;
+                case 'mF':  cycle_flowers  = qsary[key]; break;
+                case 'mT':  cycle_fruit    = qsary[key]; break;
+                case 'aD':  cycle_genang   = qsary[key]; break;
+                case 'cm':  clock_mode    = qsary[key]; break;
+                case 'aQ':  showtext       = qsary[key]; break;
             }
         }
         preset_changed = false
@@ -1308,6 +1608,21 @@ function drawTree(branch_angle, rotation) {
     // var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
     //? but we need to use THIS swapped args to get symetrical results
     // console.log("branch_angle:",branch_angle)
+
+
+    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    //%                                                 a8  8a     
+    //% 888888888888                                   d8'  `8b    
+    //%      88                                       d8'    `8b   
+    //%      88                                      d8'      `8b  
+    //%      88  8b,dPPYba,   ,adPPYba,   ,adPPYba,  88        88  
+    //%      88  88P'   "Y8  a8P_____88  a8P_____88  88        88  
+    //%      88  88          8PP"""""""  8PP"""""""  Y8,      ,8P  
+    //%      88  88          "8b,   ,aa  "8b,   ,aa   Y8,    ,8P   
+    //%      88  88           `"Ybbd8"'   `"Ybbd8"'    Y8,  ,8P    
+    //%                                                 "8  8"  
+    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
     var draw_tree = new Tree(gens, this_length, start_x, start_y, rotation, branch_angle);
 
     var draw_edges = getTreeEdges(draw_tree);
@@ -1404,11 +1719,11 @@ function drawTree(branch_angle, rotation) {
         var lcx = 0.5
         var lcy = 0.3
         var lr = 0.8
+
         if (path_color == 0) {
             path_color = colors2[cycle_colors][gen]
         }
         //? override for path_mode when viewiun just lines
-
 
 
         if (path_mode > 0) {
@@ -1417,6 +1732,12 @@ function drawTree(branch_angle, rotation) {
            lcy = 0.5
            lr = 1
         }
+
+        //? debug/viewing overrides
+        // path_color = "white";
+        // path_opacity="1";
+        // path_width='3'
+
 
         //? prepare the gradiant stroke for the PATHS
         var DATdefs = document.createElementNS(svgns, 'defs');
@@ -1458,29 +1779,33 @@ function drawTree(branch_angle, rotation) {
         svg.appendChild(newPath_l);
     }
 
-    //%          ██████   ██████  ██████      ██████  ███████  ██████  ██ ███       ███████
-    //% ██      ██    ██ ██    ██ ██   ██     ██   ██ ██      ██       ██ ████   ██ ██
-    //% ██      ██    ██ ██    ██ ██████      ██████  █████   ██   ███ ██ ██ ██  ██ ███████
-    //% ██      ██    ██ ██    ██ ██          ██   ██ ██      ██    ██ ██ ██  ██ ██      ██
-    //% ███████  ██████   ██████  ██          ██████  ███████  ██████  ██ ██   ████ ███████
-                                                                                                                                                             
+    
+    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    //%
+    //%   ad8888ba,              ,ad8888ba,   88888888888  888b      88        88           ,ad8888ba,      ,ad8888ba,    88888888ba   
+    //%  8P'    "Y8             d8"'    `"8b  88           8888b     88        88          d8"'    `"8b    d8"'    `"8b   88      "8b  
+    //% d8                     d8'            88           88 `8b    88        88         d8'        `8b  d8'        `8b  88      ,8P  
+    //% 88,dd888bb,            88             88aaaaa      88  `8b   88        88         88          88  88          88  88aaaaaa8P'  
+    //% 88P'    `8b  aaaaaaaa  88      88888  88"""""      88   `8b  88        88         88          88  88          88  88""""""'    
+    //% 88       d8  """"""""  Y8,        88  88           88    `8b 88        88         Y8,        ,8P  Y8,        ,8P  88           
+    //% 88a     a8P             Y8a.    .a88  88           88     `8888        88          Y8a.    .a8P    Y8a.    .a8P   88           
+    //%  "Y88888P"               `"Y88888P"   88888888888  88      `888        88888888888  `"Y8888Y"'      `"Y8888Y"'    88                                                                                                                                                   
+    //%
+    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 
     //? loop through the generated data
     //? length of adata_right is 126
     for (let idx = 0; idx<adata_right.length; idx++) {
+        // console.log("adata["+idx+"]");
         //? set the base data vars
         nx1 = adata_right[idx].x
         ny1 = adata_right[idx].y
         nx2 = adata_left[idx].x
         ny2 = adata_left[idx].y
 
-//        if (lOrder[gen] == 5) {
-//        if (cycle_flowers > 0)  {putPoly(nx2,ny2,idx);}
-//        if (cycle_fruit > 0)    {putCircle(nx2,ny2,idx);}
-//        }
         xytrack(nx2,ny2);
 
-        let order = lOrder[gen] //? get the actual gen value from the gens, which goes up to 126
+        order = lOrder[gen] //? get the actual gen value from the gens, which goes up to 126
 
         //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
         //@
@@ -1500,6 +1825,11 @@ function drawTree(branch_angle, rotation) {
    
         //% █████████████ ADJUSTMENTS █████████████
         var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycle through the circle-types
+
+        if (clock_mode > 0) {
+            cr_rad = maxlengths[order]*circle_radius;
+        }
+
 
         if (cycle_circles > 0) { 
             //? prepare the gradient for the circle
@@ -1534,7 +1864,6 @@ function drawTree(branch_angle, rotation) {
             //? +90° to adjust the coords to top=0°, then +180° to place teh light src at top when top=0°
             let cxr =  Math.cos(deg2rad(branch_angle+90+180))/3+.5
             let cyr =  Math.sin(deg2rad(branch_angle+90+180))/3+.5
-            // console.log("cxr",cxr,"cyr",cyr )
 
             mCIRgradient[order].id = 'Gradient'+order;
             mCIRgradient[order].setAttribute('cx', cxr.toString());//'0.3');
@@ -1549,6 +1878,8 @@ function drawTree(branch_angle, rotation) {
             mCIRcircle[order].setAttribute("r", cr_rad);            
             mCIRcircle[order].setAttribute('fill', 'url(#Gradient'+order+')');
             mCIRcircle[order].setAttribute("opacity", circle_opacity);
+            mCIRcircle[order].setAttribute("style","z-index:"+(current_level*10)); //? not working :/
+            // mCIRcircle[order].setAttribute("style","mix-blend-mode: color;");
 
             svg.appendChild(mCIRdefs[order]);
             svg.appendChild(mCIRcircle[order]);
@@ -1790,11 +2121,21 @@ function drawTree(branch_angle, rotation) {
         //% newpensize = CiR((tree_counter-order)/10*(order+1),1,10,0)
 
 
-//=========================================================================
+        //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+        //%
+        //% ██████  ██████   █████  ██     ██     ██      ██ ███    ██ ███████ 
+        //% ██   ██ ██   ██ ██   ██ ██     ██     ██      ██ ████   ██ ██      
+        //% ██   ██ ██████  ███████ ██  █  ██     ██      ██ ██ ██  ██ █████   
+        //% ██   ██ ██   ██ ██   ██ ██ ███ ██     ██      ██ ██  ██ ██ ██      
+        //% ██████  ██   ██ ██   ██  ███ ███      ███████ ██ ██   ████ ███████ 
+        //%
+        //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+                                                                           
 
         //? DRAW THE LINE
         //? prepare the gradient for the line
         //! The generatio indexing starts at 1, not 0 !!
+
         linecolors = colors2[cycle_colors]
         mLINEcolor[order] = linecolors[order]
 
@@ -1804,16 +2145,8 @@ function drawTree(branch_angle, rotation) {
         mLINEgradient[order]= document.createElementNS(svgns, 'radialGradient');
         mLINEline[order]    = document.createElementNS(svgns, 'line');
 
-        // let c1 = mLINEcolor[CiR(Math.abs(order+1),0,5,0)]
         let c1 = mLINEcolor[(Math.abs(order+1))%6]
-
-        // let c1 = mLINEcolor[order]
         let c2 = mLINEcolor[order]
-
-
-
-
-        // console.log(nx1,nx,ny1,ny2)
 
         mLINEstops[order] = [
             {"color": c1,   "offset": "10%"},
@@ -1840,49 +2173,75 @@ function drawTree(branch_angle, rotation) {
         mLINEline[order].setAttribute('y2', ny2.toString())
 
         mLINEline[order].setAttribute("id", "lines"+gen);
-        mLINEline[order].setAttribute('stroke', 'url(#lineGradient'+gen+')');
+
+        if (clock_mode > 0) {
+            mLINEline[order].setAttribute('stroke', mLINEcolor[order]);
+        } else {
+            mLINEline[order].setAttribute('stroke', 'url(#lineGradient'+gen+')');
+        }
         // mLINEline[order].setAttribute("opacity", "1");
-        mLINEline[order].setAttribute("stroke-width",newpensize);
+        if (clock_mode > 0) {
+            mLINEline[order].setAttribute("stroke-width",(7-order));
+        } else {
+            mLINEline[order].setAttribute("stroke-width",newpensize);            
+        }
         mLINEline[order].setAttribute("opacity", opacities[order]);
 
         svg.appendChild(mLINEdefs[order]);
 
         //? what lines to show/hide
-        if (show_all_lines == 1) {
-            if (show_0 == 1 && order == 0) {
-                // console.log(show_all_lines,show_0,order)
-                // console.log(mLINEline[order])
-                svg.appendChild(mLINEline[order]);
+
+        if (clock_mode > 0) {
+            if (order == current_level) {
+                if (show_all_lines == 1) {
+                    if (show_0 == 1 && order == 0) {svg.appendChild(mLINEline[order]);}
+                    if (show_1 == 1 && order == 1) {svg.appendChild(mLINEline[order]);}
+                    if (show_2 == 1 && order == 2) {svg.appendChild(mLINEline[order]);}
+                    if (show_3 == 1 && order == 3) {svg.appendChild(mLINEline[order]);}
+                    if (show_4 == 1 && order == 4) {svg.appendChild(mLINEline[order]);}
+                    if (show_5 == 1 && order == 5) {svg.appendChild(mLINEline[order]);}
+                }
+                //? placing this here ensure the pols abd circles appear ON TOP of the lines they eminate from
+                let offset = 0;
+                if (lOrder[gen] == 5) { //? only apply to last line
+                    if (cycle_flowers > 0)  {
+                        putPoly(nx2,ny2,idx);
+                    }
+                    if (cycle_fruit > 0)    {
+                        putCircle(nx2,ny2,idx,offset);
+                    }
+                }
+                for (let i = 0; i<6; i++) {
+                    if (lOrder[gen] == i) { 
+                        if (show_lines[i] == 1) {
+                            putClock(nx1,ny1,nx2,ny2,i,0); 
+                        }
+                    }
+                }
+                current_level = (current_level + 1)%6;
             }
-            if (show_1 == 1 && order == 1) {
-                svg.appendChild(mLINEline[order]);
+        } else {
+            if (show_all_lines == 1) {
+                if (show_0 == 1 && order == 0) {svg.appendChild(mLINEline[order]);}
+                if (show_1 == 1 && order == 1) {svg.appendChild(mLINEline[order]);}
+                if (show_2 == 1 && order == 2) {svg.appendChild(mLINEline[order]);}
+                if (show_3 == 1 && order == 3) {svg.appendChild(mLINEline[order]);}
+                if (show_4 == 1 && order == 4) {svg.appendChild(mLINEline[order]);}
+                if (show_5 == 1 && order == 5) {svg.appendChild(mLINEline[order]);}
             }
-            if (show_2 == 1 && order == 2) {
-                svg.appendChild(mLINEline[order]);
-            }
-            if (show_3 == 1 && order == 3) {
-                svg.appendChild(mLINEline[order]);
-            }
-            if (show_4 == 1 && order == 4) {
-                svg.appendChild(mLINEline[order]);
-            }
-            if (show_5 == 1 && order == 5) {
-                svg.appendChild(mLINEline[order]);
+
+            //? placing this here ensure the pols abd circles appear ON TOP of the lines they eminate from
+            let offset = 0;
+            if (lOrder[gen] == 5) { //? only apply to last line
+                if (cycle_flowers > 0)  {
+                    putPoly(nx2,ny2,idx);
+                }
+                if (cycle_fruit > 0)    {
+                    putCircle(nx2,ny2,idx,offset);
+                }
             }
         }
-
-
-        //? placing this here ensure the pols abd circles appear ON TOP of the lines they eminate from
-        if (lOrder[gen] == 5) {
-            if (cycle_flowers > 0)  {putPoly(nx2,ny2,idx);}
-            if (cycle_fruit > 0)    {putCircle(nx2,ny2,idx);}
-        }
-
-
-
         gen++;
-
-
     };
 
 
@@ -1968,7 +2327,7 @@ function drawTree(branch_angle, rotation) {
         //     pp = 1000 / (tree_counter % 7)
         //     for (let i = 1; i < 7; i++) {
         //         setTimeout(function () {
-        //             //? roration is actually angle :/  so angle%36= rangoe of 1-10 seconds
+        //             //? rotation is actually angle :/  so angle%36= rangoe of 1-10 seconds
         //             playSound_3(crosssum(rotation)%36, i)
         //         }, pp * i)
         //     }
@@ -1984,13 +2343,14 @@ function drawTree(branch_angle, rotation) {
     //? this only works here (not in listeners)
     if (zoomin == 1) {
         was_zoomed = 1
+        last_showtext = showtext;
         zoomvb(gMin_x, gMax_x, gMin_y, gMax_y)  
         showtext=0; //? turn off the menu, as it is unreadable
     } else {
         if (gMin_x+gMax_x+gMin_y+gMax_y != 0) {
             eleSvg.setAttribute("viewBox", "-960 -512 1920 1024");
             if (was_zoomed == 1) {
-                showtext = 1 //? turn menu back up
+                showtext = last_showtext; //? turn menu back on
                 was_zoomed = 0
             }
         }
@@ -2313,14 +2673,6 @@ const normalize = (set, range = [0, 1]) => {
     return newSet.map(n => n * newRange + initial);
 };
 //! ┌───────────────────────────────────────────────
-//! │ Get point in global SVG space
-//! └───────────────────────────────────────────────
-function cursorPoint(evt) {
-    pt.x = evt.clientX;
-    pt.y = evt.clientY;
-    return pt.matrixTransform(svg.getScreenCTM().inverse());
-}
-//! ┌───────────────────────────────────────────────
 //! │ Javascript math library trig functions take radians and not degrees by default 
 //! └───────────────────────────────────────────────
 function toRadians(angle) {
@@ -2427,18 +2779,7 @@ function rad2deg(radians) {
     let pi = Math.PI;
     return radians * (180.0 / pi);
 }
-//! ┌───────────────────────────────────────────────
-//! │ returns epoch in seconds
-//! └───────────────────────────────────────────────
-function nowsecs() {
-    function seconds_since_epoch(d) {
-        return Math.floor(d / 1000);
-    }
-    //<!-- 144000 is seconds from midmioght to 4AM -->
-    var d = Date.now();
-    var secs = seconds_since_epoch(d);
-    return secs
-}
+
 //! ┌───────────────────────────────────────────────
 //! │ a (failed) attemped to calculates the total time of the cycles
 //! └───────────────────────────────────────────────

@@ -1,3 +1,13 @@
+
+clock mode
+file:///home/jw/store/src/music/clock_1.svg?ia=180&de=0.00416666666666666&up=1000&cm=1
+
+cm=1
+
+
+Alt-Q options
+
+
 **notclock.svg** is an interactive, real-time animation SVG based in a 6-generation bifurcated point (i.e., one point becomes 2 point, each of those point becomes 2 points, etc., 6 times).  This is the basic model used to describe “Tholonic Expansion”, which describe the models of nature and energy, and this SVG was initially designed to be a clock based on this concept, but that seemingly simple idea tuned out to be far more challenging than imagined, so that code turned into this, which is not a clock.
 
 <img src="images/growth_15deg.jpg"/>

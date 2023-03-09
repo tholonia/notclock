@@ -8,8 +8,8 @@
     style="background-color: black;"
     opacity="1"
     xmlns="http://www.w3.org/2000/svg"
-    stroke-linecap="round"
     stroke-linejoin="round"
+    stroke-linecap="round"
     stroke-width="1"
     xml:space="preserve"
     align="center"
@@ -61,6 +61,12 @@
 
     <style>
         .map {pointer-events:none;}
+
+        // svg  {
+        //       mix-blend-mode: difference;
+        //       position:relative;
+        //       background: rgb(232 240 254 / 0.4);
+        // }
     </style>
     
     // *
@@ -95,8 +101,8 @@
             var href = window.location.protocol+'//'+window.location.hostname+window.location.pathname //document.defaultView.location.href;
 
             //? get everything and extract the qs
-            var fullhref = document.defaultView.location.href
-            log(fullhref)
+            var fullhref = document.defaultView.location.href;
+            log(fullhref);
 
             //? parse qs into name/value array
             if ( -1 != fullhref.indexOf("?") ) {
@@ -113,38 +119,18 @@
             // var cumxy = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]//xdel
 
 
-            //? correct settings
-            var genangLEFT  = [5,5,5,5,5,5,5]
-            var genangRIGHT = [5,5,5,5,5,5,5]
-
-            //@ Changing these vaues has dramatic and interesting effects.
-            //@ All even-number sets rotate the image 90 degrees
-
-            // genangLEFT = genangRIGHT = [0,0,0,0,0,0,0]
-            // genangLEFT = genangRIGHT = [1,1,1,1,1,1,1]
-            // genangLEFT = genangRIGHT = [2,2,2,2,2,2,2]
-            // genangLEFT = genangRIGHT = [3,3,3,3,3,3,3]
-            // genangLEFT = genangRIGHT = [4,4,4,4,4,4,4]
-
-            // var genangLEFT  = [1,3,5,7,9,11,13]
-            // var genangRIGHT = [13,11,9,7,5,3,1]
-
-            // var genangLEFT  = [3,3,3,3,3,3,3]
-            // var genangRIGHT = [5,5,5,5,5,5,5]
-
-
-            var wait_flag = true  //? for timed operations
+             var wait_flag = true;  //? for timed operations
 
             //? array to hold variable line opacities
-            var di =0
-            dlAry =  [[],[],[],[],[],[],[]]
-            xdlAry = [[],[],[],[],[],[]]
+            var di =0;
+            dlAry =  [[],[],[],[],[],[],[]];
+            xdlAry = [[],[],[],[],[],[]];
             //? fill array with 1s for now
             for (let j = 0; j<7; j++) {
-                di=1
+                di=1;
                 for (let i=0;i<100;i++) {
-                    dlAry[j].push(di)
-                    di = di + j
+                    dlAry[j].push(di);
+                    di = di + j;
                 }
             }
 
@@ -159,9 +145,9 @@
             6:(100) [1, 7, 13, 19, 25, 31, 37, 43, 49, 55, 61, 67, 73, 79,..., 595]
             */
 
-            var xdlAry = []
+            var xdlAry = [];
             for (let j = 0; j<6; j++) {
-                xdlAry[j] = dlAry[j+1]
+                xdlAry[j] = dlAry[j+1];
             }
 
             /*
@@ -178,17 +164,17 @@
             var defs = document.createElementNS(svgns, 'defs');  //@ Global 'defs', do I need/want this?
 
             //? globals for polygon gradiant stops
-            var polyColor_1_offset = 33.33
-            var polyColor_2_offset = 33.33*2
-            var polyColor_3_offset = 33.33*3
+            var polyColor_1_offset = 33.33;
+            var polyColor_2_offset = 33.33*2;
+            var polyColor_3_offset = 33.33*3;
 
-            var idx1 = tree_counter%360
-            var idx2 = tree_counter*30%360
-            var idx3 = tree_counter*60%360
+            var idx1 = tree_counter%360;
+            var idx2 = tree_counter*30%360;
+            var idx3 = tree_counter*60%360;
 
-            var idx4 = tree_counter%360
-            var idx5 = tree_counter*33%360
-            var idx6 = tree_counter*66%360
+            var idx4 = tree_counter%360;
+            var idx5 = tree_counter*33%360;
+            var idx6 = tree_counter*66%360;
 
             var this_color_1 = 0;
             var this_color_2 = 0;
@@ -196,24 +182,23 @@
 
             //? globals for line opacities
             // var opacities       = [0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]
-            var opacities   = [1,1,1,1,1,1]
-            var maxlengths  = [0,0,0,0,0,0]
-            var mladj       = [0,0,0,0,0,0]
+            var opacities   = [1,1,1,1,1,1];
+            var maxlengths  = [0,0,0,0,0,0];
+            var mladj       = [0,0,0,0,0,0];
 
             //? general global vars
-            var gens        = 6
-            var gen         = 0
-            var start_x     = 0
-            var start_y     = 0
-            var rotation    = -90
-            var inf         = 10e10  //@ I think JS has an 'infinity' var, but not sure how it works
-            var ON          = true
-            var OFF         = false
-            var this_length
-            var start_x
-            var start_y
-            var branch_angle
-            var last_angle
+            var gens        = 6;
+            var gen         = 0;
+            var start_x     = 0;
+            var start_y     = 0;
+            var inf         = 10e10;  //@ I think JS has an 'infinity' var, but not sure how it works
+            var ON          = true;
+            var OFF         = false;
+            var this_length;
+            var start_x;
+            var start_y;
+            var branch_angle;
+            var last_angle;
 
 
             //% █████████████ ADJUSTMENTS █████████████
@@ -233,98 +218,155 @@
 
 
             //@ ARGS
-            var loop_delay      = parseFloat(qget("up",DEF_loop_delay))
-            var iangle          = parseFloat(qget("ia",DEF_iangle))
-            var deg_adj         = parseFloat(qget("de",DEF_deg_adj))
-            var poly_opacity    = parseFloat(qget("aO",DEF_poly_opacity))
-            var jump_delta      = parseFloat(qget("aJ",DEF_jump_delta))
-            var circle_opacity  = parseFloat(qget("aX",DEF_circle_opacity))
-            var circle_radius   = parseInt(qget("aN",  DEF_circle_radius))
-            var cycle_circles   = parseInt(qget("aM" , DEF_cycle_circles))
-            var cycle_colors    = parseInt(qget("aR",  DEF_cycle_colors))
-            var show_0          = parseInt(qget("ca1", DEF_show_0))
-            var show_1          = parseInt(qget("ca2", DEF_show_1))
-            var show_2          = parseInt(qget("ca3", DEF_show_2))
-            var show_3          = parseInt(qget("ca4", DEF_show_3))
-            var show_4          = parseInt(qget("ca5", DEF_show_4))
-            var show_5          = parseInt(qget("ca6", DEF_show_5))
-            var show_all_lines  = parseInt(qget("ca0", DEF_show_all_lines))
-            var cycle_audio     = parseInt(qget("aG",  DEF_cycle_audio))
-            var cycle_poly      = parseInt(qget("aV",  DEF_cycle_poly))  //? default polygon is no polygons
-            var cycle_path      = parseInt(qget("aK",  DEF_cycle_path))
-            var cycle_dataset   = parseInt(qget("aU",  DEF_cycle_dataset))
-            var cycle_preset    = parseInt(qget("aA",  DEF_cycle_preset))
-            var cycle_vars      = parseInt(qget("aC",  DEF_cycle_vars))
-            var merge_count     = parseInt(qget("aS",  DEF_merge_count))
-            var zoomin          = parseInt(qget("aT",  DEF_zoomin))
+            var loop_delay      = parseFloat(qget("up",DEF_loop_delay));
+            var iangle          = parseFloat(qget("ia",DEF_iangle));
+            var deg_adj         = parseFloat(qget("de",DEF_deg_adj));
+            var poly_opacity    = parseFloat(qget("aO",DEF_poly_opacity));
+            var jump_delta      = parseFloat(qget("aJ",DEF_jump_delta));
+            var circle_opacity  = parseFloat(qget("aX",DEF_circle_opacity));
+            var circle_radius   = parseInt(qget("aN",  DEF_circle_radius));
+            var cycle_circles   = parseInt(qget("aM" , DEF_cycle_circles));
+            var cycle_colors    = parseInt(qget("aR",  DEF_cycle_colors));
+            var show_0          = parseInt(qget("ca1", DEF_show_0));
+            var show_1          = parseInt(qget("ca2", DEF_show_1));
+            var show_2          = parseInt(qget("ca3", DEF_show_2));
+            var show_3          = parseInt(qget("ca4", DEF_show_3));
+            var show_4          = parseInt(qget("ca5", DEF_show_4));
+            var show_5          = parseInt(qget("ca6", DEF_show_5));
+            var show_all_lines  = parseInt(qget("ca0", DEF_show_all_lines));
+            var cycle_audio     = parseInt(qget("aG",  DEF_cycle_audio));
+            var cycle_poly      = parseInt(qget("aV",  DEF_cycle_poly));  //? default polygon is no polygons
+            var cycle_path      = parseInt(qget("aK",  DEF_cycle_path));
+            var cycle_dataset   = parseInt(qget("aU",  DEF_cycle_dataset));
+            var cycle_preset    = parseInt(qget("aA",  DEF_cycle_preset));
+            var cycle_vars      = parseInt(qget("aC",  DEF_cycle_vars));
+            var merge_count     = parseInt(qget("aS",  DEF_merge_count));
+            var zoomin          = parseInt(qget("aT",  DEF_zoomin));
             var was_zoomed      = 0 //? need to track when zoom is turned off
-            var screensave      = parseInt(qget("aP",  DEF_screensave))
-            var cycle_ratios    = parseInt(qget("aY",  DEF_cycle_ratios))
-            var cycle_flowers   = parseInt(qget("mF",  DEF_cycle_flowers))
-            var cycle_fruit     = parseInt(qget("mT",  DEF_cycle_fruit))
+            var screensave      = parseInt(qget("aP",  DEF_screensave));
+            var cycle_ratios    = parseInt(qget("aY",  DEF_cycle_ratios));
+            var cycle_flowers   = parseInt(qget("mF",  DEF_cycle_flowers));
+            var cycle_fruit     = parseInt(qget("mT",  DEF_cycle_fruit));
+            var cycle_genang    = parseInt(qget("aD",  DEF_cycle_genang));
+            var showtext        = parseInt(qget("aQ",  DEF_showtext));
+            var last_showtext = showtext //? need to track last state
+            var show_lines = [show_0,show_1,show_2,show_3,show_4,show_5]
+
 
             //? param-only
-            var rolling_presets = parseInt(qget("xA", DEF_rolling_presets))
-            var fullscreen      = parseInt(qget("FS", DEF_fullscreen))
-            var path_mode       = parseInt(qget("li", DEF_path_mode))
-            var mouse_angle     = parseInt(qget("ma", DEF_mouse_angle))
+            var rolling_presets = parseInt(qget("xA", DEF_rolling_presets));
+            var fullscreen      = parseInt(qget("FS", DEF_fullscreen));
+            var path_mode       = parseInt(qget("li", DEF_path_mode));
+            var mouse_angle     = parseInt(qget("ma", DEF_mouse_angle));
+            var clock_mode      = parseInt(qget("cm", DEF_clock_mode));
+
+
             var preset_changed  = false //? need to keep track when the cycle preset changes for one-off loads
+
+
+            var rotation    = DEF_rotation;
+
+            //? these numbers determine the multiple of how many times the child gen rotates in relation to the parent
+            //@ even numbers rotate the base by 90
+            //@ decimanal rotate the base off center
+
+            genang.push([[5,5,5,5,5,5,5],[5,5,5,5,5,5,5]]);names_of_genang.push("5");
+            genang.push([[2,2,2,2,2,2,2],[2,2,2,2,2,2,2]]);names_of_genang.push("2");
+            genang.push([[1,1,1,1,1,1,1],[1,1,1,1,1,1,1]]);names_of_genang.push("1");
+            genang.push([[3,3,3,3,3,3,3],[3,3,3,3,3,3,3]]);names_of_genang.push("3");
+            genang.push([[7,7,7,7,7,7,7],[7,7,7,7,7,7,7]]);names_of_genang.push("7");
+            genang.push([[13,3,5,7,9,11,1],[1,3,5,7,9,11,1]]);names_of_genang.push("mx1");
+            genang.push([[6,6,6,6,6,6,6],[6,6,6,6,6,6,6]]);names_of_genang.push("6");
+
+            if (clock_mode > 0) {  
+                genang[0]=[[6,6,6,6,6,6,6],[6,6,6,6,6,6,6]];
+
+            }
 
         //! ┌───────────────────────────────────────────────
         //! │ DEFAULTS
         //! └───────────────────────────────────────────────
-            var _VERSION = 3.59
-            var _DEV_MODE = true
+            var _VERSION = 3.59;
+            var _DEV_MODE = true;
 
             //? vars for drawing live box
-            var gMin_x = 0
-            var gMax_x = 0
-            var gMin_y = 0
-            var gMax_y = 0
+            var gMin_x = 0;
+            var gMax_x = 0;
+            var gMin_y = 0;
+            var gMax_y = 0;
             var boxWidth  = 0;
             var boxHeight = 0;
             var boxSize   = 0;
 
             var _ = "" //? convenience var for menus
-            var last_loop_delay   = loop_delay
-            var line_thickness    = 1         //? adjustment factor
-            var linelength_adj    = 1.8       //? adjustment factor
-            var sel_bg            = 0         //? toggle background color... 1= white 0=black
-            var bg_color          = "black"   //? default bg color
-            var tree_counter      = 0         //? just a simple +1 tree_counter
-            var tc=[0,0,0,0,0,0,0,0,0,0,0,0,0]
-            var branch_counter    = 0         //? just a simple +1 tree_counter
-            var sound_initialized = 0
-            var sound_on          = 0
-            var opwave            = 0;  //@ opwave is dead - probably
-            var cv6inherit        = false;
-            var pause             = 0 //@ ?
+
+            var last_loop_delay   = loop_delay;
+            var line_thickness    = 1;          //? adjustment factor
+            var linelength_adj    = 1.8;        //? adjustment factor
+            var sel_bg            = 0;          //? toggle background color... 1= white 0=black
+            var bg_color          = "black";    //? default bg color
+            var tree_counter      = 0;          //? just a simple +1 tree_counter
+            var tc=[0,0,0,0,0,0,0,0,0,0,0,0,0]; //? tree_counters
+            var branch_counter    = 0;          //? just a simple +1 tree_counter
+            var sound_initialized = 0;
+            var sound_on          = 0;
+            var opwave            = 0;          //@ opwave is dead - probably
+            var cv6inherit        = false;      //? flag for cv5 
+            var pause             = 0;          //@ ?
 
             //? the count for each of these variable arrays, needed for MOD-cycling
-            var num_of_colors   = names_of_colors.length //? not -1 because [0] index is default colors, not "off'
-            var num_of_ratios   = names_of_ratios.length //? not -1 because [0] index is default colors, not "off'
+            // console.log(names_of_colors);
+            var num_of_colors   = names_of_colors.length; 
+            var num_of_ratios   = names_of_ratios.length;
             //? the follwing all have 'off' conditions in index [0]
-            var num_of_paths    = names_of_paths.length
-            var num_of_polys    = names_of_polys.length
-            var num_of_audios   = names_of_audios.length
-            var num_of_datasets = names_of_datasets.length
-            var num_of_circles  = names_of_circles.length
+            var num_of_paths    = names_of_paths.length;
+            var num_of_polys    = names_of_polys.length;
+            var num_of_audios   = names_of_audios.length;
+            var num_of_datasets = names_of_datasets.length;
+            var num_of_circles  = names_of_circles.length;
             //? for random cycling
-            var num_of_vars     = names_of_vars.length
-            var num_of_flowers  = names_of_flowers.length
-            var num_of_fruit    = names_of_fruit.length
+            var num_of_vars     = names_of_vars.length;
+            var num_of_flowers  = names_of_flowers.length;
+            var num_of_fruit    = names_of_fruit.length;
             //? for preset cycling
             var num_of_presets  = preqs.length;
+            //? for revolution ratios
+            var num_of_genang   = names_of_genang.length;
+            var num_of_showtext = names_of_showtext.length;
 
 
-            //? for function putCirle()
-            var pcir_defs        = []
-            var pcir_gradient    = []
-            var pcir_circle      = []
-            var pcir_stops       = []
-            var pcir_color       = []
 
-            for (let i =0; i<116;i++) {
+            //? for clock levels
+            var clock_angle = [0,0,0,0,0,0,0];
+            var clock_time = [0,0,0,0,0,0,0];
+            var t_time = [0,0,0,0,0,0,0];
+            var cHour = 0;
+            var z_index = 1;
+            incremental = 0;
+            var order = false;
+            var gen = false;
+            var cg = [false,false,false,false,false,false,false]
+            var current_level = 0;
+            // var tclock_ticker = 0;
+            // var tclock_ticker_0 = 0;
+            // var tclock_ticker_1 = 0;
+            // var tclock_ticker_2 = 0;
+            // var tclock_ticker_3 = 0;
+            // var tclock_ticker_4 = 0;
+            // var tclock_ticker_5 = 0;
+            var inner_gen = false;
+            var t_time_str = "";
+            var t_time_step = 0;
+
+
+            //? for function putCircle()
+            var pcir_defs        = [];
+            var pcir_gradient    = [];
+            var pcir_circle      = [];
+            var pcir_stops       = [];
+            var pcir_color       = [];
+
+            for (let i =0; i<116;i++) {  //? 116 is the number of call in the tree porocess that create circles
                 pcir_defs.push(false);
                 pcir_gradient.push(false);
                 pcir_circle.push(false);
@@ -333,69 +375,68 @@
             }
 
             //? for array of circles with gradients
-            var mCIRdefs        = [false,false,false,false,false,false]
-            var mCIRgradient    = [false,false,false,false,false,false]
-            var mCIRcircle      = [false,false,false,false,false,false]
-            var mCIRstops       = [false,false,false,false,false,false]
-            var mCIRcolor       = [false,false,false,false,false,false]
+            var mCIRdefs        = [false,false,false,false,false,false];
+            var mCIRgradient    = [false,false,false,false,false,false];
+            var mCIRcircle      = [false,false,false,false,false,false];
+            var mCIRstops       = [false,false,false,false,false,false];
+            var mCIRcolor       = [false,false,false,false,false,false];
 
             //? for array of lines with gradients
-            var mLINEdefs        = [false,false,false,false,false,false]
-            var mLINEgradient    = [false,false,false,false,false,false]
-            var mLINEline        = [false,false,false,false,false,false]
-            var mLINEstops       = [false,false,false,false,false,false]
-            var mLINEcolor       = [false,false,false,false,false,false]
+            var mLINEdefs        = [false,false,false,false,false,false];
+            var mLINEgradient    = [false,false,false,false,false,false];
+            var mLINEline        = [false,false,false,false,false,false];
+            var mLINEstops       = [false,false,false,false,false,false];
+            var mLINEcolor       = [false,false,false,false,false,false];
 
             //? all for transitioning, which never worked, but I'm optimistic
-            var transCounter = 0 
-            var last_cycle_ratios   = -1
-            var mratios             = DEF_mratios
-            var triggered           = 0
-            var divs                = 10
+            var mratios             = DEF_mratios;
+            var next_ratio          = 0;
 
-            var vPensize         = [0,0,0,0,0,0]
-            var show_message     = false
-            var showtext         = true
-            var last_pos         = 0
-            var mloc             = false
-            var this_length      = maxlengths[lOrder[gen]]
-            var last_angle       = branch_angle
-            var rnum             = 0;
+            var vPensize         = [0,0,0,0,0,0];
+            var last_pos         = 0;
+            var this_length      = 0;
+            var last_angle       = branch_angle;    //? init last_angle
+            var rnum             = 0;               //? menu line counter
 
             //? for menu
-            var menu_fontsize       = "18px"
-            var menu_spacing        = 22
-            var menu_fontweight     ="600"
-            var menu_fontclr        ="white"
-            var menuCols            = []
-            var menuAltCols         = []
+            var menu_fontsize       = "18px";
+            var menu_spacing        = 22;
+            var menu_fontweight     ="600";
+            var menu_fontclr        ="white";
+            var menuCols            = [];
+            var menuAltCols         = [];
 
             //? default menu column positions
-            menuCols.push(0)                //? qs val
-            menuCols.push(menuCols[0]+85)   //? key
-            menuCols.push(menuCols[1]+110)  //? desc
-            menuCols.push(menuCols[2]+220)  //? counters
-            menuCols.push(menuCols[3]+110)
+            menuCols.push(0);                //? qs val
+            menuCols.push(menuCols[0]+85);   //? key
+            menuCols.push(menuCols[1]+110);  //? desc
+            menuCols.push(menuCols[2]+220);  //? counters
+            menuCols.push(menuCols[3]+110);
 
-            menuAltCols.push(0)
-            menuAltCols.push(menuAltCols[0]+30)
-            menuAltCols.push(menuAltCols[1]+100)
-            menuAltCols.push(menuAltCols[2]+100)
-            menuAltCols.push(menuAltCols[3]+130)
+            //? alternative menu column positions
+            menuAltCols.push(0);
+            menuAltCols.push(menuAltCols[0]+30);
+            menuAltCols.push(menuAltCols[1]+100);
+            menuAltCols.push(menuAltCols[2]+100);
+            menuAltCols.push(menuAltCols[3]+130);
 
-            //? calculate the duration - currently not working properly
-            tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
-            var cycletime       = tt['cycletime']
-            var tot_cycletime   = tt['tot_cycletime']
-            var tot_images      = tt['tot_images']
+            //? set the default rotation ratios
+            var genangLEFT  = genang[cycle_genang][0];
+            var genangRIGHT  = genang[cycle_genang][1];
+
+            //? calculate the duration of a 'cycle' - currently not working properly
+            tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT);
+            var cycletime       = tt['cycletime'];
+            var tot_cycletime   = tt['tot_cycletime'];
+            var tot_images      = tt['tot_images'];
 
             //? define SVG element and do some intiial stuff
             //@ shoudl eleSvg be global?
             const eleSvg        = document.querySelector('svg');
             eleSvg.innerText    = `transform: translate(0,0)`;
-            var pt              = eleSvg.createSVGPoint();
-            eleSvg.dispatchEvent(new Event('click'));
-            let point = eleSvg.createSVGPoint();
+            var pt              = eleSvg.createSVGPoint();  //@ prob can use 'point'
+            eleSvg.dispatchEvent(new Event('click')); //@ why do I need this
+            var point           = eleSvg.createSVGPoint();
 
             //? these x,y points determine where the angle starts from
             //? and also store the mouse coodinates for screen, page and viewbox
@@ -406,14 +447,18 @@
             point.vy    = 0;
             point.va    = 0;
 
-            var randang1 = randint(0,359)
-            var randang2 = randint(0,359)
+            var randang1 = randint(0,359);
+            var randang2 = randint(0,359);
 
             //? initial angle determined by the time in seconds
-            //? if iangle set to on teh query string; 'ia=-1'
+            //? if iangle set to on the query string; 'ia=-1'
             if (iangle == -1) {
                 iangle = nowsecs() % 360;
             }
+            //@ implemewnt
+            // if (iangle == -2) {
+            //     iangle = clockmode_angle();
+            // }
             var branch_angle = iangle;
 
             //? In javascript, with objects you can't say a=b and have 2 objects, as a[] is only a reference to b[], 
@@ -422,28 +467,29 @@
             var pre_maxlengths  = [0,0,0,0,0,0];
             for (let i=0;i<6;i++) {pensize[i]=DEF_pensize[i];}
             for (let i=0;i<6;i++) {pre_maxlengths[i] = DEF_pre_maxlengths[i];}
-            var path_width      = 1
-            var path_opacity    = 1
-            var path_color      = 0
+            var path_width      = 1;
+            var path_opacity    = 1;
+            var path_color      = 0;
             //? fill the linelengths
-            var base_length     = 130
+            var base_length     = 130;
             for (let i = 0; i<6; i++) {
-                pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
+                pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1; //? 0s not allowed
             }
+
 
             //? ────────────────────────────────────────────────
             //? SOUND stuff
             //? create global audiocontext
-            var context = false //new AudioContext()
+            var context     = false; //new AudioContext()
             //? initial 'scale'
-            var notes = getHarmoniousNotes(54,8)  // 54 comes from the 432 set of frequencies
-            notes.reverse() //? reverse to match frequenciesa with levels
-            var notes21 = getHarmoniousNotes(54,21)  // 54 comes from the 432 set of frequencies
+            var notes       = getHarmoniousNotes(54,8);  // 54 comes from the 432 set of frequencies
+            notes.reverse(); //? reverse to match frequencies with levels
+            var notes21     = getHarmoniousNotes(54,21);  // 54 comes from the 432 set of frequencies
             //? arrays for DATASETS
-            fullary_right = fullary_left = [];
-            xfullary_right = xfullary_left = [{'g':7,'x':0,'y':0}];
+            fullary_right   = fullary_left = [];
+            xfullary_right  = xfullary_left = [{'g':7,'x':0,'y':0}];
 
-            notes6 = []
+            notes6 = [];
             for (let i = 0; i<notes21.length-3; i=i+3) {
                 notes6.push([
                     notes21[i],
@@ -458,27 +504,38 @@
             //! 1   OPEN        The connection is open and ready to communicate.
             //! 2   CLOSING     The connection is in the process of closing.
             //! 3   CLOSED      The connection is closed or couldn't be opened.
-            const socket = new WebSocket('ws://localhost:8000');
-            socket.addEventListener('open', function (event) {
-                socket.send('Connection Established');
-            });
+            //@ 'try' doesn't appear to catch anything :/
+            try {
+                const socket = new WebSocket('ws://localhost:8000');
+                socket.addEventListener('open', function (event) {
+                    socket.send('Connection Established');
+                });
 
-            const msgsend = function(mtype) {
-                let _c = tree_counter.toString().padStart(4,'0');
-                let _a = (Math.round(branch_angle)%180).toString().padStart(3,'0');
-                msg = mtype+":"+_c+":"+_a;
-                socket.send(msg);
+                const msgsend = function(mtype) {
+                    let _c = tree_counter.toString().padStart(4,'0');
+                    let _a = (Math.round(branch_angle)%180).toString().padStart(3,'0');
+                    msg = mtype+":"+_c+":"+_a;
+                    socket.send(msg);
+                }
+
+                const consoleMsg = () => {socket.send("console:")}
+                if (socket.readyState == 1) {socket.send('msg');}
+            } catch(e) {
+                console.log("Server does not appear to be running...");
             }
-
-            const consoleMsg = () => {socket.send("console:")}
-            if (socket.readyState == 1) {socket.send('msg');}
             //! ═════════════════════════════════════════════════
-            //? start a seconds times
+            //? start a seconds time
             var seconds = 0
             timer2.start(function() {
-                wait_flag = false
-                seconds +=1
+                wait_flag = false;
+                seconds +=1;
             },1000);
+
+            // branch_angle = (daysecs(new Date('17 Dec 1995 04:00:00')) * 0.00416666666666666)%360;
+            branch_angle = daysecs(new Date()) * (360/86400);//0.00416666666666666)%360;
+
+            //? ia=0&de=0.00416666666666666&up=1851.85185185
+
 
             //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
             //! 
@@ -490,14 +547,23 @@
             //! 
             //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
                                                                                 
+        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   ");
+        // console.log("branch_angle:",branch_angle);
+        // console.log("rotation:",rotation);
+            //? this works for gnang = 6 AND ONLY orients horizontally, but at least the lines are in order.
+            //? use '* 6' just flips the lines horisontally
+            rotation = DEF_rotation + (DEF_rotation*5);
+
             drawTree(branch_angle, rotation);
             timer.start(function() {
                 if (mouse_angle == 1) {
-                    branch_angle = point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360
+                    branch_angle = point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360;
                 }
+
+                // debugger
                 //? rebuild ratio lengths
                 for (let i = 0; i<6; i++) {
-                    pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1 //? 0s not allowed
+                    pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1; //? 0s not allowed
                 }
                 branch_angle = branch_angle + deg_adj;
 
@@ -506,15 +572,23 @@
 
                 //? update counters
                 tree_counter++;
+                t_time_str = "";
+                t_time_step = 0;
                 tc[1]=tree_counter++;
                 for (let i=2;i<tc.length;i++) {
-                    if (tree_counter%(i) == 0) {tc[i]++}
+                    if (tree_counter%(i) == 0) {
+                        tc[i]++;
+                    }
                 }
                 //? reset vars
                 fullary_right   = fullary_left = [];
                 xfullary_right  = xfullary_left = [{'g':7,'x':0,'y':0}];
                 gMin_x = gMax_x = gMin_y = gMax_y = 0;
                 if (screensave == 1) {msgsend("saveScreen:"+branch_angle+":"+rotation)}
+
+                // if (clock_mode == 1) {            
+                //     rotation = (45 * (tree_counter%6))%360;
+                // }
 
             },loop_delay);
             //! ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄

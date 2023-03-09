@@ -31,7 +31,7 @@ const pianoNotes6 = [[b3,d3,f3],[a4,c4,e4,g4],[b5,d5,f5],[b3,d3,f3],[a4,c4,e4,g4
 
 //@ ARGS
 const DEF_loop_delay      = 1000;
-const DEF_iangle          = 180;
+const DEF_iangle          = 0;
 const DEF_deg_adj         = 1;//180/Math.PI;
 const DEF_circle_radius   = 1;
 const DEF_cycle_circles   = 0; 
@@ -58,29 +58,36 @@ const DEF_zoomin          = 0;
 const DEF_screensave      = 0;
 const DEF_pensize         = [13,11, 7,5, 3, 2, 1]
 const DEF_pre_maxlengths  = [130,70,50,30,20,10]
-// const DEF_pre_maxlengths  = [50,50,50,50,50,50]
 const DEF_path_mode       = 0;
 const DEF_mouse_angle     = 0;
 const DEF_cycle_ratios    = 1;
 const DEF_jump_delta      = 6.0;
 const DEF_cycle_flowers   = 0;
 const DEF_cycle_fruit     = 0;
+const DEF_cycle_genang	  = 0;
+const DEF_clock_mode	  = 0;
+// const DEF_rotation	      = +90;//? for non-cm
+const DEF_rotation	      = +0;//? for cm
+const DEF_showtext	      = 1;
 
 const PlatRat = 1
 const GoldRat = 0.618033989
 const SilvRat = 0.414213562
 const sq2d2 = Math.sqrt(2)/2
 
+const genang = [];
+
 const names_of_circles        =["OFF","palette","white","random"]
 const names_of_datasets       =["Standard","Bez Parallel","Bez Serial"]
 const names_of_paths          =["OFF","True-open","True-closed","complex #1","complex #2","complex #4"]
 const names_of_polys          =["OFF","cos/sin-10","CiN(cos*sin)-10","DeltasCos(rot)","Petal"]
 const names_of_audios         =["OFF","Long","Short","Piano","Long+Short"]
-const names_of_vars           =["OFF","no-paths","paths & lines","path_mode","no-lines","smooth","worm"]
+const names_of_vars           =["OFF","no-paths","paths & lines","path_mode","no-lines","smooth"]
 const names_of_show_all_lines =["Hide","Show"]
-const names_of_ratios         =['Platinum','Golden','No-L1','Primes','GoldSilver','123456','654321','sq2d2','etetra']
 const names_of_flowers        =['OFF','thorns','arrows','bigthorn','datura','xxx']
 const names_of_fruit          =['OFF','Colored 6px']
+const names_of_genang         =[]  //? pushed on init
+const names_of_showtext       =['Blank','Full Menu','Degrees','Clock']  //? pushed on init
 
 //? presets as query strings
 const preqs = []
@@ -92,33 +99,38 @@ const preqs = []
 preqs.push("?up=200&ma=0&is=0&de=1&aC=5")
 
 //? this is the actual order of generations which the lines are created
-const lOrder=[
-5,5,5,5,4,4,5,5,5,5,   4,4,3,3,5,5,5,5,4,4,   5,5,5,5,4,4,3,3,2,2,   5,5,5,5,4,4,5,5,5,5,   4,4,3,3,5,5,5,5,4,4,
-5,5,5,5,4,4,3,3,2,2,   1,1,5,5,5,5,4,4,5,5,   5,5,4,4,3,3,5,5,5,5,   4,4,5,5,5,5,4,4,3,3,   2,2,5,5,5,5,4,4,5,5,
-5,5,4,4,3,3,5,5,5,5,   4,4,5,5,5,5,4,4,3,3,   2,2,1,1,0,0,0
-]
+var lOrder=[
+	5,5,5,5,4,4,5,5,5,5,   4,4,3,3,5,5,5,5,4,4,   5,5,5,5,4,4,3,3,2,2,   5,5,5,5,4,4,5,5,5,5,   4,4,3,3,5,5,5,5,4,4,
+	5,5,5,5,4,4,3,3,2,2,   1,1,5,5,5,5,4,4,5,5,   5,5,4,4,3,3,5,5,5,5,   4,4,5,5,5,5,4,4,3,3,   2,2,5,5,5,5,4,4,5,5,
+	5,5,4,4,3,3,5,5,5,5,   4,4,5,5,5,5,4,4,3,3,   2,2,1,1,0,0,0
+];
 
-const DEF_mratios = [
-    [0.5,0.5,0.5,0.5,0.5,0.5],
-    [1,GoldRat,GoldRat**2,GoldRat**3,GoldRat**4,GoldRat**5],
-    [0,GoldRat,GoldRat**2,GoldRat**3,GoldRat**4,GoldRat**5],
-    [(23/23)*.8,(17/23)*.8,(13/23)*.8,(11/23)*.8,(7/23)*.8,(5/23)*.8],
-    [1,
-    GoldRat,
-    GoldRat * SilvRat,
-    GoldRat * SilvRat * GoldRat,
-    GoldRat * SilvRat * GoldRat * SilvRat,
-    GoldRat * SilvRat * GoldRat * SilvRat * GoldRat,
-    ],
-    [1/6,2/6,3/6,4/6,5/6,6/6],
-    [6/6,5/6,4/6,3/6,2/6,1/6],
-    [1,sq2d2,sq2d2**2,sq2d2**3,sq2d2**4,sq2d2**5,sq2d2**6],
-    [1/2.818 ,2/2.818, 1/2.818 ,0.414/2.818, 0.707/2.818, 0.5/2.818],
-    [2.828/2.818, 2/2.818, 1/2.818 ,0.414/2.818, 0.707/2.818, 0.5/2.818],
-]
+
+const names_of_ratios = [];
+const DEF_mratios = [];
+
+DEF_mratios.push([	0.5,			0.5,		0.5,		0.5,			0.5,			0.5]);			names_of_ratios.push("Platinum");
+DEF_mratios.push([	1,				GoldRat,	GoldRat**2,	GoldRat**3,		GoldRat**4,		GoldRat**5]);	names_of_ratios.push("Golden");
+DEF_mratios.push([	0,				GoldRat,	GoldRat**2,	GoldRat**3,		GoldRat**4,		GoldRat**5]);	names_of_ratios.push("No-L2");
+DEF_mratios.push([	(23/23)*.8,		(17/23)*.8,	(13/23)*.8,	(11/23)*.8,		(7/23)*.8,		(5/23)*.8]);	names_of_ratios.push("Primes");
+DEF_mratios.push([	1/6,			2/6,		3/6,		4/6,			5/6,			6/6]);			names_of_ratios.push("123456");
+DEF_mratios.push([	6/6,			5/6,		4/6,		3/6,			2/6,			1/6]);			names_of_ratios.push("654321");
+DEF_mratios.push([	1, 				1/2, 		1/3, 		1/4, 			1/5, 			1/6]);			names_of_ratios.push("harmonic");
+DEF_mratios.push([	1/6, 			1/5, 		1/4, 		1/3, 			1/2, 			1/1]);			names_of_ratios.push("rev-harmonic");
+DEF_mratios.push([	1, 				1/2, 		1/4, 		1/8, 			1/16, 			1/32]);			names_of_ratios.push("halfs");
+
+// mratios.push([	1/2.818,		2/2.818, 	1/2.818,	0.414/2.818,	0.707/2.818,	0.5/2.818]);
+// names_of_ratios.push("etetra1");
+// mratios.push([	2.828/2.818, 	2/2.818, 	1/2.818,	0.414/2.818,	0.707/2.818,	0.5/2.818]);
+// names_of_ratios.push("etetra2");
+// mratios.push([1,				sq2d2,sq2d2**2,sq2d2**3,sq2d2**4,sq2d2**5,sq2d2**6]);
+// names_of_ratios.push("sq2d2");
+// mratios.push([1,GoldRat,GoldRat * SilvRat,GoldRat * SilvRat * GoldRat,GoldRat * SilvRat * GoldRat * SilvRat,GoldRat * SilvRat * GoldRat * SilvRat * GoldRat,]);
+// names_of_ratios.push("GoldSilver");
 
 var names_of_colors = [];
 var colors2         = [];
+
 
 colors2.push(['#0000FF','#00FFFF','#00FF00','#FFFF00','#FF0000','#FF00FF']);    names_of_colors.push("6-color spectrum");  //? default colors B,C,G,Y,R,M          ✅✅
 colors2.push([false,false,false,false,false,false]);                            names_of_colors.push("Shifted 6 spectrum"); //? place holder for shifted colors

@@ -12,6 +12,10 @@
 
 
         function toggle(n,t) {
+            // console.log(">n,t",n,t);
+            // let nn = n%t;
+            // console.log(">nn",nn);
+            // return nn
             return (n+1)%t
         }
         function dnlimit(v,step,lim) {
@@ -108,13 +112,6 @@
             if (!isOn('Alt') && !isOn('Control') &&  isOn('Meta') && !isOn('Shift') ) {isMet = true;}
             if (!isOn('Alt') && !isOn('Control') && !isOn('Meta') &&  isOn('Shift') ) {isSft = true;}
 
-//console.log("event.code: ",lastkey[event.code])
-//console.log("event.key: ",lastkey[event.key])
-//console.log("isAlt: ",isAlt)
-//console.log("isCtl: ",isCtl)
-//console.log("isKey: ",isKey)
-//console.log("isMet: ",isMet)
-//console.log("isSft: ",isSft)
 
             //? CONTROL-ALT
             if ( isOn('Alt') &&  isOn('Control') && !isOn('Meta') && !isOn('Shift')) {
@@ -146,13 +143,29 @@
                 isAlt = false
             }
 
+// console.log("event.code: ",event.code)
+// console.log("event.key: ",event.key)
+// console.log("isAlt: ",isAlt)
+// console.log("isCtl: ",isCtl)
+// console.log("isKey: ",isKey)
+// console.log("isMet: ",isMet)
+// console.log("isSft: ",isSft)
+// console.log("isAltCtl: ",isAltCtl)
+// console.log("isSftCtl: ",isSftCtl)
+// console.log("isCtlMet: ",isCtlMet)
+// console.log("isAltMet: ",isAltMet)
+
 
 //            //? ──────────────────────────────────────────────── SNAPSHOT
 //            if (isKey && lastkey['Backspace']) {
 //                snapshot=1
 //                log("Snaphot")
 //            }
-//            //? ──────────────────────────────────────────────── FRUITS and FLOWERES
+            //? ──────────────────────────────────────────────── GENANG
+            if (isAlt && lastkey['Period']) {
+                cycle_genang = toggle(cycle_genang,num_of_genang-1);
+            }
+            //? ──────────────────────────────────────────────── FRUITS and FLOWERES
             if (isMet && lastkey['KeyF']) {cycle_flowers = toggle(cycle_flowers,num_of_flowers);log("Flower:"+cycle_flowers)}
             if (isMet && lastkey['KeyT']) {cycle_fruit = toggle(cycle_fruit,num_of_fruit);log("Fruit:"+cycle_fruit)}
 
@@ -191,23 +204,31 @@
             if (isSftCtl && lastkey['F4']) {mladj[3]=mladj[3]+5;log("Line 4 length: "+mladj[3])}
             if (isSftCtl && lastkey['F5']) {mladj[4]=mladj[4]+5;log("Line 5 length: "+mladj[4])}
             if (isSftCtl && lastkey['F6']) {mladj[5]=mladj[5]+5;log("Line 6 length: "+mladj[5])}
-            if (isAltCtl && lastkey['Digit0']) {show_all_lines = toggle(show_all_lines,2); log("toggle all") }
+
+            if (isAltCtl && lastkey['Digit0']) {
+                show_all_lines = toggle(show_all_lines,2); 
+                log("toggle all:"+show_all_lines); 
+            }
+          
             if (isAltCtl && lastkey['Digit1']) {show_0 = toggle(show_0,2); log("toggle level 1") }
             if (isAltCtl && lastkey['Digit2']) {show_1 = toggle(show_1,2); log("toggle level 2") }
             if (isAltCtl && lastkey['Digit3']) {show_2 = toggle(show_2,2); log("toggle level 3") }
             if (isAltCtl && lastkey['Digit4']) {show_3 = toggle(show_3,2); log("toggle level 4") }
             if (isAltCtl && lastkey['Digit5']) {show_4 = toggle(show_4,2); log("toggle level 5") }
             if (isAltCtl && lastkey['Digit6']) {show_5 = toggle(show_5,2);log("toggle level 6") }
+
+            show_lines = [show_0,show_1,show_2,show_3,show_4,show_5]
+
             //? ──────────────────────────────────────────────── SHOW/HIDE MENU
             if (isAlt && lastkey['KeyQ']) {
-                log("gullsren",fullscreen)
+                log("fullscren",fullscreen)
                 if (fullscreen == 1) {
                     fullscreen = 0
                     showtext = 1
                     log("Fillscreen off, showtext on") 
                 } else {
-                    showtext = toggle(showtext,2); 
-                    log("Showing text") 
+                    showtext = toggle(showtext,num_of_showtext); 
+                    log("Showing text:"+showtext) 
                 }
             }
             //? ──────────────────────────────────────────────── SCREENSAVE
@@ -295,12 +316,12 @@
             point.px = pageX;
             point.py = pageY;
 
-                // The cursor point, translated into svg coordinates
+            //? The cursor point, translated into svg coordinates
             var cursorpt =  point.matrixTransform(eleSvg.getScreenCTM().inverse());
             point.vx =  cursorpt.x
             point.vy =  cursorpt.y
             point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360 //? rotate c-clockwise to adj
-
+            // rotation = point.va;
         })
         eleSvg.addEventListener('wheel', function(event) {
             if (mouse_angle==1) {
