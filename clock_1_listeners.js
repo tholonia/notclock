@@ -183,8 +183,16 @@
             //? ──────────────────────────────────────────────── DEG 
             if (isKey && lastkey['Insert']) {deg_adj = deg_adj*1.618;log("Degree Adjust: "+deg_adj);let tot_ticks = parseInt(360/deg_adj);}
             if (isKey && lastkey['Delete']) {deg_adj = deg_adj/1.618; log("Degree Adjust: "+deg_adj); let tot_ticks = parseInt(360/deg_adj);}
-            if (isAlt && lastkey['KeyJ']) {branch_angle = branch_angle + jump_delta;log("++jump_delta:"+jump_delta)}
-            if (isMet && lastkey['KeyJ']) {branch_angle = branch_angle - jump_delta;log("--jump_delta:"+jump_delta)}
+            if (isAlt && lastkey['KeyJ']) {
+                branch_angle = branch_angle + jump_delta;
+                log("++jump_delta:"+jump_delta)
+                tick_counter = tick_counter + (jump_delta * ticks_per_deg);
+            }
+            if (isMet && lastkey['KeyJ']) {
+                branch_angle = branch_angle - jump_delta;
+                log("--jump_delta:"+jump_delta);
+                tick_counter = tick_counter - (jump_delta * ticks_per_deg);
+            }
             //? ──────────────────────────────────────────────── FAT/THIN
             if (isKey && lastkey['ArrowLeft'])  {line_thickness = line_thickness *  .99;log("line_thickness: "+line_thickness)}
             if (isKey && lastkey['ArrowRight']) {line_thickness = line_thickness * 1.01;log("line_thickness: "+line_thickness)}

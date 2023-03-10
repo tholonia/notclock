@@ -66,10 +66,28 @@ const DEF_cycle_flowers   = 0;
 const DEF_cycle_fruit     = 0;
 const DEF_cycle_genang	  = 0;
 const DEF_clock_mode	  = 0;
-// const DEF_rotation	      = +90;//? for non-cm
-const DEF_rotation	      = +0;//? for cm
+const DEF_rotation	      = -90//? for non-cm
+const DEF_cmRotation	      = +0;//? for cm
 const DEF_showtext	      = 1;
 
+const degs_per_level = [
+	360/(6**1), //? 60
+	360/(6**2), //? 10
+	360/(6**3), //? 1.66666666666667
+	360/(6**4), //? 0.277777777777778
+	360/(6**5), //? 0.0462962962962963
+	360/(6**6), //? 0.00771604938271605
+];
+
+//? 240 because secs-per-day/360 = 240 secs per degree
+const secs_per_level = [
+	240*(360/(6**1)), //? 14400
+	240*(360/(6**2)), //? 2400
+	240*(360/(6**3)), //? 400
+	240*(360/(6**4)), //? 66.6666666666667
+	240*(360/(6**5)), //? 11.1111111111111 
+	240*(360/(6**6)), //? 1.85185185185185
+];
 const PlatRat = 1
 const GoldRat = 0.618033989
 const SilvRat = 0.414213562

@@ -221,6 +221,9 @@
             var loop_delay      = parseFloat(qget("up",DEF_loop_delay));
             var iangle          = parseFloat(qget("ia",DEF_iangle));
             var deg_adj         = parseFloat(qget("de",DEF_deg_adj));
+
+            if (deg_adj == -1) {deg_adj = degs_per_level[5];}  //? if -1, use smallest increment
+
             var poly_opacity    = parseFloat(qget("aO",DEF_poly_opacity));
             var jump_delta      = parseFloat(qget("aJ",DEF_jump_delta));
             var circle_opacity  = parseFloat(qget("aX",DEF_circle_opacity));
@@ -263,6 +266,11 @@
 
             var preset_changed  = false //? need to keep track when the cycle preset changes for one-off loads
 
+            if (clock_mode > 0) {
+                rotation = DEF_cmRotation;
+            } else {
+                rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
+            }
 
             var rotation    = DEF_rotation;
 
@@ -339,7 +347,7 @@
             //? for clock levels
             var clock_angle = [0,0,0,0,0,0,0];
             var clock_time = [0,0,0,0,0,0,0];
-            var t_time = [0,0,0,0,0,0,0];
+            var t_time = [0,0,0,0,0,0];
             var cHour = 0;
             var z_index = 1;
             incremental = 0;
@@ -357,6 +365,8 @@
             var inner_gen = false;
             var t_time_str = "";
             var t_time_step = 0;
+            var t_time_secs = 0;
+            var tick_counter = 0;
 
 
             //? for function putCircle()
@@ -450,6 +460,9 @@
             var randang1 = randint(0,359);
             var randang2 = randint(0,359);
 
+
+            var dump = [];
+
             //? initial angle determined by the time in seconds
             //? if iangle set to on the query string; 'ia=-1'
             if (iangle == -1) {
@@ -531,10 +544,34 @@
                 seconds +=1;
             },1000);
 
-            // branch_angle = (daysecs(new Date('17 Dec 1995 04:00:00')) * 0.00416666666666666)%360;
-            branch_angle = daysecs(new Date()) * (360/86400);//0.00416666666666666)%360;
+            var total_ticks = 6**6; //? 46656
+            var total_secs = 24*60*60; //? 86400
+            var total_degs = 360;
 
-            //? ia=0&de=0.00416666666666666&up=1851.85185185
+            var degs_per_tick = total_degs/total_ticks; //? = 0.00771604938 deg per tick
+            var ticks_per_deg = total_ticks/total_degs; //? = 129.6         ticks per deg
+            var secs_per_deg  = total_degs/total_secs;  //? = 0.00416666666 deg per sec
+            var deg_per_sec   = total_secs/total_degs;  //? = 240 secs      secs per deg 
+            var secs_per_tick = total_secs/total_ticks; //? = 1.8518518518  secs per tick
+            var ticks_per_sec = total_ticks/total_secs; //? = 0.54
+
+            var this_date = new Date('17 Dec 1995 00:00:00');
+            // var this_date = new Date('17 Dec 1995 04:00:00');
+            // var this_date = new Date();
+
+            //? if there are seconds in a day, need to update tick_counter to be n sync
+            //? ticks / secs * increment = degs_per_tick  .... ergo
+            //? (secs*increment)*degs_per_tick = ticks
+
+            let daysecs = getSecsInDay(this_date);
+            tick_counter = daysecs * ticks_per_sec
+            branch_angle = (daysecs * secs_per_deg)%360;
+
+
+            //? ia=0&de=-1&up=1851.85185185
+               //? get seconds from 0:0:0
+
+
 
 
             //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -552,15 +589,15 @@
         // console.log("rotation:",rotation);
             //? this works for gnang = 6 AND ONLY orients horizontally, but at least the lines are in order.
             //? use '* 6' just flips the lines horisontally
-            rotation = DEF_rotation + (DEF_rotation*5);
+            // rotation = DEF_rotation + (DEF_rotation*5);
 
             drawTree(branch_angle, rotation);
             timer.start(function() {
+                
                 if (mouse_angle == 1) {
                     branch_angle = point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360;
                 }
-
-                // debugger
+                last_angle = branch_angle;
                 //? rebuild ratio lengths
                 for (let i = 0; i<6; i++) {
                     pre_maxlengths[i] = (base_length * mratios[cycle_ratios][i])||1; //? 0s not allowed
@@ -572,9 +609,12 @@
 
                 //? update counters
                 tree_counter++;
+                if (branch_angle != last_angle) {
+                    tick_counter++;
+                }
                 t_time_str = "";
                 t_time_step = 0;
-                tc[1]=tree_counter++;
+                tc[1]=tree_counter;
                 for (let i=2;i<tc.length;i++) {
                     if (tree_counter%(i) == 0) {
                         tc[i]++;
@@ -585,6 +625,7 @@
                 xfullary_right  = xfullary_left = [{'g':7,'x':0,'y':0}];
                 gMin_x = gMax_x = gMin_y = gMax_y = 0;
                 if (screensave == 1) {msgsend("saveScreen:"+branch_angle+":"+rotation)}
+
 
                 // if (clock_mode == 1) {            
                 //     rotation = (45 * (tree_counter%6))%360;

@@ -49,37 +49,66 @@ function getSecsInDay(d) {
 //! │ TIME: returns epoch in HH:MM:SS format
 //! └───────────────────────────────────────────────
 function toTimeString(totalSeconds) {
-  const totalMs = (totalSeconds+14400) * 1000;
-  const result = new Date(totalMs).toISOString().slice(11, 19);
-  return result;
+
+    hours = Math.floor(totalSeconds / 3600);
+    totalSeconds %= 3600;
+    minutes = Math.floor(totalSeconds / 60);
+    seconds = totalSeconds % 60;
+
+    hms = hours.toString()+":"+minutes.toString()+":"+Math.round(seconds).toString();
+    return hms;
+
 }
 //! ┌───────────────────────────────────────────────
 //! │ TIME: returns epoch in secs for DAY/ARG adjusted for 4AM
 //! └───────────────────────────────────────────────
-function daysecs(somedate) {
-    let tsecs = getSecsInDay(somedate); 
-    let tsecs_after_4 = tsecs - 14400;  //? set to 4AM
-    if (tsecs_after_4 < 0) { tsecs_after_4 = tsecs_after_4 + 86400;}
-    return tsecs_after_4; 
+// function daysecs(somedate) {
+//     let tsecs = getSecsInDay(somedate); 
+//     let tsecs_after_4 = tsecs - 14400;  //? set to 4AM
+//     if (tsecs_after_4 < 0) { tsecs_after_4 = tsecs_after_4 + 86400;}
+//     return tsecs_after_4; 
+// }
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns current seconds in the circle
+//! └───────────────────────────────────────────────
+function ticks2secs() {
+    return tick_counter * secs_per_level[5];
 }
 //! ┌───────────────────────────────────────────────
-//! │ TIME: returns current position of the 86400 steps of a circle
+//! │ TIME: returns current degrees in the circle
 //! └───────────────────────────────────────────────
-function ttime2steps(t_time) {
-    t_time_step = parseInt(t_time_str,6)*1.851851851
-    return t_time_step;
+function ticks2degs() {
+    return tick_counter * degs_per_level[5];
 }
+
+
+
+// function xxxttime2secs() {
+//     let tot = 0
+//     // console.log("-----------------------");
+//     for (let i = 0; i<6;i++) {
+//         tot = tot + t_time[i] * secs_per_level[i];
+//         // console.log(t_time[i],secs_per_level[i])
+//     }
+//     return tot;
+// }
+
 //! ┌───────────────────────────────────────────────
 //! │ TIME: concats level vals to string - only used in MANU
 //! └───────────────────────────────────────────────
-function ttimeStr(t_time) {
-    // t_time_str = "";
-    //? updates global var
-    for (let i = 0; i<6;i++) {
-        t_time_str = t_time_str + t_time[i].toString();
-    }
-    return t_time_str;
-}
+// function ttimeStr(t_time) {
+//     // t_time_str = "";
+//     //? updates global var
+//     for (let i = 0; i<6;i++) {
+//         t_time_str = t_time_str + t_time[i].toString();
+//     }
+
+//     // if (ttimeStr = "111111") {
+//     //     debugger;
+//     // } 
+
+//     return t_time_str;
+// }
 //! ┌───────────────────────────────────────────────
 //! │ The main class that creates the x/y coords then calls drawTree
 //! └───────────────────────────────────────────────
@@ -917,9 +946,9 @@ function writeMenu() {
         //     writGrid([_,"ang "+i,clock_angle[i]]);rnum++
         // }
 
-        writGrid([_]);rnum++;
-        writGrid([_,"cHour",cHour]);rnum++;
-        writGrid([_]);rnum++;
+        // writGrid([_]);rnum++;
+        // writGrid([_,"cHour",cHour]);rnum++;
+        // writGrid([_]);rnum++;
 
         function ttime2date(tt) {
             //? each tick is 0.26455026455 s or 264.55026455 ms
@@ -975,17 +1004,22 @@ function writeMenu() {
 
         if (zoomin == 0) {
             writGrid([_,"t_time",_,t_time]);rnum++;
-            writGrid([_,"ttimeStr",_,ttimeStr(t_time)]);rnum++;
-            let _tt2s = ttime2steps();
-            writGrid([_,"ttime2steps",_,_tt2s]);rnum++;
-            let _tts = toTimeString(_tt2s);
-            writGrid([_,"toTimeString",_,_tts]);rnum++;
+
+            // let _tts = ttimeStr(t_time);
+
+            // writGrid([_,"ttimeStr",_,_tts]);rnum++;
+
+            writGrid([_,"tick_counter",_,tick_counter]);rnum++;
+            writGrid([_,"tc Deg",_,ticks2degs()]);rnum++;
+            writGrid([_,"tc Sec",_,ticks2secs()]);rnum++;
+            writGrid([_,"tc HMS",_,toTimeString(ticks2secs())]);rnum++;
+
         }
         rnum = 0;
     }
 }
 //! ┌───────────────────────────────────────────────
-//! │ build the query string
+//! │ build tfe query string
 //! └───────────────────────────────────────────────
 function makeQs(qs) {
     qs = qs + "?"
@@ -1223,7 +1257,11 @@ function cpList(list) {
                                                                                                                     
 
 function drawTree(branch_angle, rotation) {
-    //rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
+    if (clock_mode > 0) {
+        rotation = DEF_cmRotation;
+    } else {
+        rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
+    }
     var svg = document.getElementById("svg");
     //FIXME for some reason, these angles do not appear when the andhglew are integers, only floats!?
     branch_angle = branch_angle%360;
@@ -1574,7 +1612,6 @@ function drawTree(branch_angle, rotation) {
     //% █████████████ ADJUSTMENTS █████████████
     //% let noteseed = (54+tree_counter+ rotation)%108+108
     //? ────────────────────────────────────────────────
-    writeMenu()
 
     //@ this part is very confusing...  we need to swap 'rotation' and 'branch_angle' otherwise we get lines all 
     //@ rotating in the same directions around their centers, i.e., there is no symetrical balance, only rotational uniformity.  
@@ -2218,6 +2255,7 @@ function drawTree(branch_angle, rotation) {
                 }
             }
         }
+        writeMenu()
         gen++;
     };
 
