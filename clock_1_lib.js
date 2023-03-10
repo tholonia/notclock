@@ -974,13 +974,12 @@ function writeMenu() {
         }
 
         if (zoomin == 0) {
-            writGrid([_,"t_time",t_time + "   ("+"x"+")"]);rnum++;
-            writGrid([_,"T-time",ttimeStr(t_time)]);rnum++;
-            writGrid([_,"T-steps",ttime2steps()]);rnum++;
-            writGrid([_,"T-time",toTimeString(ttime2steps())]);rnum++;
-
-            toTimeString
-            // writGrid([_,"t_ctr",tclock_ticker+"/"+tclock_ticker.toString(6)]);rnum++;
+            writGrid([_,"t_time",_,t_time]);rnum++;
+            writGrid([_,"ttimeStr",_,ttimeStr(t_time)]);rnum++;
+            let _tt2s = ttime2steps();
+            writGrid([_,"ttime2steps",_,_tt2s]);rnum++;
+            let _tts = toTimeString(_tt2s);
+            writGrid([_,"toTimeString",_,_tts]);rnum++;
         }
         rnum = 0;
     }
