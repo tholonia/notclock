@@ -355,19 +355,23 @@
             var gen = false;
             var cg = [false,false,false,false,false,false,false]
             var current_level = 0;
-            // var tclock_ticker = 0;
-            // var tclock_ticker_0 = 0;
-            // var tclock_ticker_1 = 0;
-            // var tclock_ticker_2 = 0;
-            // var tclock_ticker_3 = 0;
-            // var tclock_ticker_4 = 0;
-            // var tclock_ticker_5 = 0;
+
             var inner_gen = false;
             var t_time_str = "";
             var t_time_step = 0;
             var t_time_secs = 0;
             var tick_counter = 0;
 
+            var total_ticks = 6**6; //? 46656
+            var total_secs = 24*60*60; //? 86400
+            var total_degs = 360;
+
+            var degs_per_tick = total_degs/total_ticks; //? = 0.00771604938 deg per tick
+            var ticks_per_deg = total_ticks/total_degs; //? = 129.6         ticks per deg
+            var secs_per_deg  = total_degs/total_secs;  //? = 0.00416666666 deg per sec
+            var deg_per_sec   = total_secs/total_degs;  //? = 240 secs      secs per deg 
+            var secs_per_tick = total_secs/total_ticks; //? = 1.8518518518  secs per tick
+            var ticks_per_sec = total_ticks/total_secs; //? = 0.54          ticks per sec
 
             //? for function putCircle()
             var pcir_defs        = [];
@@ -544,20 +548,9 @@
                 seconds +=1;
             },1000);
 
-            var total_ticks = 6**6; //? 46656
-            var total_secs = 24*60*60; //? 86400
-            var total_degs = 360;
-
-            var degs_per_tick = total_degs/total_ticks; //? = 0.00771604938 deg per tick
-            var ticks_per_deg = total_ticks/total_degs; //? = 129.6         ticks per deg
-            var secs_per_deg  = total_degs/total_secs;  //? = 0.00416666666 deg per sec
-            var deg_per_sec   = total_secs/total_degs;  //? = 240 secs      secs per deg 
-            var secs_per_tick = total_secs/total_ticks; //? = 1.8518518518  secs per tick
-            var ticks_per_sec = total_ticks/total_secs; //? = 0.54
-
-            var this_date = new Date('17 Dec 1995 00:00:00');
+            // var this_date = new Date('17 Dec 1995 00:00:00');
             // var this_date = new Date('17 Dec 1995 04:00:00');
-            // var this_date = new Date();
+            var this_date = new Date();
 
             //? if there are seconds in a day, need to update tick_counter to be n sync
             //? ticks / secs * increment = degs_per_tick  .... ergo
@@ -583,17 +576,14 @@
             //! ███████    ██    ██   ██ ██   ██    ██        ███████  ██████   ██████  ██      
             //! 
             //! ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-                                                                                
-        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   ");
-        // console.log("branch_angle:",branch_angle);
-        // console.log("rotation:",rotation);
+
             //? this works for gnang = 6 AND ONLY orients horizontally, but at least the lines are in order.
             //? use '* 6' just flips the lines horisontally
             // rotation = DEF_rotation + (DEF_rotation*5);
 
             drawTree(branch_angle, rotation);
             timer.start(function() {
-                
+
                 if (mouse_angle == 1) {
                     branch_angle = point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360;
                 }

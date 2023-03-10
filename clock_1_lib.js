@@ -1,5 +1,1063 @@
 
 //! ┌───────────────────────────────────────────────
+//! │ recursive collection of nodes and edges that form a tree
+//! └───────────────────────────────────────────────
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+//%
+//% ██████  ██████   █████  ██     ██ ████████ ██████  ███████ ███████ 
+//% ██   ██ ██   ██ ██   ██ ██     ██    ██    ██   ██ ██      ██      
+//% ██   ██ ██████  ███████ ██  █  ██    ██    ██████  █████   █████   
+//% ██   ██ ██   ██ ██   ██ ██ ███ ██    ██    ██   ██ ██      ██      
+//% ██████  ██   ██ ██   ██  ███ ███     ██    ██   ██ ███████ ███████ //%
+//%
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+                                                                                                                    
+function drawTree(branch_angle, rotation) {
+
+    if (merge_count == 0) {
+        clearCanvas()        
+    } else {
+        if (tree_counter%merge_count == 0) {
+            clearCanvas()
+        }
+    }
+
+    if (clock_mode > 0) {
+        rotation = DEF_cmRotation;
+    } else {
+        rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
+    }
+    var svg = document.getElementById("svg");
+    //FIXME for some reason, these angles do not appear when the angles are integers, only floats!?
+    branch_angle = branch_angle%360;
+    branch_angle = branch_angle + 0.00001; //? more that 4 0s and lines begin to disappear
+
+    genangLEFT  = genang[cycle_genang][0];
+    genangRIGHT = genang[cycle_genang][1];
+
+    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    //% ██████  ██    ██  ██████ ██      ███████     ██    ██  █████  ██████  ███████ 
+    //% ██       ██  ██  ██      ██      ██          ██    ██ ██   ██ ██   ██ ██      
+    //% ██        ████   ██      ██      █████       ██    ██ ███████ ██████  ███████ 
+    //% ██         ██    ██      ██      ██           ██  ██  ██   ██ ██   ██      ██ 
+    //% ██████     ██     ██████ ███████ ███████       ████   ██   ██ ██   ██ ███████ 
+    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+    if (cycle_vars > 0) {
+// *    ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗     ██╗
+// *   ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ███║
+// *   ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗    ╚██║
+// *   ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║     ██║
+// *   ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║     ██║
+// *    ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝     ╚═╝
+            if (cycle_vars == 1) {
+                //? no PATH lines
+
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+                cycle_flowers = randint(-3,num_of_flowers-1);
+                // % ────────────────────────────────────────────────────────────────────────
+
+                for (let i=0;i<6;i++) {
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
+                }
+                cycle_circles   = randint(0, num_of_circles-1);
+                circle_radius   = randint(5,20);
+                cycle_colors    = randint(0,num_of_colors-1);
+                circle_opacity  = randint(1,10)/10;  //@ does nothing to lines, only circles
+                cycle_poly      = randint(0,num_of_polys-1);
+                cycle_dataset   = randint(0,1);
+                cycle_ratios    = randint(0,num_of_ratios-1);
+            }
+
+// *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██████╗
+// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ╚════██╗
+// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗     █████╔╝
+// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ██╔═══╝
+// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ███████╗
+ // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝
+
+            //? paths, colors, lines
+            if (cycle_vars == 2) {
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+//                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+//                cycle_flowers = randint(-3,num_of_flowers-1);
+                // % ────────────────────────────────────────────────────────────────────────
+                for (let i=0;i<6;i++) {
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
+                }
+                cycle_path      = randint(0,num_of_paths-1);
+                cycle_colors    = randint(0,num_of_colors-1);
+                cycle_ratios    = randint(0,num_of_ratios-1);
+            }
+ // * ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██████╗
+// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ╚════██╗
+// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗     █████╔╝
+// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║     ╚═══██╗
+// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ██████╔╝
+
+            //? PATHs and path_mode only
+            if (cycle_vars == 3) {
+                show_all_lines = 0;
+                path_mode=2;
+
+                for (let i=0;i<6;i++) {
+                    pensize[i] = CiR(
+                        Math.round(tree_counter),
+                        1,
+                        DEF_pensize[i],
+                        0
+                    ) //? use initial values of pensize[]
+                    pre_maxlengths[i] = CiR(
+                        Math.round(tree_counter),
+                        1,
+                        DEF_pre_maxlengths[i],
+                        0
+                    ) //? use initial values of pre_maxlengths[]
+                }
+                cycle_path      = randint(1,num_of_paths-1);
+                cycle_colors    = randint(0,num_of_colors-1);
+
+            }
+// *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██╗  ██╗
+// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ██║  ██║
+// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗    ███████║
+// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ╚════██║
+// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║         ██║
+ // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝         ╚═╝
+
+            //? no lines or paths
+            if (cycle_vars == 4) {
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+                cycle_flowers = randint(-3,num_of_flowers-1);
+                // % ────────────────────────────────────────────────────────────────────────
+                show_all_lines = 0;
+                path_mode=2;
+
+                for (let i=0;i<6;i++) {
+                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
+                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
+                }
+                cycle_circles   = randint(0, num_of_circles-1);
+                circle_radius   = randint(5,20);
+                cycle_colors    = randint(0,num_of_colors-1);
+                circle_opacity  = randint(1,10)/10;  //@ does nothing to lines, only circles
+                cycle_poly      = randint(0,num_of_polys-1);
+                cycle_dataset   = randint(0,1);
+                cycle_ratios    = randint(0,num_of_ratios-1);
+
+            }
+// *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ███████╗
+// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ██╔════╝
+// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗    ███████╗
+// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ╚════██║
+// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ███████║
+ // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝
+
+            if (cycle_vars == 5) {
+                //? opwave is meant to be a wandering curve
+                let ang1 = Math.sin(deg2rad(randang1))
+                let mod2 = randang2 + CiR(tc[4],0,3599,0)/10
+                let ang2 = Math.cos(deg2rad(mod2))
+                // opwave = Math.abs(ang1+ang2) * 100
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+//                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
+//                cycle_flowers = randint(-3,num_of_flowers-1);
+                // % ────────────────────────────────────────────────────────────────────────
+
+                // % ──────── RATIO setting ────────────────────────────────────────
+                //? when form is smallest, set RATIO by time
+                trt = 5
+
+                if (nowsecs(0)%15 == 0) {
+                    next_ratio_change = nowsecs(0)+15
+                    next_ratio =  randintEx(0,num_of_ratios-1,next_ratio)
+                    cycle_ratios = next_ratio;
+                }
+
+                //? set LINE opacity by counter and xdlAry[]
+                for (let i=0;i<6;i++) {
+                    let c = xdlAry[i][CiR(tc[4],0,99,0)]
+                    let x= CiR(c,0,1000,0)/1000
+                    opacities[i] = 1
+                }
+                // % ──────── LINE setting ────────────────────────────────────────
+                show_all_lines = 1
+                var g = 0
+                let tcx = []
+                let tcx_bez = []
+                let tcx_flat = []
+                for (let i=0;i<6;i++) {
+                    let v =   CiR(tc[i+1],40,100,0)
+                            - CiR(tc[i+2],0,20,0)
+                            + CiR(tc[i+3],0,20,0) ;
+                    tcx.push(v);
+                }
+
+                for (let i=0;i<6;i++) {
+                    let v = CiR(tcx[i],0,DEF_pre_maxlengths[i],0);
+                    pre_maxlengths[i] = v;
+                    pensize[i] = CiR(tcx[i],-(1+4),i+4,0);
+                }
+
+                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
+                if (nowsecs(0)%17 == 0) {
+                    cycle_fruit = randint(0,num_of_fruit-1);
+                }
+                if (nowsecs(0)%23 == 0) {
+                    cycle_flowers = randint(0,num_of_flowers-1);
+                }
+
+                // % ──────── PATH setting ────────────────────────────────────────
+                //? turn on PATHS
+                // if (cycle_path==0) {cycle_path=1}
+                path_mode = 0
+                path_color = colors360[tc[10]%360];
+                // path_color = "white";
+                //? set PATH style by time
+                if (nowsecs(0)%60 == 0) {
+                    cycle_path = randintEx(1,num_of_paths-1,cycle_path);
+                }
+
+                if (bg_color == "black") {
+                    path_opacity = 1//CiR(tc[5],0,100,0)/100 //? op at > 1.0 is op = 1.0
+                    if (path_opacity < 0.2) {path_opacity = 0.2} //? limit opacitry to 0.2
+                    path_width = CiR(tc[10]%500,1,5,0)/1; //? width incremennet by 100ths (even though fractions are prob not supported)
+                }
+                // if (bg_color == "white") {
+                //     path_opacity = CiR(opwave,000,800,0)/999 //? op at > 1.0 is op = 1.0
+                //     // path_opacity = 1
+                //     path_width = CiR(tree_counter%500,1,4,0)/1;
+                // }
+
+                // % ──────── CIRCLE setting ────────────────────────────────────────
+                //? set circles to SPHERES
+                if (cycle_circles==0) {cycle_circles=1}  //? 1=palette color, 2=white, 3=random colors
+                //? the '-2' is to eliminate the random colors which are always the last in the array
+                //? set CIRCLE color by random when circles are invisible
+                if (circle_opacity == 0) {
+                    cycle_colors  = randintEx(0,num_of_colors-2,cycle_colors);
+                }
+                //? set CIRCLE radius by counter
+                circle_radius   = CiR(tcx[0],0,17,0)
+                //? set CIRCIE  OPACITY by counter
+                circle_opacity  = CiR(tc[4],0,200,0)/100  //@ does nothing to lines, only circles
+
+                // % ════════════════════════════════════════════════
+
+                wait_flag = true
+                last_cycle_ratios = cycle_ratios
+
+                //? not used here
+                // cycle_poly      = randint(0,num_of_polys)
+                // cycle_dataset   = randint(0,1)
+                // cycle_ratios    = randint(0,num_of_ratios-1)
+                //? filter by seconds example
+                // if (nowsecs(0)%(divs+15) == 0 && wait_flag == false) {
+                //? makes fadeouts smoother
+                // preop = path_opacity
+                // if (path_width == 1) {path_opacity = .6} else {path_opacity = preop}
+                // if (path_width == 2) {path_opacity = .86} else {path_opacity = preop}
+            }
+        }
+    //% █████████████████████████ LOAD PRESETS ███████████████████████
+    if (preset_changed == true) {
+        //? read a preset query string and set all params
+        //? linear cycles of presets
+        // cycle_preset = (cycle_preset + 1)% num_of_presets
+        // if (rolling_presets) {
+        //     cycle_preset = tree_counter% num_of_presets
+        // }
+        //? random selection of presents
+        // randint(0,num_of_presets)
+        // var qsary = parseQuery(preqs[randint(0,cycle_preset)])
+        var qsary = parseQuery(preqs[cycle_preset])
+        //@ ARGS
+        for (const key in qsary) {
+            switch(key) {
+                case 'up': loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
+                case 'ia': iangle          = parseFloat(qsary[key]); break;  
+                case 'de': deg_adj         = parseFloat(qsary[key]); break;  //? keep control manual
+                case 'aN': circle_radius   = parseFloat(qsary[key]); break;
+                case 'aO': poly_opacity    = parseFloat(qsary[key]); break;
+                case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
+                case 'aR': cycle_colors    = qsary[key]; break;
+                case 'a1': show_0          = qsary[key]; break;
+                case 'a2': show_1          = qsary[key]; break;
+                case 'a3': show_2          = qsary[key]; break;
+                case 'a4': show_3          = qsary[key]; break;
+                case 'a5': show_4          = qsary[key]; break;
+                case 'a6': show_5          = qsary[key]; break;
+                case 'ca0': show_all_lines  = qsary[key]; break;
+                case 'aV': cycle_poly      = qsary[key]; break;
+                case 'aG': cycle_audio     = qsary[key]; break;
+                case 'aK': cycle_path      = qsary[key]; break;
+                case 'aU': cycle_dataset   = qsary[key]; break;
+                case 'aC': cycle_vars      = qsary[key]; break;
+                case 'aM': cycle_circles   = qsary[key]; break;
+                case 'aS': merge_counts    = qsary[key]; break;
+                case 'FS': fullscreen      = qsary[key]; break;
+                case 'aA':  cycle_preset   = qsary[key]; break;
+                case 'aT':  zoomin         = qsary[key]; break;
+                case 'aP':  screensave     = qsary[key]; break;
+                case 'aY':  cycle_ratios   = qsary[key]; break;
+                case 'aJ':  jump_delta     = qsary[key]; break;
+                case 'li':  path_mode      = qsary[key]; break;
+                case 'mF':  cycle_flowers  = qsary[key]; break;
+                case 'mT':  cycle_fruit    = qsary[key]; break;
+                case 'aD':  cycle_genang   = qsary[key]; break;
+                case 'cm':  clock_mode    = qsary[key]; break;
+                case 'aQ':  showtext       = qsary[key]; break;
+            }
+        }
+        preset_changed = false
+        console.log("Preset changed: "+preset_changed)
+    }
+    //% ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+    //? ────────────────────────────────────────────────
+    //? rebuild timing data based on changes in specs
+    tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
+    cycletime = tt['cycletime']
+    tot_cycletime = tt['tot_cycletime']
+    tot_images = tt['tot_images']
+
+    //? ──────────────────────────────────────────────── CYCLE COLORS
+    if (cycle_colors == 1) {  //? shift spectrum of 7 color
+        for (let i = 0; i < 7; i++) {
+            colors2[1][i] = generateColor(CiR(tree_counter + (i * 45), 0, 360, 0))
+        }
+    }
+    if (cycle_colors == 2) {  //? random colors
+        for (let i = 0; i < 7; i++) {
+            colors2[num_of_colors-1][i] = generateRandomColor() //? last in array
+        }
+    }
+    //? ────────────────────────────────────────────────
+    //% █████████████ ADJUSTMENTS █████████████
+    //% let noteseed = (54+tree_counter+ rotation)%108+108
+    //? ────────────────────────────────────────────────
+
+    //@ this part is very confusing...  we need to swap 'rotation' and 'branch_angle' otherwise we get lines all 
+    //@ rotating in the same directions around their centers, i.e., there is no symetrical balance, only rotational uniformity.  
+    //@ This swapping could also be accomplished but reversing the declared names in the function, i.e., 
+    //@ 'function drawTree(rotation, branch_angle)', as this also keeps 'branch_angle' values assigned to 'branch_angle' variable. 
+
+    //? this call has the arguments in the order they are called in 'Tree'
+    // var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
+    //? but we need to use THIS swapped args to get symetrical results
+    // console.log("branch_angle:",branch_angle)
+
+    var draw_tree = new Tree(gens, this_length, start_x, start_y, rotation, branch_angle);
+    var draw_edges = getTreeEdges(draw_tree);
+    gen = 0
+
+    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    //*
+    //* ██████   █████  ████████  █████  ███████ ███████ ████████ ███████ 
+    //* ██   ██ ██   ██    ██    ██   ██ ██      ██         ██    ██      
+    //* ██   ██ ███████    ██    ███████ ███████ █████      ██    ███████ 
+    //* ██   ██ ██   ██    ██    ██   ██      ██ ██         ██         ██ 
+    //* ██████  ██   ██    ██    ██   ██ ███████ ███████    ██    ███████ 
+    //*
+    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+                                                                                              
+
+    //? create data sets from original data
+
+    // var bezierary_right = BezierCurve(fullary_right);
+    // var bezierary_left = BezierCurve(fullary_left);
+
+    adata_right = [] //? these hold the final data used to creates lines
+    adata_left = []
+
+    //? any cycle_path > 0 runs concurrently with "lines"
+    if (cycle_path == 0) {dataform ="line"}  //? nomal lines are the default
+    if (cycle_path >0 ) {dataform ="buildpath"} //? 'dataform is a flag for later processing
+
+    //? this is the default using standrd x/y data
+    if (cycle_dataset == 0) {
+        draw_edges.forEach(element => {
+            adata_right.push({'x':element.node_1.x, 'y':element.node_1.y})
+            adata_left.push({'x':element.node_2.x, 'y':element.node_2.y})
+        })
+    }
+    //? these are ugly and broken
+    if (cycle_dataset == 1) {
+        //? "bez"
+        adata_right = BezierCurve(fullary_right);
+        adata_left = BezierCurve(fullary_left);
+    }
+    if (cycle_dataset == 2) {
+        //? "bezSrtx"
+        adata_right = BezierCurve(fullary_right);
+        adata_left = BezierCurve(fullary_left);
+        adata_right = sortByKey(adata_right,'x');
+        adata_left = sortByKey(adata_left,'y');
+    }
+
+
+    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    //*
+    //* ██████   █████  ████████ ██   ██ ███████ 
+    //* ██   ██ ██   ██    ██    ██   ██ ██      
+    //* ██████  ███████    ██    ███████ ███████ 
+    //* ██      ██   ██    ██    ██   ██      ██ 
+    //* ██      ██   ██    ██    ██   ██ ███████ 
+    //*
+    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+
+    if (dataform=="buildpath") {
+        //? build the paths
+        paths = buildpath(xfullary_right)
+//        console.log(JSON.stringify(paths),null,2)
+        //? paths is just an array of 2 lists or 6 elements each...
+        //? [["M0,0","M0,0","M0,0","M0,0","M0,0","M0,0"],["M0,0","M0,0","M0,0","M0,0","M0,0","M0,0",]]
+        //? path_r and path_l contains 6 subarrays each
+
+        path_r = paths[0]
+        path_l = paths[1]
+
+        //? reset arrays to initial item only
+        xfullary_right = [{'g':7,'x':0,'y':0}]
+        xfullary_left = [{'g':7,'x':0,'y':0}]
+
+//        let xgen = gen
+
+        //? each gen is a single path... "M 0,0 C 0,0..."
+        //@ DEBUG Doesn't exactly do what I want
+        let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
+
+//        console.log(gen,cycle_colors,colors2)
+        var newPath_r = document.createElementNS(svgns, 'path');
+        var newPath_l = document.createElementNS(svgns, 'path');
+
+        //? normal gradient settings for path_mode
+        var lcx = 0.5
+        var lcy = 0.3
+        var lr = 0.8
+
+        if (path_color == 0) {
+            path_color = colors2[cycle_colors][gen]
+        }
+        //? override for path_mode when viewiun just lines
+
+
+        if (path_mode > 0) {
+           path_width = path_mode //? override previous setting in buildpath()
+           lcx = 0.5
+           lcy = 0.5
+           lr = 1
+        }
+
+        //? debug/viewing overrides
+        // path_color = "white";
+        // path_opacity="1";
+        // path_width='3'
+
+
+        //? prepare the gradiant stroke for the PATHS
+        var DATdefs = document.createElementNS(svgns, 'defs');
+        var gradient = document.createElementNS(svgns, 'radialGradient');
+        var stops = [
+            {"color": path_color,      "offset": "0%"},
+            {"color": "#000000",    "offset": "100%"}
+        ];
+
+        for (var i = 0, length = stops.length; i < length; i++) {
+            var stop = document.createElementNS(svgns, 'stop');
+            stop.setAttribute('offset', stops[i].offset);
+            stop.setAttribute('stop-color', stops[i].color);
+            gradient.appendChild(stop);
+        }
+        gradient.id = 'datasetGradient';
+        gradient.setAttribute('cx', lcx);
+        gradient.setAttribute('cy', lcy);  //? light is slightly above horizon
+        gradient.setAttribute('r', lr);
+        DATdefs.appendChild(gradient);
+
+        newPath_r.setAttribute('d', ""+path_r[gen]);
+        newPath_r.setAttribute("fill-opacity", "0");
+        newPath_r.setAttribute("stroke-width", path_width);
+        newPath_r.setAttribute("stroke-opacity", path_opacity);
+        newPath_r.setAttribute('stroke', 'url(#datasetGradient)');
+        svg.appendChild(DATdefs);
+        svg.appendChild(newPath_r);
+
+        //% ████████████████ ADJUSTMENT ████████████████
+        // newpensize = pensize[gen] * line_thickness
+
+        newPath_l.setAttribute('d', ""+path_l[gen]);
+        newPath_l.setAttribute("fill-opacity", "0");
+        newPath_l.setAttribute("stroke-width", path_width);//path_width);//@ SD
+        newPath_l.setAttribute("stroke-opacity", path_opacity);
+        newPath_l.setAttribute('stroke', 'url(#datasetGradient)');
+        svg.appendChild(DATdefs);
+        svg.appendChild(newPath_l);
+    }
+
+    //@ ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    //@
+    //@                                             ██████          ██       ██████   ██████  ██████  
+    //@                                            ██               ██      ██    ██ ██    ██ ██   ██ 
+    //@                                            ███████          ██      ██    ██ ██    ██ ██████  
+    //@                                            ██    ██         ██      ██    ██ ██    ██ ██      
+    //@                                             ██████          ███████  ██████   ██████  ██                                                   
+    //@
+    //@ ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+
+    //? loop through the generated data
+    //? length of adata_right is 126
+    for (let idx = 0; idx<adata_right.length; idx++) {
+        // console.log("adata["+idx+"]");
+        //? set the base data vars
+        nx1 = adata_right[idx].x
+        ny1 = adata_right[idx].y
+        nx2 = adata_left[idx].x
+        ny2 = adata_left[idx].y
+
+        xytrack(nx2,ny2);
+
+        order = lOrder[gen] //? get the actual gen value from the gens, which goes up to 126
+
+        //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+        //* 
+        //*   ██████ ██ ██████   ██████ ██      ███████ ███████ 
+        //*  ██      ██ ██   ██ ██      ██      ██      ██      
+        //*  ██      ██ ██████  ██      ██      █████   ███████ 
+        //*  ██      ██ ██   ██ ██      ██      ██           ██ 
+        //*   ██████ ██ ██   ██  ██████ ███████ ███████ ███████ 
+        //* 
+        //*  ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+                                                                        
+        //? add circle
+        var totcirc = 3
+   
+        //% █████████████ ADJUSTMENTS █████████████
+        var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycle through the circle-types
+
+        if (clock_mode > 0) {
+            cr_rad = maxlengths[order]*circle_radius;
+        }
+
+
+        if (cycle_circles > 0) { 
+            //? prepare the gradient for the circle
+            mCIRdefs[order] = document.createElementNS(svgns, 'defs');
+            mCIRgradient[order] = document.createElementNS(svgns, 'radialGradient');
+            mCIRcircle[order] = document.createElementNS(svgns, 'circle');
+
+            if (cycle_circles == 1) {mCIRcolor[order] = colors2[cycle_colors][order].toString()}
+            if (cycle_circles == 2) {mCIRcolor[order] = "white"}
+            if (cycle_circles == 3) {mCIRcolor[order] = generateRandomColor()} 
+
+            mCIRstops[order] = [
+                {"color":  mCIRcolor[order],"offset": "0%"},
+                {"color": "#000000",        "offset": "100%"}
+            ];
+
+            for (var i = 0, length = mCIRstops[order].length; i < length; i++) {
+                var stop = document.createElementNS(svgns, 'stop');
+                stop.setAttribute('offset', mCIRstops[order][i].offset);
+                stop.setAttribute('stop-color', mCIRstops[order][i].color);
+                mCIRgradient[order].appendChild(stop);
+            }
+
+            //? rotate the light source
+
+
+            //? This part calcs the angle from the viewport x,y.  Not used here, but good to save
+            //@ let cxr =  Math.sin(deg2rad(point.vx))/3+.5
+            //@ let cyr =  Math.cos(deg2rad(point.vy))/3+.5
+
+            //? This part converts branch_angle to angle of 'light source'
+            //? +90° to adjust the coords to top=0°, then +180° to place teh light src at top when top=0°
+            let cxr =  Math.cos(deg2rad(branch_angle+90+180))/3+.5
+            let cyr =  Math.sin(deg2rad(branch_angle+90+180))/3+.5
+
+            mCIRgradient[order].id = 'Gradient'+order;
+            mCIRgradient[order].setAttribute('cx', cxr.toString());//'0.3');
+            mCIRgradient[order].setAttribute('cy', cyr.toString());//'0.3');
+            mCIRgradient[order].setAttribute('r', '1');
+            mCIRdefs[order].appendChild(mCIRgradient[order]);
+            //? end of prep  ----------------------------------
+
+            mCIRcircle[order].setAttribute("id", "circles"+order);
+            mCIRcircle[order].setAttribute("cx", nx2.toString());
+            mCIRcircle[order].setAttribute("cy", ny2.toString());
+            mCIRcircle[order].setAttribute("r", cr_rad);            
+            mCIRcircle[order].setAttribute('fill', 'url(#Gradient'+order+')');
+            mCIRcircle[order].setAttribute("opacity", circle_opacity);
+            mCIRcircle[order].setAttribute("style","z-index:"+(current_level*10)); //? not working :/
+            // mCIRcircle[order].setAttribute("style","mix-blend-mode: color;");
+
+            svg.appendChild(mCIRdefs[order]);
+            svg.appendChild(mCIRcircle[order]);
+        }
+        //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+
+
+
+        //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+        //*
+        //* ██████   ██████  ██      ██    ██  ██████   ██████  ███    ██ ███████ 
+        //* ██   ██ ██    ██ ██       ██  ██  ██       ██    ██ ████   ██ ██      
+        //* ██████  ██    ██ ██        ████   ██   ███ ██    ██ ██ ██  ██ ███████ 
+        //* ██      ██    ██ ██         ██    ██    ██ ██    ██ ██  ██ ██      ██ 
+        //* ██       ██████  ███████    ██     ██████   ██████  ██   ████ ███████ 
+        //*
+        //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+                                                                                          
+        function makePolyAry(n) {
+            var poly_arr = false
+            if (n==1) {
+                poly_arr = [
+                    [nx2, ny2],
+                    [
+                        (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                        (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
+                    ],
+                    [
+                        (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
+                        (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
+                    ],
+                ];
+                xytrack(poly_arr[1][0],poly_arr[1][1],)
+                xytrack(poly_arr[2][0],poly_arr[2][1],)
+            }
+            if (n == 2) {
+                poly_arr = [
+                    [nx2, ny2],
+                    [
+                        nx1 ,
+                        CiR(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                    ],
+                    [
+                        nx1,
+                        CiR(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
+                    ],
+                ];
+                xytrack(poly_arr[1][0],poly_arr[1][1],)
+                xytrack(poly_arr[2][0],poly_arr[2][1],)
+            }
+            if (n == 3) {
+                poly_arr = [
+                    [nx2, ny2],
+                    [
+                        nx2 - nx2 * Math.cos(rotation),
+                        ny2 + ny2 * Math.sin(rotation),
+                    ],
+                    [
+                        nx2 + nx2 * Math.cos(rotation),
+                        ny2 + ny2 * Math.sin(rotation),
+                    ],
+                ];
+                xytrack(poly_arr[1][0],poly_arr[1][1],)
+                xytrack(poly_arr[2][0],poly_arr[2][1],)
+
+            }
+            if (n == 4) { //? currently not workng
+                // console.log("Usng polugon 4")
+                var petal = [
+                    [0, 0]
+                    , [nx1 % 10, -ny1 % 10]
+                    , [-nx1 % 10, ny1 % 10]
+                    , [ny1 % 10, -nx1 % 10]
+                    , [-ny1 % 10, nx1 % 10]
+                ]
+                poly_arr = []
+                for (let i = 0; i < petal.length; i++) {
+                    xp = petal[i][0] * 10
+                    yp = petal[i][1] * 10
+                    poly_arr.push({
+                        'x': xp + nx2,
+                        'y': yp + ny2
+                    })
+                }
+               poly_arr = BezierCurve(poly_arr);
+
+                var parr = []
+                for (let i = 0; i < poly_arr.length; i++) {
+                    parr.push([poly_arr[i].x, poly_arr[i].y])
+                }
+                poly_arr = parr
+            }
+            return poly_arr
+        }
+
+        var poly_arr = makePolyAry(cycle_poly)
+
+        if (cycle_poly > 0) {
+            updateListMinMax(poly_arr);
+
+            //? ┌───────────────────────────────────────────────
+            //? │ we have a poly, now prepare the gradients for poly and stroke for the PATHS
+            //? └───────────────────────────────────────────────
+            //@ !!!!!When 'defs' is defined globally, the refresh rate drops by about 80%!!!!!!
+            //? ------------------------------------
+            //? create the gradiant for FILL
+            //? ------------------------------------
+            var LGdefs = document.createElementNS(svgns, 'defs');
+            var fillGradient = document.createElementNS(svgns, 'linearGradient');
+            //? stops for fillGradient
+            //? pick 3 colors...
+
+            tidx = 0//tree_counter%6 //@ is actually branch_angle
+
+            clrIdx_1 = tidx
+            clrIdx_2 = (tidx+2)%6
+            clrIdx_3 = (tidx+4)%6
+
+            //? select 3 colors from the colors2 array
+            let polyColor_1 = colors2[cycle_colors][clrIdx_1]
+            let polyColor_2 = colors2[cycle_colors][clrIdx_2]
+            let polyColor_3 = colors2[cycle_colors][clrIdx_3]
+
+
+            //? for testing
+            // let polyColor_1 = "#FF0000"
+            // let polyColor_2 = "#00FF00"
+            // let polyColor_3 = "#0000FF" 
+
+            //? polyColor_<n>_offset is defined globally
+
+            //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
+            //@ This part was intended to show drift in the gradiant, but not working as imagined
+//            offsets = normalize(
+//                [
+//                    (polyColor_1_offset + 1)%33,
+//                    (polyColor_1_offset + polyColor_2_offset+1)%66,
+//                    (polyColor_1_offset + polyColor_2_offset + polyColor_3_offset+1)%99
+//                ],[1,100]
+//            )
+//            offsets.sort(sortNumbers);  //? make sure the offsets are sorted incrementally
+
+            offsets = [
+                CiR(tree_counter,0,60,0),//polyColor_1_offset,
+                CiR(tree_counter,20,80,0),//polyColor_2_offset,
+                CiR(tree_counter,40,100,0),//polyColor_3_offset
+            ]
+
+//            polyColor_1_offset = parseInt(offsets[0])
+//            polyColor_2_offset = parseInt(offsets[1])
+//            polyColor_3_offset = parseInt(offsets[2])
+
+            var fillGradient_stops = [
+                {"color":  polyColor_1,"offset":  offsets[0]+"%"},
+                {"color":  polyColor_2,"offset":  offsets[1]+"%"},
+                {"color":  polyColor_3,"offset":  offsets[2]+"%"},
+            ];
+
+            for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
+                var stop = document.createElementNS(svgns, 'stop');
+                stop.setAttribute('offset', fillGradient_stops[i].offset);
+                stop.setAttribute('stop-color', fillGradient_stops[i].color);
+                fillGradient.appendChild(stop);
+                // console.log("FILL STOP offsets:",fillGradient_stops[i].offset+"%",fillGradient_stops[i].color)
+            }
+
+            //? ------------------------------------
+            //? create the gradiant for STROKE
+            //? ------------------------------------
+            var STdefs = document.createElementNS(svgns, 'defs');
+            var strokeGradient = document.createElementNS(svgns, 'linearGradient');
+
+            // let altPolyColor_1 = colors2[cycle_colors][(clrIdx_1+1)%6]
+            // let altPolyColor_2 = colors2[cycle_colors][(clrIdx_2+1)%6]
+            // let altPolyColor_3 = colors2[cycle_colors][(clrIdx_3+1)%6]
+            let altPolyColor_1 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_1+1)%6])
+            let altPolyColor_2 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_2+1)%6])
+            let altPolyColor_3 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_3+1)%6])
+
+            // console.log("alt colors:",altPolyColor_1,altPolyColor_2,altPolyColor_3)
+
+
+            //? use the same offsets
+            var strokeGradient_stops = [
+                {"color":  altPolyColor_1,"offset":  offsets[0]+"%"},
+                {"color":  altPolyColor_2,"offset":  offsets[1]+"%"},
+                {"color":  altPolyColor_3,"offset":  offsets[2]+"%"},
+            ];
+
+            // console.log("---- STROKE -------------------------------------")
+            // console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
+
+            for (var i = 0, length = strokeGradient_stops.length; i < length; i++) {
+                var stop = document.createElementNS(svgns, 'stop');
+                stop.setAttribute('offset', strokeGradient_stops[i].offset);
+                stop.setAttribute('stop-color', strokeGradient_stops[i].color);
+                strokeGradient.appendChild(stop);
+                // console.log("FILL STOP offsets:",strokeGradient_stops[i].offset+"%",strokeGradient_stops[i].color)
+
+            }
+
+            fillGradient.id = 'fillGradient'+gen;
+            fillGradient.setAttribute('x1', '0%');
+            fillGradient.setAttribute('x2', '100%');
+            fillGradient.setAttribute('y1', '0%');
+            fillGradient.setAttribute('y2', '100%');
+
+            strokeGradient.id = 'strokeGradient'+gen;
+            strokeGradient.setAttribute('x1', '0%');
+            strokeGradient.setAttribute('x2', '0%');
+            strokeGradient.setAttribute('y1', '0%');
+            strokeGradient.setAttribute('y2', '100%');
+
+            LGdefs.appendChild(fillGradient);
+            STdefs.appendChild(strokeGradient);
+
+            let poly = document.createElementNS(svgns, 'polygon');
+            poly.setAttribute("points", poly_arr);
+            // poly.setAttribute("fill", colors2[cycle_colors][order + gens].toString());
+            poly.setAttribute('fill', 'url(#fillGradient'+gen+')');
+            poly.setAttribute('stroke', 'url(#strokeGradient'+gen+')');
+            poly.setAttribute("opacity", poly_opacity);
+            //poly.setAttribute("fill", generateRandomColor());
+            //poly.setAttribute("stroke", generateRandomColor());
+            poly.setAttribute("stroke-width", '1');
+            poly.setAttribute("stroke-linecap", "round");
+
+            svg.appendChild(LGdefs);
+            svg.appendChild(STdefs);
+            svg.appendChild(poly);
+        }
+
+        //% █████████████ ADJUSTMENTS █████████████
+        newpensize = pensize[order] * line_thickness
+        //% newpensize = CiR((tree_counter-order)/10*(order+1),1,10,0)
+
+        //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+        //%
+        //% ██████  ██████   █████  ██     ██     ██      ██ ███    ██ ███████ 
+        //% ██   ██ ██   ██ ██   ██ ██     ██     ██      ██ ████   ██ ██      
+        //% ██   ██ ██████  ███████ ██  █  ██     ██      ██ ██ ██  ██ █████   
+        //% ██   ██ ██   ██ ██   ██ ██ ███ ██     ██      ██ ██  ██ ██ ██      
+        //% ██████  ██   ██ ██   ██  ███ ███      ███████ ██ ██   ████ ███████ 
+        //%
+        //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+                                                                           
+        //? DRAW THE LINE
+        //? prepare the gradient for the line
+        //! The generatio indexing starts at 1, not 0 !!
+
+        linecolors = colors2[cycle_colors]
+        mLINEcolor[order] = linecolors[order]
+
+        // console.log(linecolors)
+
+        mLINEdefs[order]    = document.createElementNS(svgns, 'defs');
+        mLINEgradient[order]= document.createElementNS(svgns, 'radialGradient');
+        mLINEline[order]    = document.createElementNS(svgns, 'line');
+
+        let c1 = mLINEcolor[(Math.abs(order+1))%6]
+        let c2 = mLINEcolor[order]
+
+        mLINEstops[order] = [
+            {"color": c1,   "offset": "10%"},
+            {"color": c2,   "offset": "90%"},
+        ];
+
+        for (var i = 0; i < mLINEstops[order].length; i++) {
+            var stop = document.createElementNS(svgns, 'stop');
+            stop.setAttribute('offset', mLINEstops[order][i].offset);
+            stop.setAttribute('stop-color', mLINEstops[order][i].color);
+            mLINEgradient[order].appendChild(stop);
+        }
+        //? ug!  This gradiant spec is one of the worst, and it's broken as well.  radialGradient are only radial
+        //? at 45 degrees, and they disappear at 0 and 90 deg.
+        mLINEgradient[order].id = 'lineGradient'+gen;
+        mLINEgradient[order].setAttribute('cx', "50%");
+        mLINEgradient[order].setAttribute('cy', "50%");
+        mLINEgradient[order].setAttribute('r', "100%");//this_length);
+        mLINEdefs[order].appendChild(mLINEgradient[order]);
+        //! ---------------------------------------------
+        mLINEline[order].setAttribute('x1', nx1.toString())
+        mLINEline[order].setAttribute('y1', ny1.toString())
+        mLINEline[order].setAttribute('x2', nx2.toString())
+        mLINEline[order].setAttribute('y2', ny2.toString())
+
+        mLINEline[order].setAttribute("id", "lines"+gen);
+
+        if (clock_mode > 0) {
+            mLINEline[order].setAttribute('stroke', mLINEcolor[order]);
+        } else {
+            mLINEline[order].setAttribute('stroke', 'url(#lineGradient'+gen+')');
+        }
+        // mLINEline[order].setAttribute("opacity", "1");
+        if (clock_mode > 0) {
+            mLINEline[order].setAttribute("stroke-width",(7-order));
+        } else {
+            mLINEline[order].setAttribute("stroke-width",newpensize);            
+        }
+        mLINEline[order].setAttribute("opacity", opacities[order]);
+
+        svg.appendChild(mLINEdefs[order]);
+
+        //? what lines to show/hide
+
+        if (clock_mode > 0) {
+            if (order == current_level) {
+                if (show_all_lines == 1) {
+                    if (show_0 == 1 && order == 0) {svg.appendChild(mLINEline[order]);}
+                    if (show_1 == 1 && order == 1) {svg.appendChild(mLINEline[order]);}
+                    if (show_2 == 1 && order == 2) {svg.appendChild(mLINEline[order]);}
+                    if (show_3 == 1 && order == 3) {svg.appendChild(mLINEline[order]);}
+                    if (show_4 == 1 && order == 4) {svg.appendChild(mLINEline[order]);}
+                    if (show_5 == 1 && order == 5) {svg.appendChild(mLINEline[order]);}
+                }
+                //? placing this here ensure the polys and circles appear ON TOP of the lines they eminate from.
+                //? z-index (zIndex) settings appear to do nothing :/
+                let offset = 0;
+                if (lOrder[gen] == 5) { //? only apply to last line
+                    if (cycle_flowers > 0)  {
+                        putPoly(nx2,ny2,idx);
+                    }
+                    if (cycle_fruit > 0)    {
+                        putCircle(nx2,ny2,idx,offset);
+                    }
+                }
+                for (let i = 0; i<6; i++) {
+                    if (lOrder[gen] == i) { 
+                        if (show_lines[i] == 1) {
+                            putClock(nx1,ny1,nx2,ny2,i,0); 
+                        }
+                    }
+                }
+                current_level = (current_level + 1)%6;
+            }
+        } else {
+            if (show_all_lines == 1) {
+                if (show_0 == 1 && order == 0) {svg.appendChild(mLINEline[order]);}
+                if (show_1 == 1 && order == 1) {svg.appendChild(mLINEline[order]);}
+                if (show_2 == 1 && order == 2) {svg.appendChild(mLINEline[order]);}
+                if (show_3 == 1 && order == 3) {svg.appendChild(mLINEline[order]);}
+                if (show_4 == 1 && order == 4) {svg.appendChild(mLINEline[order]);}
+                if (show_5 == 1 && order == 5) {svg.appendChild(mLINEline[order]);}
+            }
+
+            //? placing this here ensure the pols abd circles appear ON TOP of the lines they eminate from
+            let offset = 0;
+            if (lOrder[gen] == 5) { //? only apply to last line
+                if (cycle_flowers > 0)  {
+                    putPoly(nx2,ny2,idx);
+                }
+                if (cycle_fruit > 0)    {
+                    putCircle(nx2,ny2,idx,offset);
+                }
+            }
+        }
+        gen++;
+    };
+    writeMenu()
+
+    //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    //!
+    //! ███████  ██████  ██    ██ ███    ██ ██████  
+    //! ██      ██    ██ ██    ██ ████   ██ ██   ██ 
+    //! ███████ ██    ██ ██    ██ ██ ██  ██ ██   ██ 
+    //!      ██ ██    ██ ██    ██ ██  ██ ██ ██   ██ 
+    //! ███████  ██████   ██████  ██   ████ ██████  
+    //!
+    //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+    if (sound_initialized == 1) {
+
+        //? make some new sounds based on vars
+        alternotes = [54, 67.5, 43.2, 34.56, 84.375]
+        let noteseed = (tree_counter + rotation) % 4
+        let rx = randint(0, alternotes.length - 1)
+        let xx = alternotes[rx] * 2
+
+        //@ g=0: playSound_0()  Long sound
+        //@ g=1: playSound_1()  Short sound
+        //@ g=2: playSoundData()  snd.play(MP3) - currenly not used
+        //@ g=3: playSound_2()  long and short together
+        //@ g=4: playSound_3()  varible length
+
+
+        //@ &g=
+        let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
+        //? Play sound #1 (playSound_0 = LONG SOUND) (g=0)
+        if (cycle_audio == 0 && (tree_counter % limiter == 0)) {
+            // long sound
+            pp = 1000 / (tree_counter % 7)
+            for (let i = 1; i < 7; i++) {
+                setTimeout(function () {
+                    playSound_0(crosssum(rotation), i)
+                }, pp * i)
+            }
+        }
+        //? Play sound #2 (playSound_1 = SHORT SOUND)
+        if (cycle_audio == 1 && (tree_counter % limiter == 0)) {
+            // short sound
+            pp = 1000 / (tree_counter % 7)
+            for (let i = 1; i < 7; i++) {
+                setTimeout(function () {
+                    playSound_1(crosssum(rotation), i)
+                }, pp * i)
+            }
+        }
+        //? Play sound #3 (playSoundData = MP3-piano)
+        if (cycle_audio == 2 && (tree_counter % limiter == 0)) {
+            //piano notes
+            pp = 1000 / (crosssum(branch_angle + branch_counter) % 4)
+            for (let i = 1; i < 6; i++) {
+                setTimeout(function () {
+                    note = randint(0, 20)
+                    playSoundData("data:audio/wav;base64," + pianoNotes[note])
+                }, pp * i)
+            }
+        }
+        //? Play sound #3 - playSound_0 + playSound_1, long and short
+        if (cycle_audio == 3 & (tree_counter % limiter == 0)) {
+            // long and short 
+            pp = 1000 / (tree_counter % 7)
+            for (let i = 1; i < 7; i++) {
+                setTimeout(function () {
+                    playSound_0(crosssum(rotation), i)
+                }, pp * i)
+                setTimeout(function () {
+                    playSound_1(crosssum(rotation), i)
+                }, pp * i)
+            }
+        }
+        // //? Play sound #4 - playSound_0 + playSound_1, long and short
+        // if (cycle_audio == 4 & (tree_counter % limiter == 0)) {
+        //     pp = 1000 / (tree_counter % 7)
+        //     for (let i = 1; i < 7; i++) {
+        //         setTimeout(function () {
+        //             //? rotation is actually angle :/  so angle%36= rangoe of 1-10 seconds
+        //             playSound_3(crosssum(rotation)%36, i)
+        //         }, pp * i)
+        //     }
+        // }
+    }
+        //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
+
+//    console.log("drawBox("+gMin_x+","+gMax_x+","+gMin_y+","+gMax_y+"  w/h:"+(gMax_y-gMin_y)+"/"+(gMax_x-gMin_x)+")")
+    boxWidth = Math.round(gMax_y-gMin_y)
+    boxHeight = Math.round(gMax_x-gMin_x)
+    boxSize = boxWidth * boxHeight
+//    drawBox(gMin_x, gMax_x, gMin_y, gMax_y)
+    //? this only works here (not in listeners)
+    if (zoomin == 1) {
+        was_zoomed = 1
+        last_showtext = showtext;
+        zoomvb(gMin_x, gMax_x, gMin_y, gMax_y)  
+        showtext=0; //? turn off the menu, as it is unreadable
+    } else {
+        if (gMin_x+gMax_x+gMin_y+gMax_y != 0) {
+            eleSvg.setAttribute("viewBox", "-960 -512 1920 1024");
+            if (was_zoomed == 1) {
+                showtext = last_showtext; //? turn menu back on
+                was_zoomed = 0
+            }
+        }
+    }}
+//? END OF FUNCTION 'drawTree'
+//! ┌───────────────────────────────────────────────
 //! │ holds the x,y data
 //! └───────────────────────────────────────────────
 class Node {
@@ -10,8 +1068,7 @@ class Node {
     toString() {
         return "(" + this.x + ", " + this.y + ")";
 //        return "(" + this.x.toFixed(2) + ", " + this.y.toFixed(2) + ")";
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ connections between nodes in a graph 
 //! └───────────────────────────────────────────────
@@ -22,110 +1079,19 @@ class Edge {
     }
     toString() {
         return "[" + this.node_1.toString() + ", " + this.node_2.toString() + "]";
-    }
-}
-
-//! ┌───────────────────────────────────────────────
-//! │ TIME: returns epoch in seconds
-//! └───────────────────────────────────────────────
-function nowsecs(d) {
-    var datestamp = 0;
-    if (d==0) {
-        datestamp = new Date.now();
-    } else {
-        datestamp = new Date(d);
-    }
-    var secs = new Date(datestamp).getTime()/1000;
-    return secs
-}
-//! ┌───────────────────────────────────────────────
-//! │ TIME: returns epoch in seconds for NOW or ARG
-//! └───────────────────────────────────────────────
-function getSecsInDay(d) {
-  var e = new Date(d);
-  return (d - e.setHours(0,0,0,0))/1000;
-}
-//! ┌───────────────────────────────────────────────
-//! │ TIME: returns epoch in HH:MM:SS format
-//! └───────────────────────────────────────────────
-function toTimeString(totalSeconds) {
-
-    hours = Math.floor(totalSeconds / 3600);
-    totalSeconds %= 3600;
-    minutes = Math.floor(totalSeconds / 60);
-    seconds = totalSeconds % 60;
-
-    hms = hours.toString()+":"+minutes.toString()+":"+Math.round(seconds).toString();
-    return hms;
-
-}
-//! ┌───────────────────────────────────────────────
-//! │ TIME: returns epoch in secs for DAY/ARG adjusted for 4AM
-//! └───────────────────────────────────────────────
-// function daysecs(somedate) {
-//     let tsecs = getSecsInDay(somedate); 
-//     let tsecs_after_4 = tsecs - 14400;  //? set to 4AM
-//     if (tsecs_after_4 < 0) { tsecs_after_4 = tsecs_after_4 + 86400;}
-//     return tsecs_after_4; 
-// }
-//! ┌───────────────────────────────────────────────
-//! │ TIME: returns current seconds in the circle
-//! └───────────────────────────────────────────────
-function ticks2secs() {
-    return tick_counter * secs_per_level[5];
-}
-//! ┌───────────────────────────────────────────────
-//! │ TIME: returns current degrees in the circle
-//! └───────────────────────────────────────────────
-function ticks2degs() {
-    return tick_counter * degs_per_level[5];
-}
-
-
-
-// function xxxttime2secs() {
-//     let tot = 0
-//     // console.log("-----------------------");
-//     for (let i = 0; i<6;i++) {
-//         tot = tot + t_time[i] * secs_per_level[i];
-//         // console.log(t_time[i],secs_per_level[i])
-//     }
-//     return tot;
-// }
-
-//! ┌───────────────────────────────────────────────
-//! │ TIME: concats level vals to string - only used in MANU
-//! └───────────────────────────────────────────────
-// function ttimeStr(t_time) {
-//     // t_time_str = "";
-//     //? updates global var
-//     for (let i = 0; i<6;i++) {
-//         t_time_str = t_time_str + t_time[i].toString();
-//     }
-
-//     // if (ttimeStr = "111111") {
-//     //     debugger;
-//     // } 
-
-//     return t_time_str;
-// }
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ The main class that creates the x/y coords then calls drawTree
 //! └───────────────────────────────────────────────
-                                                                                                     
-
-//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+//% ████████████████████████████████████████████████████████████████████████████████████████████████
 //%
-//%   ,ad8888ba,   88                                       888888888888                                 
-//%  d8"'    `"8b  88                                            88                                      
-//% d8'            88                                            88                                      
-//% 88             88  ,adPPYYba,  ,adPPYba,  ,adPPYba,          88  8b,dPPYba,   ,adPPYba,   ,adPPYba,  
-//% 88             88  ""     `Y8  I8[    ""  I8[    ""          88  88P'   "Y8  a8P_____88  a8P_____88  
-//% Y8,            88  ,adPPPPP88   `"Y8ba,    `"Y8ba,           88  88          8PP"""""""  8PP"""""""  
-//%  Y8a.    .a8P  88  88,    ,88  aa    ]8I  aa    ]8I          88  88          "8b,   ,aa  "8b,   ,aa  
-//%   `"Y8888Y"'   88  `"8bbdP"Y8  `"YbbdP"'  `"YbbdP"'          88  88           `"Ybbd8"'   `"Ybbd8"'  
-//%
-//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+//% ████████ ██████  ███████ ███████ 
+//%    ██    ██   ██ ██      ██      
+//%    ██    ██████  █████   █████   
+//%    ██    ██   ██ ██      ██      
+//%    ██    ██   ██ ███████ ███████  
+//%                                         
+//% ████████████████████████████████████████████████████████████████████████████████████████████████
 
 class Tree {
     constructor(gens, lineLength, x, y, angle, rotation) {
@@ -228,12 +1194,61 @@ class Tree {
                  this.right_tree = this.left_tree;
             }            
         }
+    }}
+
+//% ████████████████████████████████████████████████████████████████████████████████████████████████
+//% ████████████████                ████████████████                ████████████████                 
+//% ████    ████    ████    ████    ████    ████    ████    ████    ████    ████    ████    ████    
+//% ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  
+//% █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ █ 
+//% ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  
+//% ████    ████    ████    ████    ████    ████    ████    ████    ████    ████    ████    ████    
+//% ████████████████                ████████████████                ████████████████                 
+//% ████████████████████████████████████████████████████████████████████████████████████████████████
+
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns epoch in seconds
+//! └───────────────────────────────────────────────
+function nowsecs(d) {
+    var datestamp = 0;
+    if (d==0) {
+        datestamp = new Date.now();
+    } else {
+        datestamp = new Date(d);
     }
-}
+    var secs = new Date(datestamp).getTime()/1000;
+    return secs}
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns epoch in seconds for NOW or ARG
+//! └───────────────────────────────────────────────
+function getSecsInDay(d) {
+  var e = new Date(d);
+  return (d - e.setHours(0,0,0,0))/1000;}
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns epoch in HH:MM:SS format
+//! └───────────────────────────────────────────────
+function toTimeString(totalSeconds) {
 
-//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    hours = Math.floor(totalSeconds / 3600);
+    totalSeconds %= 3600;
+    minutes = Math.floor(totalSeconds / 60);
+    seconds = totalSeconds % 60;
 
+    hms = hours.toString()+":"+minutes.toString()+":"+Math.round(seconds).toString();
+    return hms;}
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns current seconds in the circle
+//! └───────────────────────────────────────────────
+function ticks2secs() {
+    return tick_counter * secs_per_level[5];}
+//! ┌───────────────────────────────────────────────
+//! │ TIME: returns current degrees in the circle
+//! └───────────────────────────────────────────────
+function ticks2degs() {
+    return tick_counter * degs_per_level[5];}
+//! ┌───────────────────────────────────────────────
+//! │ standalone poly routine
+//! └───────────────────────────────────────────────
 function putPoly(x,y,idx,offset=0) {//@ loop
 
     let gen = lOrder[idx]
@@ -523,10 +1538,10 @@ function putPoly(x,y,idx,offset=0) {//@ loop
 
     svg.appendChild(polyfill_defs);
     svg.appendChild(polystroke_defs);
-    svg.appendChild(poly);
-}
-
-
+    svg.appendChild(poly);}
+//! ┌───────────────────────────────────────────────
+//! │ standalone circle routine
+//! └───────────────────────────────────────────────
 function putCircle(x,y,idx,offset) { //@ loop
     // console.log("putCircle",x,y,offset)
 
@@ -596,9 +1611,10 @@ function putCircle(x,y,idx,offset) { //@ loop
 
     svg.appendChild(pcir_defs[porder]);
 
-    svg.appendChild(pcir_circle[porder]);
-}
-
+    svg.appendChild(pcir_circle[porder]);}
+//! ┌───────────────────────────────────────────────
+//! │ standalone clock routine, with much of the clock logic
+//! └───────────────────────────────────────────────
 function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     idx=current_level;
     var svg = document.getElementById("svg");
@@ -690,10 +1706,7 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     // console.log("Appending id ","put_clock_circles"+idx,lOrder[idx])
     if (cycle_circles == 0) {  //? only put circles if spheres is turned off
         svg.appendChild(pcir_circle[idx]);
-    }
-}
-
-
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ sort associative array by key
 //! └───────────────────────────────────────────────
@@ -701,9 +1714,7 @@ function sortByKey(array, key) {
     return array.sort(function(a, b) {
         var x = a[key]; var y = b[key];
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-    });
-}
-
+    });}
 //! ┌───────────────────────────────────────────────
 //! │ parse query string into associatve array
 //! └───────────────────────────────────────────────
@@ -714,9 +1725,7 @@ function parseQuery(queryString) {
         var pair = pairs[i].split('=');
         query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
     }
-    return query;
-}
-
+    return query;}
 //! ┌───────────────────────────────────────────────
 //! │ interface to wTL
 //! └───────────────────────────────────────────────
@@ -741,47 +1750,40 @@ function writGrid(args) {
         }
         wTL({'str': args[i], 'row': rnum, 'col': mCols[i],});
         // console.log("mCols:",mCols[i],i)
-    }
-    // rnum++;
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ wtite text from left->right in grod format
 //! └───────────────────────────────────────────────
 function wTL(args) {
-    // row,col
     let fs = menu_fontsize
     let spacing = menu_spacing
 
-    // if (showtext == true) {
-        xpos = (args['col'] * 1) - 960  //? viewbox is x=1920 y=1024 w. 0,0 as dead center, leftmost col is -960
-        // log("xpos:"+xpos+' - '+args['col'])
-        ypos = (args['row'] * 20) - 450 //? topmost col is -960
-        var svg = document.getElementById("svg");
-        let text = document.createElementNS(svgns, 'text');
-        text.id = "id-wtP1";
-        text.setAttribute("style", "white-space: pre;")
-        text.setAttribute("classname", "wt", );
-        text.setAttribute("x", xpos);
-        text.setAttribute("y", ypos);
-        if (bg_color == "black") {
-            text.setAttribute("fill", menu_fontclr);
-        } else {
-            text.setAttribute("fill", menu_fontclr);    
-        }
-        text.setAttribute("font-size", fs);
-        text.setAttribute("font-family", "monospace, monospace");
-        text.setAttribute("font-weight", menu_fontweight);
-        //text.setAttribute("stroke", args['stroke']);
-        //text.setAttribute("style", args['style']);
-        //text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+    xpos = (args['col'] * 1) - 960  //? viewbox is x=1920 y=1024 w. 0,0 as dead center, leftmost col is -960
+    ypos = (args['row'] * 20) - 450 //? topmost col is -960
+    var svg = document.getElementById("svg");
+    let text = document.createElementNS(svgns, 'text');
+    text.id = "id-wtP1";
+    text.setAttribute("style", "white-space: pre;")
+    text.setAttribute("classname", "wt", );
+    text.setAttribute("x", xpos);
+    text.setAttribute("y", ypos);
+    if (bg_color == "black") {
+        text.setAttribute("fill", menu_fontclr);
+    } else {
+        text.setAttribute("fill", menu_fontclr);    
+    }
+    text.setAttribute("font-size", fs);
+    text.setAttribute("font-family", "monospace, monospace");
+    text.setAttribute("font-weight", menu_fontweight);
+    //text.setAttribute("stroke", args['stroke']);
+    //text.setAttribute("style", args['style']);
+    //text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
 
-        let textNode = document.createTextNode(args['str']);
-        text.appendChild(textNode);
-        svg.appendChild(text);
+    let textNode = document.createTextNode(args['str']);
+    text.appendChild(textNode);
+    svg.appendChild(text);
 
-        return (document.getElementById('id-wtP1'));
-    // }
-}
+    return (document.getElementById('id-wtP1'));}
 //! ┌───────────────────────────────────────────────
 //! │ wtite text from left->right in grod format
 //! └───────────────────────────────────────────────
@@ -813,26 +1815,19 @@ function wTLp(xpos,ypos,str) {
     text.appendChild(textNode);
     svg.appendChild(text);
 
-    return (document.getElementById('id-wtP1'));
-}
-
-
+    return (document.getElementById('id-wtP1'));}
 //! ┌───────────────────────────────────────────────
 //! │ all the menu and screen text is written here
 //! └───────────────────────────────────────────────
 //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 //%
-//% 88b           d88  88888888888  888b      88  88        88  
-//% 888b         d888  88           8888b     88  88        88  
-//% 88`8b       d8'88  88           88 `8b    88  88        88  
-//% 88 `8b     d8' 88  88aaaaa      88  `8b   88  88        88  
-//% 88  `8b   d8'  88  88"""""      88   `8b  88  88        88  
-//% 88   `8b d8'   88  88           88    `8b 88  88        88  
-//% 88    `888'    88  88           88     `8888  Y8a.    .a8P  
-//% 88     `8'     88  88888888888  88      `888   `"Y8888Y"'   
-//%
+//% ███    ███ ███████ ███    ██ ██    ██ 
+//% ████  ████ ██      ████   ██ ██    ██ 
+//% ██ ████ ██ █████   ██ ██  ██ ██    ██ 
+//% ██  ██  ██ ██      ██  ██ ██ ██    ██ 
+//% ██      ██ ███████ ██   ████  ██████  
+//% 
 //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-
 function writeMenu() {
     // if (cycle_vars != 0) {
     //     var longqs = "";
@@ -1016,8 +2011,7 @@ function writeMenu() {
 
         }
         rnum = 0;
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ build tfe query string
 //! └───────────────────────────────────────────────
@@ -1060,8 +2054,7 @@ function makeQs(qs) {
     if (showtext        != DEF_showtext)    {qs = qs + "&aQ=" + showtext;}
     qs = qs + "&ia=" + branch_angle;
     //@ ARGS
-    return(qs)
-}
+    return(qs)}
 //! ┌───────────────────────────────────────────────
 //! │ funcs to track tey min/max xy
 //! └───────────────────────────────────────────────
@@ -1069,8 +2062,10 @@ function xytrack(x,y) {
     if ((x+circle_radius) > gMax_x) {gMax_x = (x+circle_radius);}
     if ((x-circle_radius) < gMin_x) {gMin_x = (x-circle_radius);}
     if ((y+circle_radius) > gMax_y) {gMax_y = (y+circle_radius);}
-    if ((y-circle_radius) < gMin_y) {gMin_y = (y-circle_radius);}
-}
+    if ((y-circle_radius) < gMin_y) {gMin_y = (y-circle_radius);}}
+//! ┌───────────────────────────────────────────────
+//! │ test x/y min/max vals againt a list of x/y data
+//! └───────────────────────────────────────────────
 function updateListMinMax(data) {
     //? no need to traxk if zoom is not on
     if (zoomin ==1) {
@@ -1079,15 +2074,16 @@ function updateListMinMax(data) {
 
             // console.log("xytrack("+data[i][0]+","+data[i][1]+")=>"+gMax_x+","+gMin_y)
         }
-    }
-}
+    }}
+//! ┌───────────────────────────────────────────────
+//! │ test x/y min/max vals againt anobject of x/y data
+//! └───────────────────────────────────────────────
 function updateObjMinMax(data) {
     for (let i=0;i<data.length;i++) {
         for (let j=0;j<data[i].length;j++){
             xytrack(data[i][j].x,data[i][j].y);
         }
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ zoom in the viewbox 
 //! └───────────────────────────────────────────────
@@ -1106,8 +2102,7 @@ function zoomvb(xmin, xmax, ymin, ymax) {
     eleSvg.setAttribute("viewBox", vbstr);
 
     wTLp(vbMinX,vbMinY+20,ttimeStr(t_time) + "   ("+new Date()+")");
-    
-}
+    }
 //! ┌───────────────────────────────────────────────
 //! │ draw a box around the min/max xy... mainly for debugging
 //! └───────────────────────────────────────────────
@@ -1135,36 +2130,12 @@ function drawBox(xmin, xmax, ymin, ymax) {
     // let vbstr =  vbMinX.toString()+" "+vbMinY.toString()+" "+vbLen.toString()+" "+vbHei.toString();
     // eleSvg.setAttribute("viewBox", vbstr);
 
-    zoomvb(xmin, xmax, ymin, ymax);
-}
+    zoomvb(xmin, xmax, ymin, ymax);}
 //! ┌───────────────────────────────────────────────
 //! │ func to alter the colors
 //! └───────────────────────────────────────────────
 //? https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors#:~:text=Just%20pass%20in%20a%20string,number%20(i.e.%20%2D20%20).
 const pSBC=(p,c0,c1,l)=>{
-    let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
-    if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
-    if(!this.pSBCr)this.pSBCr=(d)=>{
-        let n=d.length,x={};
-        if(n>9){
-            [r,g,b,a]=d=d.split(","),n=d.length;
-            if(n<3||n>4)return null;
-            x.r=i(r[3]=="a"?r.slice(5):r.slice(4)),x.g=i(g),x.b=i(b),x.a=a?parseFloat(a):-1
-        }else{
-            if(n==8||n==6||n<4)return null;
-            if(n<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(n>4?d[4]+d[4]:"");
-            d=i(d.slice(1),16);
-            if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;
-            else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1
-        }return x};
-    h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=this.pSBCr(c0),P=p<0,t=c1&&c1!="c"?this.pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
-    if(!f||!t)return null;
-    if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);
-    else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
-    a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;
-    if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
-    else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
-
 // // Tests:
 
 // /*** Log Blending ***/
@@ -1215,10 +2186,28 @@ const pSBC=(p,c0,c1,l)=>{
 // pSBC ( 0.42, "#salt" ); // #salt + [42% Lighter] => #a5a5a500??(...and a Pound of Salt is Jibberish)
 
 // // Ripping
-// pSBCr ( color4 ); // #5567DAF0 + [Rip] => [object Object] => {'r':85,'g':103,'b':218,'a':0.941}
-
-
-}
+// pSBCr ( color4 ); // #5567DAF0 + [Rip] => [object Object] => {'r':85,'g':103,'b':218,'a':0.941}    let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
+    if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
+    if(!this.pSBCr)this.pSBCr=(d)=>{
+        let n=d.length,x={};
+        if(n>9){
+            [r,g,b,a]=d=d.split(","),n=d.length;
+            if(n<3||n>4)return null;
+            x.r=i(r[3]=="a"?r.slice(5):r.slice(4)),x.g=i(g),x.b=i(b),x.a=a?parseFloat(a):-1
+        }else{
+            if(n==8||n==6||n<4)return null;
+            if(n<6)d="#"+d[1]+d[1]+d[2]+d[2]+d[3]+d[3]+(n>4?d[4]+d[4]:"");
+            d=i(d.slice(1),16);
+            if(n==9||n==5)x.r=d>>24&255,x.g=d>>16&255,x.b=d>>8&255,x.a=m((d&255)/0.255)/1000;
+            else x.r=d>>16,x.g=d>>8&255,x.b=d&255,x.a=-1
+        }return x};
+    h=c0.length>9,h=a?c1.length>9?true:c1=="c"?!h:false:h,f=this.pSBCr(c0),P=p<0,t=c1&&c1!="c"?this.pSBCr(c1):P?{r:0,g:0,b:0,a:-1}:{r:255,g:255,b:255,a:-1},p=P?p*-1:p,P=1-p;
+    if(!f||!t)return null;
+    if(l)r=m(P*f.r+p*t.r),g=m(P*f.g+p*t.g),b=m(P*f.b+p*t.b);
+    else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
+    a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;
+    if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
+    else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)}
 //! ┌───────────────────────────────────────────────
 //! │ user to alter array of gradiant stops
 //! └───────────────────────────────────────────────
@@ -1229,1151 +2218,16 @@ function sortNumbers(a, b) {
     return -1;
   } else {
     return 0;
-  }
-}
+  }}
+//! ┌───────────────────────────────────────────────
+//! │ copy a list
+//! └───────────────────────────────────────────────  
 function cpList(list) {
     let nList = [];
     for (let i=0; i<list.length;i++) {
         nList.push(list[i])
     }
-    return nList
-}
-
-//! ┌───────────────────────────────────────────────
-//! │ recursive collection of nodes and edges that form a tree
-//! └───────────────────────────────────────────────
-//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-//%
-//%          88                                                                                             d8'  `8b    
-//%          88                                                ,d                                          d8'    `8b   
-//%          88                                                88                                         d8'      `8b  
-//%  ,adPPYb,88  8b,dPPYba,  ,adPPYYba,  8b      db      d8  MM88MMM  8b,dPPYba,   ,adPPYba,   ,adPPYba,  88        88  
-//% a8"    `Y88  88P'   "Y8  ""     `Y8  `8b    d88b    d8'    88     88P'   "Y8  a8P_____88  a8P_____88  88        88  
-//% 8b       88  88          ,adPPPPP88   `8b  d8'`8b  d8'     88     88          8PP"""""""  8PP"""""""  Y8,      ,8P  
-//% "8a,   ,d88  88          88,    ,88    `8bd8'  `8bd8'      88,    88          "8b,   ,aa  "8b,   ,aa   Y8,    ,8P   
-//%  `"8bbdP"Y8  88          `"8bbdP"Y8      YP      YP        "Y888  88           `"Ybbd8"'   `"Ybbd8"'    Y8,  ,8P    
-//%
-//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-                                                                                                                    
-
-function drawTree(branch_angle, rotation) {
-    if (clock_mode > 0) {
-        rotation = DEF_cmRotation;
-    } else {
-        rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
-    }
-    var svg = document.getElementById("svg");
-    //FIXME for some reason, these angles do not appear when the andhglew are integers, only floats!?
-    branch_angle = branch_angle%360;
-    branch_angle = branch_angle + 0.00001; //? more that 4 0s and lines begin to disappear
-    // rotation = DEF_rotation * mratios[cycle_ratios][]
-
-               // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ");
-               //  console.log("branch_angle:",branch_angle);
-               //  console.log("rotation:",rotation);
-
-    genangLEFT  = genang[cycle_genang][0];
-    genangRIGHT = genang[cycle_genang][1];
-
-
-
-
-
-    // for (let i=0;i<genang.length-1;i++){
-    //     genangLEFT[i]  = genangLEFT[i] * 1.001
-    //     genangRIGHT[i] = genangRIGHT[i] * 1.001
-    // }
-
-
-    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-    //%                            888                                                 
-    //%                            888                                                 
-    //%                            888                                                 
-    //%  .d8888b 888  888  .d8888b 888  .d88b.      888  888  8888b.  888d888 .d8888b  
-    //% d88P"    888  888 d88P"    888 d8P  Y8b     888  888     "88b 888P"   88K      
-    //% 888      888  888 888      888 88888888     Y88  88P .d888888 888     "Y8888b. 
-    //% Y88b.    Y88b 888 Y88b.    888 Y8b.          Y8bd8P  888  888 888          X88 
-    //%  "Y8888P  "Y88888  "Y8888P 888  "Y8888        Y88P   "Y888888 888      88888P' 
-    //%               888                                                              
-    //%          Y8b d88P                                                              
-    //%           "Y88P"                                                               
-    //%
-    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-
-
-
-
-
-
-    if (cycle_vars > 0) {
-// *    ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗     ██╗
-// *   ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ███║
-// *   ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗    ╚██║
-// *   ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║     ██║
-// *   ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║     ██║
-// *    ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝     ╚═╝
-            if (cycle_vars == 1) {
-                //? no PATH lines
-
-                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
-                cycle_flowers = randint(-3,num_of_flowers-1);
-                // % ────────────────────────────────────────────────────────────────────────
-
-                for (let i=0;i<6;i++) {
-                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
-                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
-                }
-                cycle_circles   = randint(0, num_of_circles-1);
-                circle_radius   = randint(5,20);
-                cycle_colors    = randint(0,num_of_colors-1);
-                circle_opacity  = randint(1,10)/10;  //@ does nothing to lines, only circles
-                cycle_poly      = randint(0,num_of_polys-1);
-                cycle_dataset   = randint(0,1);
-                cycle_ratios    = randint(0,num_of_ratios-1);
-            }
-
-// *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██████╗
-// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ╚════██╗
-// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗     █████╔╝
-// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ██╔═══╝
-// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ███████╗
- // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝
-
-            //? paths, colors, lines
-            if (cycle_vars == 2) {
-                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-//                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
-//                cycle_flowers = randint(-3,num_of_flowers-1);
-                // % ────────────────────────────────────────────────────────────────────────
-                for (let i=0;i<6;i++) {
-                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
-                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
-                }
-                cycle_path      = randint(0,num_of_paths-1);
-                cycle_colors    = randint(0,num_of_colors-1);
-                cycle_ratios    = randint(0,num_of_ratios-1);
-            }
- // * ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██████╗
-// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ╚════██╗
-// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗     █████╔╝
-// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║     ╚═══██╗
-// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ██████╔╝
-
-            //? PATHs and path_mode only
-            if (cycle_vars == 3) {
-                show_all_lines = 0;
-                path_mode=2;
-
-                for (let i=0;i<6;i++) {
-                    pensize[i] = CiR(
-                        Math.round(tree_counter),
-                        1,
-                        DEF_pensize[i],
-                        0
-                    ) //? use initial values of pensize[]
-                    pre_maxlengths[i] = CiR(
-                        Math.round(tree_counter),
-                        1,
-                        DEF_pre_maxlengths[i],
-                        0
-                    ) //? use initial values of pre_maxlengths[]
-                }
-                cycle_path      = randint(1,num_of_paths-1);
-                cycle_colors    = randint(0,num_of_colors-1);
-
-            }
-// *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ██╗  ██╗
-// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ██║  ██║
-// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗    ███████║
-// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ╚════██║
-// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║         ██║
- // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝         ╚═╝
-
-            //? no lines or paths
-            if (cycle_vars == 4) {
-                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
-                cycle_flowers = randint(-3,num_of_flowers-1);
-                // % ────────────────────────────────────────────────────────────────────────
-                show_all_lines = 0;
-                path_mode=2;
-
-                for (let i=0;i<6;i++) {
-                    pensize[i] = CiR(Math.round(tree_counter),0,DEF_pensize[i],0); //? use initialial values of pensize[]
-                    pre_maxlengths[i] = CiR(Math.round(tree_counter),0,DEF_pre_maxlengths[i],0);  //? use initialial values of pre_maxlengths[]
-                }
-                cycle_circles   = randint(0, num_of_circles-1);
-                circle_radius   = randint(5,20);
-                cycle_colors    = randint(0,num_of_colors-1);
-                circle_opacity  = randint(1,10)/10;  //@ does nothing to lines, only circles
-                cycle_poly      = randint(0,num_of_polys-1);
-                cycle_dataset   = randint(0,1);
-                cycle_ratios    = randint(0,num_of_ratios-1);
-
-            }
-// *  ██████╗██╗   ██╗ ██████╗██╗     ███████╗       ██╗   ██╗ █████╗ ██████╗ ███████╗    ███████╗
-// * ██╔════╝╚██╗ ██╔╝██╔════╝██║     ██╔════╝       ██║   ██║██╔══██╗██╔══██╗██╔════╝    ██╔════╝
-// * ██║      ╚████╔╝ ██║     ██║     █████╗         ██║   ██║███████║██████╔╝███████╗    ███████╗
-// * ██║       ╚██╔╝  ██║     ██║     ██╔══╝         ╚██╗ ██╔╝██╔══██║██╔══██╗╚════██║    ╚════██║
-// * ╚██████╗   ██║   ╚██████╗███████╗███████╗███████╗╚████╔╝ ██║  ██║██║  ██║███████║    ███████║
- // * ╚═════╝   ╚═╝    ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝    ╚══════╝
-
-            if (cycle_vars == 5) {
-                //? opwave is meant to be a wandering curve
-                let ang1 = Math.sin(deg2rad(randang1))
-                let mod2 = randang2 + CiR(tc[4],0,3599,0)/10
-                let ang2 = Math.cos(deg2rad(mod2))
-                // opwave = Math.abs(ang1+ang2) * 100
-                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-//                cycle_fruit = randint(-3,num_of_fruit-1);  //@ neg vals are a very bad way to increase the 0 distributions
-//                cycle_flowers = randint(-3,num_of_flowers-1);
-                // % ────────────────────────────────────────────────────────────────────────
-
-                // % ──────── RATIO setting ────────────────────────────────────────
-                //? when form is smallest, set RATIO by time
-                trt = 5
-
-                if (nowsecs(0)%15 == 0) {
-                    next_ratio_change = nowsecs(0)+15
-                    next_ratio =  randintEx(0,num_of_ratios-1,next_ratio)
-                    cycle_ratios = next_ratio;
-                }
-
-                //? set LINE opacity by counter and xdlAry[]
-                for (let i=0;i<6;i++) {
-                    let c = xdlAry[i][CiR(tc[4],0,99,0)]
-                    let x= CiR(c,0,1000,0)/1000
-                    opacities[i] = 1
-                }
-                // % ──────── LINE setting ────────────────────────────────────────
-                show_all_lines = 1
-                var g = 0
-                let tcx = []
-                let tcx_bez = []
-                let tcx_flat = []
-                for (let i=0;i<6;i++) {
-                    let v =   CiR(tc[i+1],40,100,0)
-                            - CiR(tc[i+2],0,20,0)
-                            + CiR(tc[i+3],0,20,0) ;
-                    tcx.push(v);
-                }
-
-                for (let i=0;i<6;i++) {
-                    let v = CiR(tcx[i],0,DEF_pre_maxlengths[i],0);
-                    pre_maxlengths[i] = v;
-                    pensize[i] = CiR(tcx[i],-(1+4),i+4,0);
-                }
-
-                // % ──────── FRUITS/FLOWERS setting ────────────────────────────────────────
-                if (nowsecs(0)%17 == 0) {
-                    cycle_fruit = randint(0,num_of_fruit-1);
-                }
-                if (nowsecs(0)%23 == 0) {
-                    cycle_flowers = randint(0,num_of_flowers-1);
-                }
-
-                // % ──────── PATH setting ────────────────────────────────────────
-                //? turn on PATHS
-                // if (cycle_path==0) {cycle_path=1}
-                path_mode = 0
-                path_color = colors360[tc[10]%360];
-                // path_color = "white";
-                //? set PATH style by time
-                if (nowsecs(0)%60 == 0) {
-                    cycle_path = randintEx(1,num_of_paths-1,cycle_path);
-                }
-
-                if (bg_color == "black") {
-                    path_opacity = 1//CiR(tc[5],0,100,0)/100 //? op at > 1.0 is op = 1.0
-                    if (path_opacity < 0.2) {path_opacity = 0.2} //? limit opacitry to 0.2
-                    path_width = CiR(tc[10]%500,1,5,0)/1; //? width incremennet by 100ths (even though fractions are prob not supported)
-                }
-                // if (bg_color == "white") {
-                //     path_opacity = CiR(opwave,000,800,0)/999 //? op at > 1.0 is op = 1.0
-                //     // path_opacity = 1
-                //     path_width = CiR(tree_counter%500,1,4,0)/1;
-                // }
-
-                // % ──────── CIRCLE setting ────────────────────────────────────────
-                //? set circles to SPHERES
-                if (cycle_circles==0) {cycle_circles=1}  //? 1=palette color, 2=white, 3=random colors
-                //? the '-2' is to eliminate the random colors which are always the last in the array
-                //? set CIRCLE color by random when circles are invisible
-                if (circle_opacity == 0) {
-                    cycle_colors  = randintEx(0,num_of_colors-2,cycle_colors);
-                }
-                //? set CIRCLE radius by counter
-                circle_radius   = CiR(tcx[0],0,17,0)
-                //? set CIRCIE  OPACITY by counter
-                circle_opacity  = CiR(tc[4],0,200,0)/100  //@ does nothing to lines, only circles
-
-                // % ════════════════════════════════════════════════
-
-                wait_flag = true
-                last_cycle_ratios = cycle_ratios
-
-                //? not used here
-                // cycle_poly      = randint(0,num_of_polys)
-                // cycle_dataset   = randint(0,1)
-                // cycle_ratios    = randint(0,num_of_ratios-1)
-                //? filter by seconds example
-                // if (nowsecs(0)%(divs+15) == 0 && wait_flag == false) {
-                //? makes fadeouts smoother
-                // preop = path_opacity
-                // if (path_width == 1) {path_opacity = .6} else {path_opacity = preop}
-                // if (path_width == 2) {path_opacity = .86} else {path_opacity = preop}
-            }
-
-        }
-
-
-
-    //% █████████████████████████ LOAD PRESETS ███████████████████████
-    if (preset_changed == true) {
-        //? read a preset query string and set all params
-        //? linear cycles of presets
-        // cycle_preset = (cycle_preset + 1)% num_of_presets
-        // if (rolling_presets) {
-        //     cycle_preset = tree_counter% num_of_presets
-        // }
-        //? random selection of presents
-        // randint(0,num_of_presets)
-        // var qsary = parseQuery(preqs[randint(0,cycle_preset)])
-        var qsary = parseQuery(preqs[cycle_preset])
-        //@ ARGS
-        for (const key in qsary) {
-            switch(key) {
-                case 'up': loop_delay      = parseFloat(qsary[key]); break;  //? loop_delay can't be set here??
-                case 'ia': iangle          = parseFloat(qsary[key]); break;  
-                case 'de': deg_adj         = parseFloat(qsary[key]); break;  //? keep control manual
-                case 'aN': circle_radius   = parseFloat(qsary[key]); break;
-                case 'aO': poly_opacity    = parseFloat(qsary[key]); break;
-                case 'aX': circle_opacity  = parseFloat(qsary[key]); break;
-                case 'aR': cycle_colors    = qsary[key]; break;
-                case 'a1': show_0          = qsary[key]; break;
-                case 'a2': show_1          = qsary[key]; break;
-                case 'a3': show_2          = qsary[key]; break;
-                case 'a4': show_3          = qsary[key]; break;
-                case 'a5': show_4          = qsary[key]; break;
-                case 'a6': show_5          = qsary[key]; break;
-                case 'ca0': show_all_lines  = qsary[key]; break;
-                case 'aV': cycle_poly      = qsary[key]; break;
-                case 'aG': cycle_audio     = qsary[key]; break;
-                case 'aK': cycle_path      = qsary[key]; break;
-                case 'aU': cycle_dataset   = qsary[key]; break;
-                case 'aC': cycle_vars      = qsary[key]; break;
-                case 'aM': cycle_circles   = qsary[key]; break;
-                case 'aS': merge_counts    = qsary[key]; break;
-                case 'FS': fullscreen      = qsary[key]; break;
-                case 'aA':  cycle_preset   = qsary[key]; break;
-                case 'aT':  zoomin         = qsary[key]; break;
-                case 'aP':  screensave     = qsary[key]; break;
-                case 'aY':  cycle_ratios   = qsary[key]; break;
-                case 'aJ':  jump_delta     = qsary[key]; break;
-                case 'li':  path_mode      = qsary[key]; break;
-                case 'mF':  cycle_flowers  = qsary[key]; break;
-                case 'mT':  cycle_fruit    = qsary[key]; break;
-                case 'aD':  cycle_genang   = qsary[key]; break;
-                case 'cm':  clock_mode    = qsary[key]; break;
-                case 'aQ':  showtext       = qsary[key]; break;
-            }
-        }
-        preset_changed = false
-        console.log("Preset changed: "+preset_changed)
-    }
-    //% ≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
-    if (merge_count == 0) {
-        clearCanvas()        
-    } else {
-        if (tree_counter%merge_count == 0) {
-            clearCanvas()
-        }
-    }
-    //? ────────────────────────────────────────────────
-    //? rebuild timing data based on changes in specs
-    tt = cycletimes(loop_delay, deg_adj, genangLEFT, genangRIGHT)
-    cycletime = tt['cycletime']
-    tot_cycletime = tt['tot_cycletime']
-    tot_images = tt['tot_images']
-
-    //? ──────────────────────────────────────────────── CYCLE COLORS
-    if (cycle_colors == 1) {  //? shift spectrum of 7 color
-        for (let i = 0; i < 7; i++) {
-            colors2[1][i] = generateColor(CiR(tree_counter + (i * 45), 0, 360, 0))
-        }
-    }
-    if (cycle_colors == 2) {  //? random colors
-        for (let i = 0; i < 7; i++) {
-            colors2[num_of_colors-1][i] = generateRandomColor() //? last in array
-        }
-    }
-    //? ────────────────────────────────────────────────
-    //% █████████████ ADJUSTMENTS █████████████
-    //% let noteseed = (54+tree_counter+ rotation)%108+108
-    //? ────────────────────────────────────────────────
-
-    //@ this part is very confusing...  we need to swap 'rotation' and 'branch_angle' otherwise we get lines all 
-    //@ rotating in the same directions around their centers, i.e., there is no symetrical balance, only rotational uniformity.  
-    //@ This swapping could also be accomplished but reversing the declared names in the function, i.e., 
-    //@ 'function drawTree(rotation, branch_angle)', as this also keeps 'branch_angle' values assigned to 'branch_angle' variable. 
-
-    //? this call has the arguments in the order they are called in 'Tree'
-    // var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
-    //? but we need to use THIS swapped args to get symetrical results
-    // console.log("branch_angle:",branch_angle)
-
-
-    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-    //%                                                 a8  8a     
-    //% 888888888888                                   d8'  `8b    
-    //%      88                                       d8'    `8b   
-    //%      88                                      d8'      `8b  
-    //%      88  8b,dPPYba,   ,adPPYba,   ,adPPYba,  88        88  
-    //%      88  88P'   "Y8  a8P_____88  a8P_____88  88        88  
-    //%      88  88          8PP"""""""  8PP"""""""  Y8,      ,8P  
-    //%      88  88          "8b,   ,aa  "8b,   ,aa   Y8,    ,8P   
-    //%      88  88           `"Ybbd8"'   `"Ybbd8"'    Y8,  ,8P    
-    //%                                                 "8  8"  
-    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-
-    var draw_tree = new Tree(gens, this_length, start_x, start_y, rotation, branch_angle);
-
-    var draw_edges = getTreeEdges(draw_tree);
-    
-
-    gen = 0
-    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-    //*
-    //* 8888888b.         d8888 88888888888        d8888  .d8888b.  8888888888 88888888888  .d8888b.
-    //* 888  "Y88b       d88888     888           d88888 d88P  Y88b 888            888     d88P  Y88b 
-    //* 888    888      d88P888     888          d88P888 Y88b.      888            888     Y88b.      
-    //* 888    888     d88P 888     888         d88P 888  "Y888b.   8888888        888      "Y888b.   
-    //* 888    888    d88P  888     888        d88P  888     "Y88b. 888            888         "Y88b. 
-    //* 888    888   d88P   888     888       d88P   888       "888 888            888           "888 
-    //* 888  .d88P  d8888888888     888      d8888888888 Y88b  d88P 888            888     Y88b  d88P 
-    //* 8888888P"  d88P     888     888     d88P     888  "Y8888P"  8888888888     888      "Y8888P"  
-    //*
-    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-                                                                                              
-
-    //? create data sets from original data
-
-    // var bezierary_right = BezierCurve(fullary_right);
-    // var bezierary_left = BezierCurve(fullary_left);
-
-    adata_right = [] //? these hold the final data used to creates lines
-    adata_left = []
-
-    //? any cycle_path > 0 runs concurrently with "lines"
-    if (cycle_path == 0) {dataform ="line"}  //? nomal lines are the default
-    if (cycle_path >0 ) {dataform ="buildpath"} //? 'dataform is a flag for later processing
-
-    //? this is the default using standrd x/y data
-    if (cycle_dataset == 0) {
-        draw_edges.forEach(element => {
-            adata_right.push({'x':element.node_1.x, 'y':element.node_1.y})
-            adata_left.push({'x':element.node_2.x, 'y':element.node_2.y})
-        })
-    }
-    //? these are ugly and broken
-    if (cycle_dataset == 1) {
-        //? "bez"
-        adata_right = BezierCurve(fullary_right);
-        adata_left = BezierCurve(fullary_left);
-    }
-    if (cycle_dataset == 2) {
-        //? "bezSrtx"
-        adata_right = BezierCurve(fullary_right);
-        adata_left = BezierCurve(fullary_left);
-        adata_right = sortByKey(adata_right,'x');
-        adata_left = sortByKey(adata_left,'y');
-    }
-
-
-    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-    //*
-    //* 8888888b.         d8888 88888888888 888    888  .d8888b.  
-    //* 888   Y88b       d88888     888     888    888 d88P  Y88b 
-    //* 888    888      d88P888     888     888    888 Y88b.      
-    //* 888   d88P     d88P 888     888     8888888888  "Y888b.   
-    //* 8888888P"     d88P  888     888     888    888     "Y88b. 
-    //* 888          d88P   888     888     888    888       "888 
-    //* 888         d8888888888     888     888    888 Y88b  d88P 
-    //* 888        d88P     888     888     888    888  "Y8888P"
-    // *
-    //* ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-
-    if (dataform=="buildpath") {
-        //? build the paths
-        paths = buildpath(xfullary_right)
-//        console.log(JSON.stringify(paths),null,2)
-        //? paths is just an array of 2 lists or 6 elements each...
-        //? [["M0,0","M0,0","M0,0","M0,0","M0,0","M0,0"],["M0,0","M0,0","M0,0","M0,0","M0,0","M0,0",]]
-        //? path_r and path_l contains 6 subarrays each
-
-        path_r = paths[0]
-        path_l = paths[1]
-
-        //? reset arrays to initial item only
-        xfullary_right = [{'g':7,'x':0,'y':0}]
-        xfullary_left = [{'g':7,'x':0,'y':0}]
-
-//        let xgen = gen
-
-        //? each gen is a single path... "M 0,0 C 0,0..."
-        //@ DEBUG Doesn't exactly do what I want
-        let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
-
-//        console.log(gen,cycle_colors,colors2)
-        var newPath_r = document.createElementNS(svgns, 'path');
-        var newPath_l = document.createElementNS(svgns, 'path');
-
-        //? normal gradient settings for path_mode
-        var lcx = 0.5
-        var lcy = 0.3
-        var lr = 0.8
-
-        if (path_color == 0) {
-            path_color = colors2[cycle_colors][gen]
-        }
-        //? override for path_mode when viewiun just lines
-
-
-        if (path_mode > 0) {
-           path_width = path_mode //? override previous setting in buildpath()
-           lcx = 0.5
-           lcy = 0.5
-           lr = 1
-        }
-
-        //? debug/viewing overrides
-        // path_color = "white";
-        // path_opacity="1";
-        // path_width='3'
-
-
-        //? prepare the gradiant stroke for the PATHS
-        var DATdefs = document.createElementNS(svgns, 'defs');
-        var gradient = document.createElementNS(svgns, 'radialGradient');
-        var stops = [
-            {"color": path_color,      "offset": "0%"},
-            {"color": "#000000",    "offset": "100%"}
-        ];
-
-        for (var i = 0, length = stops.length; i < length; i++) {
-            var stop = document.createElementNS(svgns, 'stop');
-            stop.setAttribute('offset', stops[i].offset);
-            stop.setAttribute('stop-color', stops[i].color);
-            gradient.appendChild(stop);
-        }
-        gradient.id = 'datasetGradient';
-        gradient.setAttribute('cx', lcx);
-        gradient.setAttribute('cy', lcy);  //? light is slightly above horizon
-        gradient.setAttribute('r', lr);
-        DATdefs.appendChild(gradient);
-
-        newPath_r.setAttribute('d', ""+path_r[gen]);
-        newPath_r.setAttribute("fill-opacity", "0");
-        newPath_r.setAttribute("stroke-width", path_width);
-        newPath_r.setAttribute("stroke-opacity", path_opacity);
-        newPath_r.setAttribute('stroke', 'url(#datasetGradient)');
-        svg.appendChild(DATdefs);
-        svg.appendChild(newPath_r);
-
-        //% ████████████████ ADJUSTMENT ████████████████
-        // newpensize = pensize[gen] * line_thickness
-
-        newPath_l.setAttribute('d', ""+path_l[gen]);
-        newPath_l.setAttribute("fill-opacity", "0");
-        newPath_l.setAttribute("stroke-width", path_width);//path_width);//@ SD
-        newPath_l.setAttribute("stroke-opacity", path_opacity);
-        newPath_l.setAttribute('stroke', 'url(#datasetGradient)');
-        svg.appendChild(DATdefs);
-        svg.appendChild(newPath_l);
-    }
-
-    
-    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-    //%
-    //%   ad8888ba,              ,ad8888ba,   88888888888  888b      88        88           ,ad8888ba,      ,ad8888ba,    88888888ba   
-    //%  8P'    "Y8             d8"'    `"8b  88           8888b     88        88          d8"'    `"8b    d8"'    `"8b   88      "8b  
-    //% d8                     d8'            88           88 `8b    88        88         d8'        `8b  d8'        `8b  88      ,8P  
-    //% 88,dd888bb,            88             88aaaaa      88  `8b   88        88         88          88  88          88  88aaaaaa8P'  
-    //% 88P'    `8b  aaaaaaaa  88      88888  88"""""      88   `8b  88        88         88          88  88          88  88""""""'    
-    //% 88       d8  """"""""  Y8,        88  88           88    `8b 88        88         Y8,        ,8P  Y8,        ,8P  88           
-    //% 88a     a8P             Y8a.    .a88  88           88     `8888        88          Y8a.    .a8P    Y8a.    .a8P   88           
-    //%  "Y88888P"               `"Y88888P"   88888888888  88      `888        88888888888  `"Y8888Y"'      `"Y8888Y"'    88                                                                                                                                                   
-    //%
-    //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-
-    //? loop through the generated data
-    //? length of adata_right is 126
-    for (let idx = 0; idx<adata_right.length; idx++) {
-        // console.log("adata["+idx+"]");
-        //? set the base data vars
-        nx1 = adata_right[idx].x
-        ny1 = adata_right[idx].y
-        nx2 = adata_left[idx].x
-        ny2 = adata_left[idx].y
-
-        xytrack(nx2,ny2);
-
-        order = lOrder[gen] //? get the actual gen value from the gens, which goes up to 126
-
-        //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-        //@
-        //@  .d8888b.  8888888 8888888b.   .d8888b.  888      8888888888  .d8888b.
-        //@ d88P  Y88b   888   888   Y88b d88P  Y88b 888      888        d88P  Y88b 
-        //@ 888    888   888   888    888 888    888 888      888        Y88b.      
-        //@ 888          888   888   d88P 888        888      8888888     "Y888b.   
-        //@ 888          888   8888888P"  888        888      888            "Y88b. 
-        //@ 888    888   888   888 T88b   888    888 888      888              "888 
-        //@ Y88b  d88P   888   888  T88b  Y88b  d88P 888      888        Y88b  d88P 
-        //@ "Y8888P"  8888888 888   T88b  "Y8888P"  88888888 8888888888  "Y8888P"  
-        //@
-        //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-                                                                        
-        //? add circle
-        var totcirc = 3
-   
-        //% █████████████ ADJUSTMENTS █████████████
-        var cr_rad = Math.round(circle_radius*((7-order)/3)) //? this is small so we can cycle through the circle-types
-
-        if (clock_mode > 0) {
-            cr_rad = maxlengths[order]*circle_radius;
-        }
-
-
-        if (cycle_circles > 0) { 
-            //? prepare the gradient for the circle
-            mCIRdefs[order] = document.createElementNS(svgns, 'defs');
-            mCIRgradient[order] = document.createElementNS(svgns, 'radialGradient');
-            mCIRcircle[order] = document.createElementNS(svgns, 'circle');
-
-            if (cycle_circles == 1) {mCIRcolor[order] = colors2[cycle_colors][order].toString()}
-            if (cycle_circles == 2) {mCIRcolor[order] = "white"}
-            if (cycle_circles == 3) {mCIRcolor[order] = generateRandomColor()} 
-
-            mCIRstops[order] = [
-                {"color":  mCIRcolor[order],"offset": "0%"},
-                {"color": "#000000",        "offset": "100%"}
-            ];
-
-            for (var i = 0, length = mCIRstops[order].length; i < length; i++) {
-                var stop = document.createElementNS(svgns, 'stop');
-                stop.setAttribute('offset', mCIRstops[order][i].offset);
-                stop.setAttribute('stop-color', mCIRstops[order][i].color);
-                mCIRgradient[order].appendChild(stop);
-            }
-
-            //? rotate the light source
-
-
-            //? This part calcs the angle from the viewport x,y.  Not used here, but good to save
-            //@ let cxr =  Math.sin(deg2rad(point.vx))/3+.5
-            //@ let cyr =  Math.cos(deg2rad(point.vy))/3+.5
-
-            //? This part converts branch_angle to angle of 'light source'
-            //? +90° to adjust the coords to top=0°, then +180° to place teh light src at top when top=0°
-            let cxr =  Math.cos(deg2rad(branch_angle+90+180))/3+.5
-            let cyr =  Math.sin(deg2rad(branch_angle+90+180))/3+.5
-
-            mCIRgradient[order].id = 'Gradient'+order;
-            mCIRgradient[order].setAttribute('cx', cxr.toString());//'0.3');
-            mCIRgradient[order].setAttribute('cy', cyr.toString());//'0.3');
-            mCIRgradient[order].setAttribute('r', '1');
-            mCIRdefs[order].appendChild(mCIRgradient[order]);
-            //? end of prep  ----------------------------------
-
-            mCIRcircle[order].setAttribute("id", "circles"+order);
-            mCIRcircle[order].setAttribute("cx", nx2.toString());
-            mCIRcircle[order].setAttribute("cy", ny2.toString());
-            mCIRcircle[order].setAttribute("r", cr_rad);            
-            mCIRcircle[order].setAttribute('fill', 'url(#Gradient'+order+')');
-            mCIRcircle[order].setAttribute("opacity", circle_opacity);
-            mCIRcircle[order].setAttribute("style","z-index:"+(current_level*10)); //? not working :/
-            // mCIRcircle[order].setAttribute("style","mix-blend-mode: color;");
-
-            svg.appendChild(mCIRdefs[order]);
-            svg.appendChild(mCIRcircle[order]);
-        }
-        //@ ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-
-
-
-        //? ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-        //?
-        //? 8888888b.   .d88888b.  888      Y88b   d88P  .d8888b.   .d88888b.  888b    888  .d8888b.
-        //? 888   Y88b d88P" "Y88b 888       Y88b d88P  d88P  Y88b d88P" "Y88b 8888b   888 d88P  Y88b 
-        //? 888    888 888     888 888        Y88o88P   888    888 888     888 88888b  888 Y88b.      
-        //? 888   d88P 888     888 888         Y888P    888        888     888 888Y88b 888  "Y888b.   
-        //? 8888888P"  888     888 888          888     888  88888 888     888 888 Y88b888     "Y88b. 
-        //? 888        888     888 888          888     888    888 888     888 888  Y88888       "888 
-        //? 888        Y88b. .d88P 888          888     Y88b  d88P Y88b. .d88P 888   Y8888 Y88b  d88P 
-        //? 888         "Y88888P"  88888888     888      "Y8888P88  "Y88888P"  888    Y888  "Y8888P"
-        //?
-        //? ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-                                                                                          
-        function makePolyAry(n) {
-            var poly_arr = false
-            if (n==1) {
-                poly_arr = [
-                    [nx2, ny2],
-                    [
-                        (nx2 - 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                        (ny2 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation),
-                    ],
-                    [
-                        (nx2 + 10) * Math.cos(rotation) - (nx2 - 10) * Math.sin(rotation),
-                        (ny2 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation),
-                    ],
-                ];
-                xytrack(poly_arr[1][0],poly_arr[1][1],)
-                xytrack(poly_arr[2][0],poly_arr[2][1],)
-            }
-            if (n == 2) {
-                poly_arr = [
-                    [nx2, ny2],
-                    [
-                        nx1 ,
-                        CiR(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 + 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
-                    ],
-                    [
-                        nx1,
-                        CiR(Math.round(Math.abs((ny1 + 10) * Math.cos(rotation) + (ny2 - 10) * Math.sin(rotation))),-50,50,0)+ny2-ny1,
-                    ],
-                ];
-                xytrack(poly_arr[1][0],poly_arr[1][1],)
-                xytrack(poly_arr[2][0],poly_arr[2][1],)
-            }
-            if (n == 3) {
-                poly_arr = [
-                    [nx2, ny2],
-                    [
-                        nx2 - nx2 * Math.cos(rotation),
-                        ny2 + ny2 * Math.sin(rotation),
-                    ],
-                    [
-                        nx2 + nx2 * Math.cos(rotation),
-                        ny2 + ny2 * Math.sin(rotation),
-                    ],
-                ];
-                xytrack(poly_arr[1][0],poly_arr[1][1],)
-                xytrack(poly_arr[2][0],poly_arr[2][1],)
-
-            }
-            if (n == 4) { //? currently not workng
-                // console.log("Usng polugon 4")
-                var petal = [
-                    [0, 0]
-                    , [nx1 % 10, -ny1 % 10]
-                    , [-nx1 % 10, ny1 % 10]
-                    , [ny1 % 10, -nx1 % 10]
-                    , [-ny1 % 10, nx1 % 10]
-                ]
-                poly_arr = []
-                for (let i = 0; i < petal.length; i++) {
-                    xp = petal[i][0] * 10
-                    yp = petal[i][1] * 10
-                    poly_arr.push({
-                        'x': xp + nx2,
-                        'y': yp + ny2
-                    })
-                }
-               poly_arr = BezierCurve(poly_arr);
-
-                var parr = []
-                for (let i = 0; i < poly_arr.length; i++) {
-                    parr.push([poly_arr[i].x, poly_arr[i].y])
-                }
-                poly_arr = parr
-            }
-            return poly_arr
-        }
-
-        var poly_arr = makePolyAry(cycle_poly)
-
-        if (cycle_poly > 0) {
-            updateListMinMax(poly_arr);
-
-            //? ┌───────────────────────────────────────────────
-            //? │ we have a poly, now prepare the gradients for poly and stroke for the PATHS
-            //? └───────────────────────────────────────────────
-            //@ !!!!!When 'defs' is defined globally, the refresh rate drops by about 80%!!!!!!
-            //? ------------------------------------
-            //? create the gradiant for FILL
-            //? ------------------------------------
-            var LGdefs = document.createElementNS(svgns, 'defs');
-            var fillGradient = document.createElementNS(svgns, 'linearGradient');
-            //? stops for fillGradient
-            //? pick 3 colors...
-
-            tidx = 0//tree_counter%6 //@ is actually branch_angle
-
-            clrIdx_1 = tidx
-            clrIdx_2 = (tidx+2)%6
-            clrIdx_3 = (tidx+4)%6
-
-            //? select 3 colors from the colors2 array
-            let polyColor_1 = colors2[cycle_colors][clrIdx_1]
-            let polyColor_2 = colors2[cycle_colors][clrIdx_2]
-            let polyColor_3 = colors2[cycle_colors][clrIdx_3]
-
-
-            //? for testing
-            // let polyColor_1 = "#FF0000"
-            // let polyColor_2 = "#00FF00"
-            // let polyColor_3 = "#0000FF" 
-
-            //? polyColor_<n>_offset is defined globally
-
-            //? reference http://thenewcode.com/1155/Understanding-Linear-SVG-Gradients
-            //@ This part was intended to show drift in the gradiant, but not working as imagined
-//            offsets = normalize(
-//                [
-//                    (polyColor_1_offset + 1)%33,
-//                    (polyColor_1_offset + polyColor_2_offset+1)%66,
-//                    (polyColor_1_offset + polyColor_2_offset + polyColor_3_offset+1)%99
-//                ],[1,100]
-//            )
-//            offsets.sort(sortNumbers);  //? make sure the offsets are sorted incrementally
-
-            offsets = [
-                CiR(tree_counter,0,60,0),//polyColor_1_offset,
-                CiR(tree_counter,20,80,0),//polyColor_2_offset,
-                CiR(tree_counter,40,100,0),//polyColor_3_offset
-            ]
-
-//            polyColor_1_offset = parseInt(offsets[0])
-//            polyColor_2_offset = parseInt(offsets[1])
-//            polyColor_3_offset = parseInt(offsets[2])
-
-            var fillGradient_stops = [
-                {"color":  polyColor_1,"offset":  offsets[0]+"%"},
-                {"color":  polyColor_2,"offset":  offsets[1]+"%"},
-                {"color":  polyColor_3,"offset":  offsets[2]+"%"},
-            ];
-
-            for (var i = 0, length = fillGradient_stops.length; i < length; i++) {
-                var stop = document.createElementNS(svgns, 'stop');
-                stop.setAttribute('offset', fillGradient_stops[i].offset);
-                stop.setAttribute('stop-color', fillGradient_stops[i].color);
-                fillGradient.appendChild(stop);
-                // console.log("FILL STOP offsets:",fillGradient_stops[i].offset+"%",fillGradient_stops[i].color)
-            }
-
-            //? ------------------------------------
-            //? create the gradiant for STROKE
-            //? ------------------------------------
-            var STdefs = document.createElementNS(svgns, 'defs');
-            var strokeGradient = document.createElementNS(svgns, 'linearGradient');
-
-            // let altPolyColor_1 = colors2[cycle_colors][(clrIdx_1+1)%6]
-            // let altPolyColor_2 = colors2[cycle_colors][(clrIdx_2+1)%6]
-            // let altPolyColor_3 = colors2[cycle_colors][(clrIdx_3+1)%6]
-            let altPolyColor_1 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_1+1)%6])
-            let altPolyColor_2 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_2+1)%6])
-            let altPolyColor_3 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_3+1)%6])
-
-            // console.log("alt colors:",altPolyColor_1,altPolyColor_2,altPolyColor_3)
-
-
-            //? use the same offsets
-            var strokeGradient_stops = [
-                {"color":  altPolyColor_1,"offset":  offsets[0]+"%"},
-                {"color":  altPolyColor_2,"offset":  offsets[1]+"%"},
-                {"color":  altPolyColor_3,"offset":  offsets[2]+"%"},
-            ];
-
-            // console.log("---- STROKE -------------------------------------")
-            // console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
-
-            for (var i = 0, length = strokeGradient_stops.length; i < length; i++) {
-                var stop = document.createElementNS(svgns, 'stop');
-                stop.setAttribute('offset', strokeGradient_stops[i].offset);
-                stop.setAttribute('stop-color', strokeGradient_stops[i].color);
-                strokeGradient.appendChild(stop);
-                // console.log("FILL STOP offsets:",strokeGradient_stops[i].offset+"%",strokeGradient_stops[i].color)
-
-            }
-
-            fillGradient.id = 'fillGradient'+gen;
-            fillGradient.setAttribute('x1', '0%');
-            fillGradient.setAttribute('x2', '100%');
-            fillGradient.setAttribute('y1', '0%');
-            fillGradient.setAttribute('y2', '100%');
-
-            strokeGradient.id = 'strokeGradient'+gen;
-            strokeGradient.setAttribute('x1', '0%');
-            strokeGradient.setAttribute('x2', '0%');
-            strokeGradient.setAttribute('y1', '0%');
-            strokeGradient.setAttribute('y2', '100%');
-
-            LGdefs.appendChild(fillGradient);
-            STdefs.appendChild(strokeGradient);
-
-            let poly = document.createElementNS(svgns, 'polygon');
-            poly.setAttribute("points", poly_arr);
-            // poly.setAttribute("fill", colors2[cycle_colors][order + gens].toString());
-            poly.setAttribute('fill', 'url(#fillGradient'+gen+')');
-            poly.setAttribute('stroke', 'url(#strokeGradient'+gen+')');
-            poly.setAttribute("opacity", poly_opacity);
-            //poly.setAttribute("fill", generateRandomColor());
-            //poly.setAttribute("stroke", generateRandomColor());
-            poly.setAttribute("stroke-width", '1');
-            poly.setAttribute("stroke-linecap", "round");
-
-            svg.appendChild(LGdefs);
-            svg.appendChild(STdefs);
-            svg.appendChild(poly);
-        }
-        //? ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-
-        //% █████████████ ADJUSTMENTS █████████████
-        newpensize = pensize[order] * line_thickness
-        //% newpensize = CiR((tree_counter-order)/10*(order+1),1,10,0)
-
-
-        //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-        //%
-        //% ██████  ██████   █████  ██     ██     ██      ██ ███    ██ ███████ 
-        //% ██   ██ ██   ██ ██   ██ ██     ██     ██      ██ ████   ██ ██      
-        //% ██   ██ ██████  ███████ ██  █  ██     ██      ██ ██ ██  ██ █████   
-        //% ██   ██ ██   ██ ██   ██ ██ ███ ██     ██      ██ ██  ██ ██ ██      
-        //% ██████  ██   ██ ██   ██  ███ ███      ███████ ██ ██   ████ ███████ 
-        //%
-        //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-                                                                           
-
-        //? DRAW THE LINE
-        //? prepare the gradient for the line
-        //! The generatio indexing starts at 1, not 0 !!
-
-        linecolors = colors2[cycle_colors]
-        mLINEcolor[order] = linecolors[order]
-
-        // console.log(linecolors)
-
-        mLINEdefs[order]    = document.createElementNS(svgns, 'defs');
-        mLINEgradient[order]= document.createElementNS(svgns, 'radialGradient');
-        mLINEline[order]    = document.createElementNS(svgns, 'line');
-
-        let c1 = mLINEcolor[(Math.abs(order+1))%6]
-        let c2 = mLINEcolor[order]
-
-        mLINEstops[order] = [
-            {"color": c1,   "offset": "10%"},
-            {"color": c2,   "offset": "90%"},
-        ];
-
-        for (var i = 0; i < mLINEstops[order].length; i++) {
-            var stop = document.createElementNS(svgns, 'stop');
-            stop.setAttribute('offset', mLINEstops[order][i].offset);
-            stop.setAttribute('stop-color', mLINEstops[order][i].color);
-            mLINEgradient[order].appendChild(stop);
-        }
-        //? ug!  This gradiant spec is one of the worst, and it's broken as well.  radialGradient are only radial
-        //? at 45 degrees, and they disappear at 0 and 90 deg.
-        mLINEgradient[order].id = 'lineGradient'+gen;
-        mLINEgradient[order].setAttribute('cx', "50%");
-        mLINEgradient[order].setAttribute('cy', "50%");
-        mLINEgradient[order].setAttribute('r', "100%");//this_length);
-        mLINEdefs[order].appendChild(mLINEgradient[order]);
-        //! ---------------------------------------------
-        mLINEline[order].setAttribute('x1', nx1.toString())
-        mLINEline[order].setAttribute('y1', ny1.toString())
-        mLINEline[order].setAttribute('x2', nx2.toString())
-        mLINEline[order].setAttribute('y2', ny2.toString())
-
-        mLINEline[order].setAttribute("id", "lines"+gen);
-
-        if (clock_mode > 0) {
-            mLINEline[order].setAttribute('stroke', mLINEcolor[order]);
-        } else {
-            mLINEline[order].setAttribute('stroke', 'url(#lineGradient'+gen+')');
-        }
-        // mLINEline[order].setAttribute("opacity", "1");
-        if (clock_mode > 0) {
-            mLINEline[order].setAttribute("stroke-width",(7-order));
-        } else {
-            mLINEline[order].setAttribute("stroke-width",newpensize);            
-        }
-        mLINEline[order].setAttribute("opacity", opacities[order]);
-
-        svg.appendChild(mLINEdefs[order]);
-
-        //? what lines to show/hide
-
-        if (clock_mode > 0) {
-            if (order == current_level) {
-                if (show_all_lines == 1) {
-                    if (show_0 == 1 && order == 0) {svg.appendChild(mLINEline[order]);}
-                    if (show_1 == 1 && order == 1) {svg.appendChild(mLINEline[order]);}
-                    if (show_2 == 1 && order == 2) {svg.appendChild(mLINEline[order]);}
-                    if (show_3 == 1 && order == 3) {svg.appendChild(mLINEline[order]);}
-                    if (show_4 == 1 && order == 4) {svg.appendChild(mLINEline[order]);}
-                    if (show_5 == 1 && order == 5) {svg.appendChild(mLINEline[order]);}
-                }
-                //? placing this here ensure the pols abd circles appear ON TOP of the lines they eminate from
-                let offset = 0;
-                if (lOrder[gen] == 5) { //? only apply to last line
-                    if (cycle_flowers > 0)  {
-                        putPoly(nx2,ny2,idx);
-                    }
-                    if (cycle_fruit > 0)    {
-                        putCircle(nx2,ny2,idx,offset);
-                    }
-                }
-                for (let i = 0; i<6; i++) {
-                    if (lOrder[gen] == i) { 
-                        if (show_lines[i] == 1) {
-                            putClock(nx1,ny1,nx2,ny2,i,0); 
-                        }
-                    }
-                }
-                current_level = (current_level + 1)%6;
-            }
-        } else {
-            if (show_all_lines == 1) {
-                if (show_0 == 1 && order == 0) {svg.appendChild(mLINEline[order]);}
-                if (show_1 == 1 && order == 1) {svg.appendChild(mLINEline[order]);}
-                if (show_2 == 1 && order == 2) {svg.appendChild(mLINEline[order]);}
-                if (show_3 == 1 && order == 3) {svg.appendChild(mLINEline[order]);}
-                if (show_4 == 1 && order == 4) {svg.appendChild(mLINEline[order]);}
-                if (show_5 == 1 && order == 5) {svg.appendChild(mLINEline[order]);}
-            }
-
-            //? placing this here ensure the pols abd circles appear ON TOP of the lines they eminate from
-            let offset = 0;
-            if (lOrder[gen] == 5) { //? only apply to last line
-                if (cycle_flowers > 0)  {
-                    putPoly(nx2,ny2,idx);
-                }
-                if (cycle_fruit > 0)    {
-                    putCircle(nx2,ny2,idx,offset);
-                }
-            }
-        }
-        writeMenu()
-        gen++;
-    };
-
-
-
-
-
-
-        //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-        //!
-        //! .d8888b.   .d88888b.  888     888 888b    888 8888888b.  
-        //! d88P  Y88b d88P" "Y88b 888     888 8888b   888 888  "Y88b 
-        //! Y88b.      888     888 888     888 88888b  888 888    888 
-        //!  "Y888b.   888     888 888     888 888Y88b 888 888    888 
-        //!     "Y88b. 888     888 888     888 888 Y88b888 888    888 
-        //!       "888 888     888 888     888 888  Y88888 888    888 
-        //! Y88b  d88P Y88b. .d88P Y88b. .d88P 888   Y8888 888  .d88P 
-        //!  "Y8888P"   "Y88888P"   "Y88888P"  888    Y888 8888888P"
-        //!
-        //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-    if (sound_initialized == 1) {
-
-        //? make some new sounds based on vars
-        alternotes = [54, 67.5, 43.2, 34.56, 84.375]
-        let noteseed = (tree_counter + rotation) % 4
-        let rx = randint(0, alternotes.length - 1)
-        let xx = alternotes[rx] * 2
-
-        //@ g=0: playSound_0()  Long sound
-        //@ g=1: playSound_1()  Short sound
-        //@ g=2: playSoundData()  snd.play(MP3) - currenly not used
-        //@ g=3: playSound_2()  long and short together
-        //@ g=4: playSound_3()  varible length
-
-
-        //@ &g=
-        let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
-        //? Play sound #1 (playSound_0 = LONG SOUND) (g=0)
-        if (cycle_audio == 0 && (tree_counter % limiter == 0)) {
-            // long sound
-            pp = 1000 / (tree_counter % 7)
-            for (let i = 1; i < 7; i++) {
-                setTimeout(function () {
-                    playSound_0(crosssum(rotation), i)
-                }, pp * i)
-            }
-        }
-        //? Play sound #2 (playSound_1 = SHORT SOUND)
-        if (cycle_audio == 1 && (tree_counter % limiter == 0)) {
-            // short sound
-            pp = 1000 / (tree_counter % 7)
-            for (let i = 1; i < 7; i++) {
-                setTimeout(function () {
-                    playSound_1(crosssum(rotation), i)
-                }, pp * i)
-            }
-        }
-        //? Play sound #3 (playSoundData = MP3-piano)
-        if (cycle_audio == 2 && (tree_counter % limiter == 0)) {
-            //piano notes
-            pp = 1000 / (crosssum(branch_angle + branch_counter) % 4)
-            for (let i = 1; i < 6; i++) {
-                setTimeout(function () {
-                    note = randint(0, 20)
-                    playSoundData("data:audio/wav;base64," + pianoNotes[note])
-                }, pp * i)
-            }
-        }
-        //? Play sound #3 - playSound_0 + playSound_1, long and short
-        if (cycle_audio == 3 & (tree_counter % limiter == 0)) {
-            // long and short 
-            pp = 1000 / (tree_counter % 7)
-            for (let i = 1; i < 7; i++) {
-                setTimeout(function () {
-                    playSound_0(crosssum(rotation), i)
-                }, pp * i)
-                setTimeout(function () {
-                    playSound_1(crosssum(rotation), i)
-                }, pp * i)
-            }
-        }
-        // //? Play sound #4 - playSound_0 + playSound_1, long and short
-        // if (cycle_audio == 4 & (tree_counter % limiter == 0)) {
-        //     pp = 1000 / (tree_counter % 7)
-        //     for (let i = 1; i < 7; i++) {
-        //         setTimeout(function () {
-        //             //? rotation is actually angle :/  so angle%36= rangoe of 1-10 seconds
-        //             playSound_3(crosssum(rotation)%36, i)
-        //         }, pp * i)
-        //     }
-        // }
-    }
-        //! ██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████
-
-//    console.log("drawBox("+gMin_x+","+gMax_x+","+gMin_y+","+gMax_y+"  w/h:"+(gMax_y-gMin_y)+"/"+(gMax_x-gMin_x)+")")
-    boxWidth = Math.round(gMax_y-gMin_y)
-    boxHeight = Math.round(gMax_x-gMin_x)
-    boxSize = boxWidth * boxHeight
-//    drawBox(gMin_x, gMax_x, gMin_y, gMax_y)
-    //? this only works here (not in listeners)
-    if (zoomin == 1) {
-        was_zoomed = 1
-        last_showtext = showtext;
-        zoomvb(gMin_x, gMax_x, gMin_y, gMax_y)  
-        showtext=0; //? turn off the menu, as it is unreadable
-    } else {
-        if (gMin_x+gMax_x+gMin_y+gMax_y != 0) {
-            eleSvg.setAttribute("viewBox", "-960 -512 1920 1024");
-            if (was_zoomed == 1) {
-                showtext = last_showtext; //? turn menu back on
-                was_zoomed = 0
-            }
-        }
-    }
-}
-
-//? END OF FUNCTION 'drawTree'
-
+    return nList}
 //! ┌───────────────────────────────────────────────
 //! │ Convert HSV to RGB
 //! └───────────────────────────────────────────────
@@ -2407,13 +2261,7 @@ function HSVtoRGB(h, s, v) { //? excpects h,s,v to be in range from 0...1
             r = v, g = p, b = q;
             break;
     }
-    return "#" + Math.round(r * 255).toString(16) + Math.round(g * 255).toString(16) + Math.round(b * 255).toString(16)
-    //    { 
-    //        r: Math.round(r * 255).toString(16),
-    //        g: Math.round(g * 255).toString(16),
-    //        b: Math.round(b * 255).toString(16)
-    //    };
-}
+    return "#" + Math.round(r * 255).toString(16) + Math.round(g * 255).toString(16) + Math.round(b * 255).toString(16);}
 //! ┌───────────────────────────────────────────────
 //! │ Convert HSV to RGB
 //! └───────────────────────────────────────────────
@@ -2452,8 +2300,7 @@ function HSVtoRGBArray(h, s, v) {
                 r: Math.round(r * 255),
                 g: Math.round(g * 255),
                 b: Math.round(b * 255)
-            };
-}
+            };}
 //! ┌───────────────────────────────────────────────
 //! │ Creates RGB string from a number
 //! └───────────────────────────────────────────────
@@ -2462,16 +2309,14 @@ function generateColor(num) {
     //@ probably better to MOD the H, not divide
     var S = .8
     var V = .8
-    return HSVtoRGB(H, S, V)
-}
+    return HSVtoRGB(H, S, V)}
 //! ┌───────────────────────────────────────────────
 //! │ Creates RGB string from a number and SV vals
 //! └───────────────────────────────────────────────
 function generateColorHSV(num,S,V) {
     var H = num / 360 //? H range is 0-360, 0 and 360 are both RED
     //@ probably better to MOD the H, not divide
-    return HSVtoRGB(H, S, V)
-}
+    return HSVtoRGB(H, S, V)}
 //! ┌───────────────────────────────────────────────
 //! │Randmo color between #000000 and #FFFFFF
 //! └───────────────────────────────────────────────
@@ -2481,8 +2326,7 @@ function generateRandomColor() {
     randomNumber = Math.floor(randomNumber);
     randomNumber = randomNumber.toString(16);
     let randColor = randomNumber.padStart(6, 0);
-    return `#${randColor.toUpperCase()}`
-}
+    return `#${randColor.toUpperCase()}`}
 //@ DEBUG this can be made better with a 2-phase flipping MOD
 //! ┌───────────────────────────────────────────────
 //! │ take any number and find the equivalent value on a cycle of n.  For example,
@@ -2558,12 +2402,10 @@ try {
     }
     return (Math.round(new_value))
 
-    return cary[Math.round(new_value)]
-
-}
-
-
-
+    return cary[Math.round(new_value)]}
+//! ┌───────────────────────────────────────────────
+//! │ a failed attempt to create a CiR that returns a bezier curve
+//! └───────────────────────────────────────────────    
 function CiR2(number, nmin,nmax,amin, amax, invert = 0) {
     //? create array of amax elements
     rary = []
@@ -2574,8 +2416,7 @@ function CiR2(number, nmin,nmax,amin, amax, invert = 0) {
     newnums = normalize(rary,[amin,amax])
 
     newval = newnums[number]+amin
-    return newval
-}
+    return newval}
 //! ┌───────────────────────────────────────────────
 //! │ Used in Bezier Curve
 //! └───────────────────────────────────────────────
@@ -2587,8 +2428,7 @@ function factorial(n) {
     else
     {
         return(n * factorial(n - 1));
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ Used in Bezier Curve
 //! └───────────────────────────────────────────────
@@ -2603,19 +2443,19 @@ function nCr(n, r) {
         return(0)
     } else {
         return(res)
-    }
-}
-
+    }}
+//! ┌───────────────────────────────────────────────
+//! │ JSON output
+//! └───────────────────────────────────────────────
 function jstr(obj) {
-    console.log(JSON.stringify(obj),null,2)
-}
+    console.log(JSON.stringify(obj),null,2)}
+//! ┌───────────────────────────────────────────────
+//! │ convenience functions
+//! └───────────────────────────────────────────────
 function log(txt) {
-    console.log(txt)
-}
+    console.log(txt)}
 function call_log(txt) {
-    console.log("\t\t"+txt)
-}
-
+    console.log("\t\t"+txt)}
 //! ┌───────────────────────────────────────────────
 //! │ Create Bezier curve form a list of values
 //! └───────────────────────────────────────────────
@@ -2636,8 +2476,7 @@ function BezierCurve(points) {
         }
         curvepoints.push(p);
     }
-    return curvepoints;
-}
+    return curvepoints;}
 //! ┌───────────────────────────────────────────────
 //! │ crossums and series or number to a single digit, i.e., -1.2E3 = 1+2+3=6
 //! └───────────────────────────────────────────────
@@ -2660,14 +2499,12 @@ function crosssum(val) {
     if (rval > 9) {
         rval = crosssum(rval)
     }
-    return(rval)
-}
+    return(rval)}
 //! ┌───────────────────────────────────────────────
-//! │                                              
+//! │Fron Adam... no dea what this is
 //! └───────────────────────────────────────────────
 function next() {
-    return
-}
+    return}
 //! ┌───────────────────────────────────────────────
 //! │ moves data series to a min/max range 
 //! └───────────────────────────────────────────────
@@ -2685,14 +2522,12 @@ const normalize = (set, range = [0, 1]) => {
     let initial = range[0];
 
     // normalized = (array * new range) + range[0];
-    return newSet.map(n => n * newRange + initial);
-};
+    return newSet.map(n => n * newRange + initial);};
 //! ┌───────────────────────────────────────────────
 //! │ Javascript math library trig functions take radians and not degrees by default 
 //! └───────────────────────────────────────────────
 function toRadians(angle) {
-    return angle * Math.PI / 180;
-}
+    return angle * Math.PI / 180;}
 //! ┌───────────────────────────────────────────────
 //! │ traverse a tree object and return the edges in the form of a list
 //! └───────────────────────────────────────────────
@@ -2704,8 +2539,7 @@ function getTreeEdges(tree) {
         return edges;
     } else {
         return [];
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ Remove all children on the SVG canvas                                             
 //! └───────────────────────────────────────────────
@@ -2713,8 +2547,7 @@ function clearCanvas() {
     const myNode = document.getElementById("svg");
     while (myNode.firstChild) {
         myNode.removeChild(myNode.lastChild);
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ ??? reverse engineer the generation level based on the points generated
 //! └───────────────────────────────────────────────
@@ -2724,11 +2557,7 @@ function getLevel(p) {
             return (n)
         }
     }
-    return (0)
-}
-
-
-
+    return (0)}
 //! ┌───────────────────────────────────────────────
 //! │ return string of time data
 //! └───────────────────────────────────────────────
@@ -2746,8 +2575,7 @@ function TimeCalculator(seconds) {
     let hDisplay = h > 0 ? h + (h === 1 ? " hour, " : " hours, ") : "";
     let mDisplay = m > 0 ? m + (m === 1 ? " minute " : " minutes, ") : "";
     let sDisplay = s > 0 ? s + (s === 1 ? " second" : " seconds ") : "";
-    return yDisplay + moDisplay + dDisplay + hDisplay + mDisplay + sDisplay;
-}
+    return yDisplay + moDisplay + dDisplay + hDisplay + mDisplay + sDisplay;}
 //! ┌───────────────────────────────────────────────
 //! │ returns array of time data
 //! └───────────────────────────────────────────────
@@ -2765,36 +2593,33 @@ function TimeAry(seconds) {
         'h': h,
         'm': m,
         's': s
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ return random integer
 //! └───────────────────────────────────────────────
 function randint(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+    return Math.floor(Math.random() * (max - min + 1)) + min;}
+//! ┌───────────────────────────────────────────────
+//! │ return random integer EXCEPT a particular number
+//! └───────────────────────────────────────────────
 function randintEx(min, max, excluded) {
     var n = Math.floor(Math.random() * (max - min) + min);
     if (n >= excluded) n++;
-    return n;
-}
+    return n;}
 //! ┌───────────────────────────────────────────────
 //! │ converts degrees to radians
 //! └───────────────────────────────────────────────
 function deg2rad(degrees) {
     let pi = Math.PI;
-    return degrees / (180.0 / pi);
-}
+    return degrees / (180.0 / pi);}
 //! ┌───────────────────────────────────────────────
 //! │ converts radians to degrees
 //! └───────────────────────────────────────────────
 function rad2deg(radians) {
     let pi = Math.PI;
-    return radians * (180.0 / pi);
-}
-
+    return radians * (180.0 / pi);}
 //! ┌───────────────────────────────────────────────
 //! │ a (failed) attemped to calculates the total time of the cycles
 //! └───────────────────────────────────────────────
@@ -2817,8 +2642,7 @@ function cycletimes(loop_delay, deg_adj, leftary, rightary) {
         'cycletime': cycletime,
         'tot_cycletime': tot_cycletime,
         'tot_images': tot_images
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ general loop timer with variable delay
 //! └───────────────────────────────────────────────
@@ -2851,8 +2675,7 @@ var timer = {
     set_interval: function (iv) {
         clearInterval(this.timeout);
         this.start(false, iv);
-    }
-};
+    }};
 var timer2 = {
     running: false,
     iv: 5000,
@@ -2882,8 +2705,7 @@ var timer2 = {
     set_interval: function (iv) {
         clearInterval(this.timeout);
         this.start(false, iv);
-    }
-};
+    }};
 //! ┌───────────────────────────────────────────────
 //! │ array of frequencies based on a single freuency
 //! └───────────────────────────────────────────────
@@ -2892,8 +2714,7 @@ function getNotes(basenote) {
     for (let n = -6; n < 6; n++) {
         nFreq.push(basenote * 2 ** (n / 12))
     }
-    return nFreq
-}
+    return nFreq}
 //! ┌───────────────────────────────────────────────
 //! │ only frequencoes that are 5:4 ratio, as they are the most harmonious
 //! └───────────────────────────────────────────────
@@ -2909,8 +2730,7 @@ function getHarmoniousNotes(basenote) {
         nFreq.push(parseFloat(basenote * 1.25 * n * 2)).toFixed(2)
         //}
     }
-    return nFreq
-}
+    return nFreq}
 //! ┌───────────────────────────────────────────────
 //! │ Init AudioContext, called by a user action (CTRL-Y in this case)
 //! └───────────────────────────────────────────────
@@ -2930,8 +2750,7 @@ function initSound(state) {
         console.log("SOUND (initSound) uninitialized")
         // AudioContext.close()
         sound_initialized = 0
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ Long sound  (note: update "var num_of_audios")
 //! └───────────────────────────────────────────────
@@ -2957,8 +2776,7 @@ function playSound_0(v1, dv) {
             osc.stop();
             //console.log("killed oscillator")
         }, v1 * 2 * 2 * 1000);
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ Short sound  (note: update "var num_of_audios")
 //! └───────────────────────────────────────────────
@@ -2987,8 +2805,7 @@ function playSound_1(v1, dv) {
             osc.stop();
             //console.log("killed oscillator")
         }, dnt * 1000);
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ manually added FFT data
 //! └───────────────────────────────────────────────
@@ -3008,8 +2825,7 @@ function playSound_2() {
         osc.connect(ac.destination);
         osc.start();
         osc.stop(1);
-    }
-}
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ variable length  (note: update "var num_of_audios")
 //! └───────────────────────────────────────────────
@@ -3038,17 +2854,14 @@ function playSound_1(v1, dv) {
             osc.stop();
             //console.log("killed oscillator")
         }, dnt * 1000);
-    }
-}
-
+    }}
 //! ┌───────────────────────────────────────────────
 //! │ halt the program for 1000 seconds
 //! └─────────────────────────────────────────────── 
 function freeze() {
     console.log("freezing ...")
     loop_delay = 1000000000
-    timer.set_interval(loop_delay);
-}
+    timer.set_interval(loop_delay);}
 //! ┌───────────────────────────────────────────────
 //! │ plays an MP3 sound file using
 //! └───────────────────────────────────────────────
@@ -3063,8 +2876,7 @@ var playSoundData = (function () {
         snd.volume = 1;
         snd.play();
         return snd;
-    }
-}());
+    }}());
 //! ┌───────────────────────────────────────────────
 //! │ read query string and override existing default values
 //! └───────────────────────────────────────────────
@@ -3076,9 +2888,7 @@ function qget(tag, val) {
         r = val
     }
     console.log("OVERRIDING [" + tag + "] with [" + r + "]")
-    return r
-}
-
+    return r}
 //! ┌───────────────────────────────────────────────
 //! │ Build SVG 'd' paths 
 //! └───────────────────────────────────────────────
@@ -3341,8 +3151,7 @@ function buildpath(xfr) {
     if (cycle_path == 5) { rs=[makepath_CS5(1),makepath_CS5(-1)]}  //? complex l.4
     if (cycle_path == 6) { rs=[makepath_CS6(1),makepath_CS6(-1)]}  //? super complex
 
-    return rs
-}
+    return rs}
 
 
 
