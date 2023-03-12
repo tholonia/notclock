@@ -1612,6 +1612,79 @@ function putCircle(x,y,idx,offset) { //@ loop
     svg.appendChild(pcir_defs[porder]);
 
     svg.appendChild(pcir_circle[porder]);}
+
+
+//! ┌───────────────────────────────────────────────
+//! │ standalone clock marker routine
+//! └───────────────────────────────────────────────
+function putMarker(x,y,style) {
+    var svg = document.getElementById("svg");
+    let marker = document.createElementNS(svgns, 'circle');
+
+    //? prepare the gradient for the circle
+    let marker_defs = document.createElementNS(svgns, 'defs');
+    let marker_gradient = document.createElementNS(svgns, 'radialGradient');
+    let marker_circle = document.createElementNS(svgns, 'circle');
+
+    let marker_color = "white";
+    let radius = 6;
+
+    if (style == 1) { //? every 0 
+        marker_color = "white";
+        radius = 8;
+    }
+    if (style == 2) { //? every 60 degrees
+        marker_color = "red";
+        radius = 4; 
+    }
+    if (style == 3) { //? every 30 && !60 degrees
+        marker_color = "cyan";
+        radius = 2;
+    }
+
+    // marker_stops = [
+    //     {"color":  marker_color,"offset": "0%"},
+    //     {"color": "#000000",        "offset": "100%"}
+    // ];
+
+    // for (var i = 0, length = marker_stops.length; i < length; i++) {
+    //     var stop = document.createElementNS(svgns, 'stop');
+    //     stop.setAttribute('offset', marker_stops[i].offset);
+    //     stop.setAttribute('stop-color', marker_stops[i].color);
+    //     marker_gradient.appendChild(stop);
+    // }
+
+    // //? rotate the light source
+    // //? This part calcs the angle from the viewport x,y.  Not used here, but good to save
+    // //@ let cxr =  Math.sin(deg2rad(point.vx))/3+.5
+    // //@ let cyr =  Math.cos(deg2rad(point.vy))/3+.5
+
+    // //? This part converts branch_angle to angle of 'light source'
+    // //? +90° to adjust the coords to top=0°, then +180° to place teh light src at top when top=0°
+    // let cxr =  Math.cos(deg2rad(branch_angle+90+180))/3+.5
+    // let cyr =  Math.sin(deg2rad(branch_angle+90+180))/3+.5
+
+    // marker_gradient.id = 'marker_Gradient';
+    // marker_gradient.setAttribute('cx', cxr.toString());//'0.3');
+    // marker_gradient.setAttribute('cy', cyr.toString());//'0.3');
+    // marker_gradient.setAttribute('r', '1');
+    // marker_defs.appendChild(marker_gradient);
+    //? end of prep  ----------------------------------
+
+    marker_circle.setAttribute("class", "put_circles");
+    marker_circle.setAttribute("id", "put_circles");
+    marker_circle.setAttribute("cx", x.toString());
+    marker_circle.setAttribute("cy", y.toString());
+    marker_circle.setAttribute("r", radius.toString());
+    // marker_circle.setAttribute('fill', 'url(#marker_Gradient');
+    marker_circle.setAttribute('fill', marker_color);
+    marker_circle.setAttribute("opacity", 1);
+
+    svg.appendChild(marker_defs);
+
+    svg.appendChild(marker_circle);}
+
+
 //! ┌───────────────────────────────────────────────
 //! │ standalone clock routine, with much of the clock logic
 //! └───────────────────────────────────────────────
@@ -1706,7 +1779,30 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     // console.log("Appending id ","put_clock_circles"+idx,lOrder[idx])
     if (cycle_circles == 0) {  //? only put circles if spheres is turned off
         svg.appendChild(pcir_circle[idx]);
-    }}
+    }
+
+
+    let mx = false;
+    let my = false;
+    //? put a marker at 0h
+    let adj = 1.62;
+    if (idx == 1) {
+        let ang = 30;
+        for (let i = 0; i<12; i++) {
+            let tang = ang*i;
+            mx = rad * adj * Math.cos(toRadians(tang))
+            my = rad * adj * Math.sin(toRadians(tang))
+            if (tang == 0) {
+                putMarker(mx,my,1);
+            } else if (tang%60 == 0) {
+                    putMarker(mx,my,2);
+            } else if (tang%60 == 30) {
+                putMarker(mx,my,3);
+            }
+        }
+    }
+
+    }
 //! ┌───────────────────────────────────────────────
 //! │ sort associative array by key
 //! └───────────────────────────────────────────────
