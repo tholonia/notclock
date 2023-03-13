@@ -553,8 +553,8 @@
             },1000);
 
             // var this_date = new Date('17 Dec 1995 00:00:00');
-            var this_date = new Date('17 Dec 1995 04:00:00');
-            // var this_date = new Date();
+            // var this_date = new Date('17 Dec 1995 04:00:00');
+            var this_date = new Date();
 
             //? if there are seconds in a day, need to update tick_counter to be n sync
             //? ticks / secs * increment = degs_per_tick  .... ergo
