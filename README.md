@@ -138,10 +138,13 @@ The following query parameters are only available for use by adding them manuall
 - set the deg adjustment.  `ma=1` override this.  `de=-1`automatically sets `deg_adj=0.00771604938271605`, which is necessary for `clock mode`
 
 ```cm=1```
-- **Clock Mode**: Set initial clock timings based on realtime clock.  All timing after that are calculated, so with time, they are off but a bit.  You can make any adjustments, or jump forward or backward in time. This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=1&aQ=3)
+- **Clock Mode 1**: Set initial clock timings based on realtime clock.  All timing after that are calculated, so with time, they are off but a bit.  You can make any adjustments, or jump forward or backward in time. This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=1&aQ=3)
 
 ```cm=2```
-- **Clock Mode**: Set clock based on real-time clock.  The setting ensures you are synced to the actual 24 hr time.  You can’t make any adjustments, or jump forward or backward in time, but you can increase the update rate,  The default update rate for the clock is 1815ms, or `up=1815.851851` and each update advances the clock arm by 1/6 of the circle.  If you want to see a smooth clock arm, set `up=100`, for example.   This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=2&aQ=3)
+- **Clock Mode 2**: Set clock based on real-time clock.  The setting ensures you are synced to the actual 24 hr time.  You can’t make any adjustments, or jump forward or backward in time, but you can increase the update rate,  The default update rate for the clock is 1815ms, or `up=1815.851851` and each update advances the clock arm by 1/6 of the circle.  If you want to see a smooth clock arm, set `up=100`, for example.   This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=2&aQ=3)
+
+```cm=3```
+- **Clock Mode 3**: Like clock mode 1, but the clock starts at 4AM rather that 00 hours. This is because 4AM is when one day ends and the other begins.  More accurately, this is the the time when the energy cycle of the day is at its minumum for that particular part of the earth. This is also why this time has been called the "witching hour" or "devil's hour", which is typically associated with supernatural events, whereby witches, demons and ghosts are thought to appear and be at their most powerful.  This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=3&aQ=3)
 
 
 

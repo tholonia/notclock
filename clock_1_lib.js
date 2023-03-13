@@ -1221,9 +1221,13 @@ function nowsecs(d) {
 //! ┌───────────────────────────────────────────────
 //! │ TIME: returns epoch in seconds for NOW or ARG
 //! └───────────────────────────────────────────────
-function getSecsInDay(d) {
+function getSecsInDay(d, adj=0) {
   var e = new Date(d);
-  return (d - e.setHours(0,0,0,0))/1000;}
+  let t = (d - e.setHours(0,0,0,0))/1000;
+  t = t-adj;
+  if (t<0) {t = t+86400;}
+  return t;
+}
 //! ┌───────────────────────────────────────────────
 //! │ TIME: returns epoch in HH:MM:SS format
 //! └───────────────────────────────────────────────
@@ -2103,7 +2107,14 @@ function writeMenu() {
             writGrid([_,"tick_counter",_,tick_counter]);rnum++;
             writGrid([_,"tc Deg",_,ticks2degs()]);rnum++;
             writGrid([_,"tc Sec",_,ticks2secs()]);rnum++;
-            writGrid([_,"tc HMS",_,toTimeString(ticks2secs())]);rnum++;
+            let current_secs = ticks2secs();
+            if (clock_mode == 3) {
+                current_secs = current_secs +14400;
+                if (current_secs > 86400) {
+                    current_secs = current_secs - 86400;
+                }
+            }
+            writGrid([_,"tc HMS",_,toTimeString(current_secs)]);rnum++;
 
             // //for (let i = 5;i>-1;i--) {
             // // writGrid([_,iching_line_names[i],t_time[i],iching_stages[4][t_time[i]]]);rnum++;

@@ -268,6 +268,7 @@
 
             if (clock_mode > 0) {
                 rotation = DEF_cmRotation;
+                deg_adj = 0.00771604938271605;
             } else {
                 rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
             }
@@ -556,7 +557,11 @@
             //? ticks / secs * increment = degs_per_tick  .... ergo
             //? (secs*increment)*degs_per_tick = ticks
 
+
             let daysecs = getSecsInDay(this_date);
+            if (clock_mode == 3) {
+                daysecs = getSecsInDay(this_date,14400);
+            }
             tick_counter = daysecs * ticks_per_sec
             branch_angle = (daysecs * secs_per_deg)%360;
 
