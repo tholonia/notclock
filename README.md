@@ -1,12 +1,4 @@
 
-clock mode
-file:///home/jw/store/src/music/clock_1.svg?ia=180&de=0.00416666666666666&up=1000&cm=1
-
-cm=1
-
-
-Alt-Q options
-
 
 **notclock.svg** is an interactive, real-time animation SVG based in a 6-generation bifurcated point (i.e., one point becomes 2 point, each of those point becomes 2 points, etc., 6 times).  This is the basic model used to describe “Tholonic Expansion”, which describe the models of nature and energy, and this SVG was initially designed to be a clock based on this concept, but that seemingly simple idea tuned out to be far more challenging than imagined, so that code turned into this, which is not a clock.
 
@@ -101,10 +93,8 @@ The characters in brackets [] represent the HTML query string variable name that
 
 **⌥ K** `[aK]`      Cycle Connectors/Paths   *Connecting the points in various ways*
 **⌥ V** `[aV]`      Cycle Polygons      *Cycling thru various polygons based on the data*
-**⌥ O** `[aO]`    ++poly opacity         *Increases density of polygon*
-**⌥ I** `[aI]`       --poly opacity         *Increases translucency of polygon*
 **⌥ J**  `[aJ]`       Jump fwd n° deg     *Advance all diverging angles by 5 degrees*
-**⌥ S|W**                  Merge count          *Increases/decreases number of images that can overlay
+**⌥ S|W**                  Merge count      *Increases/decreases num of images that can overlay*
 **^ Y**                       Toggle audio           *Start sound system (requires manual initiation)*
 
 **^⌥  1** `[ca1]`   *Toggle show/hide line 1*
@@ -122,7 +112,7 @@ The characters in brackets [] represent the HTML query string variable name that
 **^⇧ F5**   *Shorten line 5*		**^⇧ 5**    *Lengthen Lines 5*
 **^⇧ F6**   *Shorten line 6*		**^⇧ 6**    *Lengthen Lines 6*
 
-**⌥ Q** `[FS]`    *Show/hide screen menu*
+**⌥ Q** `[FS]`    *Show/hide/change screen menu*.  <sup>(see note 7)</sup>
 **⌥ P**  `[aP]`   *Screensave*  <sup>(see note 4)</sup>
 **SPACE**               *Pause/Run*     Pause program for 10000 seconds 
 **⌥ T**  `[aT]`   *Dynamic zoom*  Automatically zooms viewbox to maximize image, <sup>(see note 5)</sup>
@@ -145,7 +135,14 @@ The following query parameters are only available for use by adding them manuall
 - Use angle of mouse (relative to center) as the branch_angle. In auto-zoomed mode, these coordinates will bounce around.
 
 ```de=n```
-- set the deg adjustment.  `ma=1` override this.
+- set the deg adjustment.  `ma=1` override this.  `de=-1`automatically sets `deg_adj=0.00771604938271605`, which is necessary for `clock mode`
+
+```cm=1```
+- **Clock Mode**: Set initial clock timings based on realtime clock.  All timing after that are calculated, so with time, they are off but a bit.  You can make any adjustments, or jump forward or backward in time. This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=1&aQ=3)
+
+```cm=2```
+- **Clock Mode**: Set clock based on real-time clock.  The setting ensures you are synced to the actual 24 hr time.  You can’t make any adjustments, or jump forward or backward in time, but you can increase the update rate,  The default update rate for the clock is 1815ms, or `up=1815.851851` and each update advances the clock arm by 1/6 of the circle.  If you want to see a smooth clock arm, set `up=100`, for example.   This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=2&aQ=3)
+
 
 
 
@@ -173,7 +170,9 @@ The following query parameters are only available for use by adding them manuall
 
 ***Note 5:*** As dynamic zoom adjusts the viewbox for every frame, and as the image limits change every frame, there is always some jitter between frames.  For SVG 'paths', the image may extend out-of-frame as the x,y values are being dynamically generated when creating Bezier curves.
 
-***Note 6:*** These rations are: Platinum mean (1), Golden mean (1.618), Removal of line #1, prime numbers (5,7,11,13,17,23), alternate gold/silver mean (1.617, 1,414), incremental (123456), decremental (654321), √2÷2 (0.707), bi-ncremental (135246).
+***Note 6:*** These ratios are: Platinum mean (1), Golden mean (1.618), Removal of line #1, prime numbers (5,7,11,13,17,23), alternate gold/silver mean (1.617, 1,414), incremental (123456), decremental (654321), √2÷2 (0.707), bi-ncremental (135246).
+
+***Note 7:*** `aQ=0`  is no menu or text. `aQ=1` is the  default menu.  `aQ=2` is for the `clock mode` and only shows the current angle.  `aQ=3`is also for `clock mode`, but shows more information.  **ALT-Q** cycles through these modes, starting with 1.
 
 
 ## Tips
@@ -211,5 +210,7 @@ To have a image that only moves according to the mouse position, add the query p
 
 ## Bugs
 
-- Tracking column in menu often might display wrong numbers.
+This 'app' was built as a tholonic research tool.  It is super-beta, untested, questionably designed, massively inefficient, and in general is a linguine of code... but it does what it was built to do.  No doubt, there are countless bugs yet to be discovered.  Here are some of the more obvious bugs you should be aware of...
+
+- Tracking column in main  menu often might display wrong numbers.
 - In merge/overlay mode, strings on the menu screen overwrite themselves, so if the string changes, such as the query string, it’s unreadable.  However, Copying the string copies the current and last version.

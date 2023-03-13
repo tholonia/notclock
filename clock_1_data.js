@@ -70,6 +70,18 @@ const DEF_rotation	      = -90//? for non-cm
 const DEF_cmRotation	      = +0;//? for cm
 const DEF_showtext	      = 1;
 
+
+const iching_stages = [
+		["Inner Negotiation","Inner Definition","Inner Contribution","Outer Negotiation","Outer Definition","Outer Contribution"],
+		["Inception","Specification","Deployment","Emergence","Integration","Difuson"],
+		["Insemination","Pregnancy","Birth","Growing Up","Adult Life","Death"],
+		["Germination","Growth","Blooming","Fruiting","Seeding","Recycling"],
+		["Precontemplation","Contemplation","Preparation","Action","Maintenance","Termination"],
+];
+
+const iching_line_names = ["Line 1","Line 2","Line 3","Line 4","Line 5","Line 6"];
+const iching_line_vals = [1,0,1,0,1,0]; //? 1 = yang, 0 = yin
+
 const degs_per_level = [
 	360/(6**1), //? 60
 	360/(6**2), //? 10

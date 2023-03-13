@@ -2105,9 +2105,31 @@ function writeMenu() {
             writGrid([_,"tc Sec",_,ticks2secs()]);rnum++;
             writGrid([_,"tc HMS",_,toTimeString(ticks2secs())]);rnum++;
 
+            // //for (let i = 5;i>-1;i--) {
+            // // writGrid([_,iching_line_names[i],t_time[i],iching_stages[4][t_time[i]]]);rnum++;
+            // //}
+            // let ichinghex = 0
+            // let tris = [false,false,false];
+            // for (let i = 5;i>-1;i--) {
+            //     let line_yinyang = t_time[i]%2;//? even number
+            //     if (line_yinyang == iching_line_vals[i]) { //? matches line type
+            //         writGrid([_,iching_line_names[i],t_time[i],iching_stages[0][i]]);rnum++;
+            //         ichinghex = ichinghex + 2**i;
+            //     } else {
+            //         writGrid([_]);rnum++;
+            //         //writGrid([_,iching_line_names[i],t_time[i],"-"+iching_stages[4][i]]);rnum++;
+            //     }
+            //     //writGrid([_,"xx",ichinghex]);rnum++;
+            // }
+            // writGrid([_,"Hex",ichinghex]);rnum++;            
+
         }
         rnum = 0;
     }}
+
+
+//% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+    
 //! ┌───────────────────────────────────────────────
 //! │ build tfe query string
 //! └───────────────────────────────────────────────
@@ -2197,7 +2219,8 @@ function zoomvb(xmin, xmax, ymin, ymax) {
     let vbstr =  vbMinX.toString()+" "+vbMinY.toString()+" "+vbLen.toString()+" "+vbHei.toString();
     eleSvg.setAttribute("viewBox", vbstr);
 
-    wTLp(vbMinX,vbMinY+20,ttimeStr(t_time) + "   ("+new Date()+")");
+    // wTLp(vbMinX,vbMinY+20,ttimeStr(t_time) + "   ("+new Date()+")");
+    wTLp(vbMinX,vbMinY+20,t_time + "   ("+new Date()+")");
     }
 //! ┌───────────────────────────────────────────────
 //! │ draw a box around the min/max xy... mainly for debugging
