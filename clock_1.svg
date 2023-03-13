@@ -262,6 +262,7 @@
             var path_mode       = parseInt(qget("li", DEF_path_mode));
             var mouse_angle     = parseInt(qget("ma", DEF_mouse_angle));
             var clock_mode      = parseInt(qget("cm", DEF_clock_mode));
+            var merge_colors     = parseInt(qget("mc", DEF_merge_colors));
 
 
             var preset_changed  = false //? need to keep track when the cycle preset changes for one-off loads
@@ -287,6 +288,7 @@
             genang.push([[13,3,5,7,9,11,1],[1,3,5,7,9,11,1]]);names_of_genang.push("mx1");
             genang.push([[6,6,6,6,6,6,6],[6,6,6,6,6,6,6]]);names_of_genang.push("6");
 
+            //? in clock mode, set angle multplier to 6
             if (clock_mode > 0) {  
                 genang[0]=[[6,6,6,6,6,6,6],[6,6,6,6,6,6,6]];
 
@@ -342,6 +344,7 @@
             //? for revolution ratios
             var num_of_genang   = names_of_genang.length;
             var num_of_showtext = names_of_showtext.length;
+            var num_of_merges = names_of_merges.length;
 
 
 
@@ -559,8 +562,11 @@
 
 
             let daysecs = getSecsInDay(this_date);
+            //? override for 4AM mode
             if (clock_mode == 3) {
                 daysecs = getSecsInDay(this_date,14400);
+            } else {
+
             }
             tick_counter = daysecs * ticks_per_sec
             branch_angle = (daysecs * secs_per_deg)%360;

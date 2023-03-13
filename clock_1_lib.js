@@ -311,6 +311,7 @@ function drawTree(branch_angle, rotation) {
                 case 'aD':  cycle_genang   = qsary[key]; break;
                 case 'cm':  clock_mode    = qsary[key]; break;
                 case 'aQ':  showtext       = qsary[key]; break;
+                case 'mc':  merge_colors   = qsary[key]; break;
             }
         }
         preset_changed = false
@@ -874,6 +875,21 @@ function drawTree(branch_angle, rotation) {
         mLINEgradient[order].setAttribute('r', "100%");//this_length);
         mLINEdefs[order].appendChild(mLINEgradient[order]);
         //! ---------------------------------------------
+
+        //? doesn't work here either :( 
+        // if (clock_mode == 3) {
+        //     let angle = ((rad2deg(Math.atan2(ny2-ny1,nx2-nx1)))+360+90)%360;
+        //     let rad = maxlengths[lOrder[gen]-1]*2 *.90;
+        //     if (lOrder[gen] == 0) {
+        //         //? recalc base line for 4AM adj
+        //         //? DOESN'T WORK HERE
+        //         nx2 = Math.cos(deg2rad(angle) * rad + nx1);
+        //         ny2 = Math.sin(deg2rad(angle) * rad + ny1);
+        //         console.log("nx2",nx2,"angle",angle,"rad",rad);
+
+        //     }
+        // }//@ X
+
         mLINEline[order].setAttribute('x1', nx1.toString())
         mLINEline[order].setAttribute('y1', ny1.toString())
         mLINEline[order].setAttribute('x2', nx2.toString())
@@ -1697,10 +1713,19 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     var svg = document.getElementById("svg");
 
     //? get angle
-    clock_angle[idx] = ((rad2deg(Math.atan2(y2-y1,x2-x1)))+360+0)%360;
+    clock_angle[idx] = ((rad2deg(Math.atan2(y2-y1,x2-x1)))+360+0)%360;//@ X
+    let rad =   maxlengths[idx]*2 *.90;//@ why does it need to be adjusted?
+
+
+    //? DOESN'T WORK HERE
+    // if (idx == 0) {
+    //     //? recalc base line for 4AM adj
+    //     x2 = Math.cos(deg2rad(clock_angle[idx]+90) * rad + x1);
+    //     y2 = Math.sin(deg2rad(clock_angle[idx]+90) * rad + y1);
+    // }
+
     pcir_circle[idx] = document.createElementNS(svgns, 'circle');
 
-    let rad =   maxlengths[idx]*2 *.90;//@ why does it need to be adjusted?
     let pcir_color=colors2[cycle_colors][idx]; 
 
     clock_time[idx] = parseFloat(x1).toFixed(2)+"  :  "+parseFloat(y1).toFixed(2);
@@ -1708,52 +1733,23 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     if (idx == 0) { //? common hours
         cHour = Math.floor((((clock_angle[idx]+90)%360)/360)*24);
     }
-    //? tholonic time held in array
-    //? clock_angle has alredy been synced to 4AM as 0-time
-    // let last_t_time_5 = t_time[5];
-    // let last_t_time_4 = t_time[4];
-    // let last_t_time_3 = t_time[3];
-    // let last_t_time_2 = t_time[2];
-    // let last_t_time_1 = t_time[1];
-    // let last_t_time_0 = t_time[0];
     for (let i = 0;i<6;i++) {
         if (idx == i) { 
             t_time[i] = Math.floor((clock_angle[idx]/360)*6); 
             // console.log(i,t_time[i])
         }
     }
-    // console.log(t_time[5],last_t_time_5)
-    // if (t_time[5] != last_t_time_5) {
-    //     tclock_ticker_5 = tclock_ticker_5 + (t_time[5]-last_t_time_5);
-    // }
-    // if (t_time[4] != last_t_time_4) {
-    //     tclock_ticker_4 = tclock_ticker_4 + (t_time[4]-last_t_time_4);
-    // }
-    // if (t_time[3] != last_t_time_3) {
-    //     tclock_ticker_3 = tclock_ticker_3 + (t_time[3]-last_t_time_3);
-    // }
-    // if (t_time[2] != last_t_time_2) {
-    //     tclock_ticker_2 = tclock_ticker_2 + (t_time[2]-last_t_time_2);
-    // }
-    // if (t_time[1] != last_t_time_1) {
-    //     tclock_ticker_1 = tclock_ticker_1 + (t_time[1]-last_t_time_1);
-    // }
-    // if (t_time[0] != last_t_time_0) {
-    //     tclock_ticker_0 = tclock_ticker_0 + (t_time[0]-last_t_time_0);
-    // }
-
-    // tclock_ticker = tclock_ticker_0.toString()+tclock_ticker_1.toString()+tclock_ticker_2.toString()+tclock_ticker_3.toString()+tclock_ticker_4.toString()+tclock_ticker_5.toString();
 
     pcir_circle[idx].setAttribute("id", "put_clock_circles"+idx);
     pcir_circle[idx].setAttribute("cx", x1.toString());
     pcir_circle[idx].setAttribute("cy", y1.toString());
     pcir_circle[idx].setAttribute("r",rad);
     pcir_circle[idx].setAttribute("fill", pcir_color);
-    pcir_circle[idx].setAttribute("fill-opacity", "1");
+    pcir_circle[idx].setAttribute("fill-opacity", "0.2");
     pcir_circle[idx].setAttribute("stroke", "gray");
     pcir_circle[idx].setAttribute("stroke-width", "1");
     pcir_circle[idx].setAttribute("style","z-index:"+(current_level*10));
-    pcir_circle[idx].setAttribute("style","mix-blend-mode: difference;");
+    pcir_circle[idx].setAttribute("style","mix-blend-mode: "+names_of_merges[merge_colors]);
     // pcir_circle[idx].setAttribute("style","background-blend-mode: difference;");
     // svg.setAttribute("style","isolation:isolate;");
 
@@ -1793,16 +1789,16 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     if (idx == 1) {
         let ang = 30;
         for (let i = 0; i<12; i++) {
-            let tang = ang*i;
+            let tang = ang*(i);  //? (i+3) for 4Am bottom) //@ X
             mx = rad * adj * Math.cos(toRadians(tang))
             my = rad * adj * Math.sin(toRadians(tang))
-            if (tang == 0) {
+            if (i == 0) {
                 putMarker(mx,my,1);
-            } else if (tang%60 == 0) {
-                    putMarker(mx,my,2);
-            } else if (tang%60 == 30) {
-                putMarker(mx,my,3);
-            }
+            } 
+            if (i%2==0) {
+                putMarker(mx,my,2);
+            } 
+            putMarker(mx,my,3);
         }
     }
 
@@ -1973,6 +1969,7 @@ function writeMenu() {
             writGrid(['aY','⌥ Y','Cycle Ratios' ,'(' + cycle_ratios+ ') '+  names_of_ratios[cycle_ratios]]);    rnum++;
             writGrid(['mF','⌘ F','Cycle Flowers','(' + cycle_flowers+') '+ names_of_flowers[cycle_flowers]]);   rnum++;
             writGrid(['mT','⌘ T','Cycle Fruit'  ,'(' + cycle_fruit+  ') '+   names_of_fruit[cycle_fruit]]);     rnum++;
+            writGrid(['mc','⌘ C','Cycle Merge (clock)'  ,'(' + merge_colors+  ') '+   names_of_merges[merge_colors]]);     rnum++;
             writGrid([_]);rnum++;
             writGrid(['aN','⌥ (N|B)','Circle radius  +/-',   '(' +circle_radius.toFixed(2)+')']);rnum++;
             writGrid(['aX','⌥ (X|Z)','Circle opacity +/-',   '(' +circle_opacity+')']);rnum++;
@@ -2179,8 +2176,9 @@ function makeQs(qs) {
     if (cycle_flowers   != DEF_cycle_flowers)   {qs = qs + "&mF=" + cycle_flowers;}
     if (cycle_fruit     != DEF_cycle_fruit)     {qs = qs + "&mT=" + cycle_fruit;}
     if (cycle_genang    != DEF_cycle_genang)    {qs = qs + "&aD=" + cycle_genang;}
-    if (clock_mode      != DEF_clock_mode)    {qs = qs + "&cm=" + clock_mode;}
-    if (showtext        != DEF_showtext)    {qs = qs + "&aQ=" + showtext;}
+    if (clock_mode      != DEF_clock_mode)      {qs = qs + "&cm=" + clock_mode;}
+    if (showtext        != DEF_showtext)        {qs = qs + "&aQ=" + showtext;}
+    if (merge_colors     != DEF_merge_colors)   {qs = qs + "&mc=" + merge_colors;}
     qs = qs + "&ia=" + branch_angle;
     //@ ARGS
     return(qs)}

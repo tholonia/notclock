@@ -165,6 +165,10 @@
             if (isAlt && lastkey['Period']) {
                 cycle_genang = toggle(cycle_genang,num_of_genang-1);
             }
+            //? ──────────────────────────────────────────────── MERGE COLORS
+            if (isMet && lastkey['KeyC']) {
+                merge_colors = toggle(merge_colors,num_of_merges-1);
+            }
             //? ──────────────────────────────────────────────── FRUITS and FLOWERES
             if (isMet && lastkey['KeyF']) {cycle_flowers = toggle(cycle_flowers,num_of_flowers);log("Flower:"+cycle_flowers)}
             if (isMet && lastkey['KeyT']) {cycle_fruit = toggle(cycle_fruit,num_of_fruit);log("Fruit:"+cycle_fruit)}
@@ -329,7 +333,7 @@
             point.vx =  cursorpt.x
             point.vy =  cursorpt.y
             point.va = (rad2deg(Math.atan2(point.vy,point.vx))+90+360)%360 //? rotate c-clockwise to adj
-            // rotation = point.va;
+            rotation = point.va;
         })
         eleSvg.addEventListener('wheel', function(event) {
             if (mouse_angle==1) {

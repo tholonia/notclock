@@ -69,6 +69,7 @@ const DEF_clock_mode	  = 0;
 const DEF_rotation	      = -90//? for non-cm
 const DEF_cmRotation	      = +0;//? for cm
 const DEF_showtext	      = 1;
+const DEF_merge_colors	  = 0;
 
 
 const iching_stages = [
@@ -118,6 +119,10 @@ const names_of_flowers        =['OFF','thorns','arrows','bigthorn','datura','xxx
 const names_of_fruit          =['OFF','Colored 6px']
 const names_of_genang         =[]  //? pushed on init
 const names_of_showtext       =['Blank','Full Menu','Degrees','Clock']  //? pushed on init
+const names_of_merges 		  = [
+	"difference","darken","lighten","color-dodge","color-burn","hard-light","soft-light",
+	"exclusion","hue","saturation","color","luminosity","screen","overlay","isolate"
+];
 
 //? presets as query strings
 const preqs = []
