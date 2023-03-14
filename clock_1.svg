@@ -17,11 +17,7 @@
     >
 
     // * ─────────────────────────────── old vars ─────────────────
-    // *  viewBox="-960 -540 1920 1080"
-    // * viewBox="-480 -270 960 540"
-    // * viewBox="-540 -960 1080 1920"
-    // * viewBox="-960 -540 1920 1080"
-    // * viewBox="-960 -540 1920 1080"
+    // *  viewBox="-960 -512 1920 1024"
     // * transform="translate(0 -0) rotate(-90) "
     // * transform="translate(450 -400) rotate(-90) "
     // * transform="rotate(-90 50 100)"
@@ -221,9 +217,6 @@
             var loop_delay      = parseFloat(qget("up",DEF_loop_delay));
             var iangle          = parseFloat(qget("ia",DEF_iangle));
             var deg_adj         = parseFloat(qget("de",DEF_deg_adj));
-
-            if (deg_adj == -1) {deg_adj = degs_per_level[5];}  //? if -1, use smallest increment
-
             var poly_opacity    = parseFloat(qget("aO",DEF_poly_opacity));
             var jump_delta      = parseFloat(qget("aJ",DEF_jump_delta));
             var circle_opacity  = parseFloat(qget("aX",DEF_circle_opacity));
@@ -267,9 +260,15 @@
 
             var preset_changed  = false //? need to keep track when the cycle preset changes for one-off loads
 
+            //? if -1, use smallest increment
+            if (deg_adj == -1) {
+                deg_adj = degs_per_level[5];
+            } 
+
             if (clock_mode > 0) {
                 rotation = DEF_cmRotation;
-                deg_adj = 0.00771604938271605;
+                deg_adj =  degs_per_level[5];
+                loop_delay=1851.851851
             } else {
                 rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
             }
@@ -297,7 +296,7 @@
         //! ┌───────────────────────────────────────────────
         //! │ DEFAULTS
         //! └───────────────────────────────────────────────
-            var _VERSION = 3.59;
+            var _VERSION = 3.61
             var _DEV_MODE = true;
 
             //? vars for drawing live box

@@ -1883,9 +1883,9 @@ function wTL(args) {
 //! ┌───────────────────────────────────────────────
 //! │ wtite text from left->right in grod format
 //! └───────────────────────────────────────────────
-function wTLp(xpos,ypos,str) {
+function clockWrite(xpos,ypos,str) {
     // row,col
-    let fs = menu_fontsize
+    let fs = 40;//menu_fontsize
     let spacing = menu_spacing
 
     var svg = document.getElementById("svg");
@@ -1896,9 +1896,9 @@ function wTLp(xpos,ypos,str) {
     text.setAttribute("x", xpos);
     text.setAttribute("y", ypos);
     if (bg_color == "black") {
-        text.setAttribute("fill", menu_fontclr);
+        text.setAttribute("fill", "gray");
     } else {
-        text.setAttribute("fill", menu_fontclr);    
+        text.setAttribute("fill", "gray");    
     }
     text.setAttribute("font-size", fs);
     text.setAttribute("font-family", "monospace, monospace");
@@ -1925,19 +1925,11 @@ function wTLp(xpos,ypos,str) {
 //% 
 //% ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
 function writeMenu() {
-    // if (cycle_vars != 0) {
-    //     var longqs = "";
-    //     //? always send a copy of the qs to the console when in cycla_vars mode
-    //     let qs = makeQs(href).match(/.{1,140}/g);  //? limit chars to line to 140, return array of lines
-    //     for(let i = 0; i < qs.length; i++ ) {
-    //         longqs = longqs + qs[i];
-    //     }
-    //     console.log("LATEST QUERY STRING: ",longqs);
-    // }
     //? no menu
     if (showtext == 0) {return}
-    //? menu
-    if (showtext == 1) {
+
+    //? main menu        
+    if (showtext == 1) { 
         if (fullscreen == 0) {
             //@ ARGS
             menu_fontweight="600";menu_fontclr="#00ffff"; writGrid(['✅',_,_,_,'⌥ = Alt']);
@@ -1954,7 +1946,13 @@ function writeMenu() {
             writGrid([_,'◀▶','-thinner|+wider','('+pensize+')']);rnum++;
             writGrid([_,'PGUP/PGDN','+zoom in|-zoom out','(x '+linelength_adj + ')']);rnum++;
             writGrid(['de','INS/DEL','+Finer°|Courser°','(' + deg_adj + '°)']);rnum++;
-            writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer','('+ pre_maxlengths+')']);rnum++;
+
+            let shortdegs = [0,0,0,0,0,0];
+            for (i=0;i<6;i++) {
+                shortdegs[i] = Math.round(pre_maxlengths[i]);
+            }
+
+            writGrid([_,'^⇧(F1-F6)','lines(1-6) +longer','('+ shortdegs+')']);rnum++;
             writGrid([_,'^⇧(1-6)','lines(1-6) -shorter']);rnum++;
             writGrid([_]);rnum++;
 
@@ -2010,97 +2008,29 @@ function writeMenu() {
             rnum = 0;
         }
     }
-    //? degrees only
-    if (showtext == 2) {
+
+    //? degrees only (clock mode)
+    if (showtext == 2) { 
         if (loop_delay < 4) {
             menu_fontweight="800";menu_fontclr="RED";
             writGrid(["  !  ",_]);
         }
-        menu_fontweight="300";menu_fontclr="RED";
         writGrid([_,branch_angle.toFixed(6)]);rnum++;
         rnum = 0;
     }
-    //? clock mode
-    if (showtext == 3) {
-        if (loop_delay < 4) {
+
+    //? stats (clock mode)
+    if (showtext == 3) {  
+        if (loop_delay < 4) {  //? show "too fast" warning
             menu_fontweight="800";menu_fontclr="RED";
             writGrid(["  !  ",_]);
         }
         menu_fontweight="300";menu_fontclr="RED";
         writGrid([_,"CLOCK"]);rnum++
-        //? print x/y of points
-        // for (let i = 0; i<clock_time.length;i++) {
-        //     writGrid([_,"pt "+i,clock_time[i]]);rnum++
-        // }
-        // writGrid([_]);rnum++
-        //? print angles
-        // for (let i = 0; i<clock_time.length;i++) {
-        //     writGrid([_,"ang "+i,clock_angle[i]]);rnum++
-        // }
-
-        // writGrid([_]);rnum++;
-        // writGrid([_,"cHour",cHour]);rnum++;
-        // writGrid([_]);rnum++;
-
-        function ttime2date(tt) {
-            //? each tick is 0.26455026455 s or 264.55026455 ms
-            let tsecs = 0;
-            let ts = 0.26455026455;
-            let secs_per_deg = 240;
-            let secs_in_day = 86400;
-            let D = 360*60*60;
-            let degL=[0,0,0,0,0,0];
-
-
-            degL[0] = (secs_in_day / 6) * tt[0]; 
-            tsecs = tsecs + degL[0];
-            // console.log("degL[0]=",degL[0]);
-
-            degL[1] = (secs_in_day / 6**2) * tt[1]; 
-            tsecs = tsecs + degL[1];
-            // console.log("degL[1]=",degL[1]);
-
-            degL[2] = (secs_in_day / 6**3) * tt[2]; 
-            tsecs = tsecs + degL[2];
-            // console.log("degL[2]=",degL[2]);
-
-            degL[3] = (secs_in_day / 6**4) * tt[3]; 
-            tsecs = tsecs + degL[3];
-            // console.log("degL[3]=",degL[3]);
-
-            degL[4] = (secs_in_day / 6**5) * tt[4]; 
-            tsecs = tsecs + degL[4];
-            // console.log("degL[4]=",degL[4]);
-
-            degL[5] = (secs_in_day / 6**6 ) * tt[5]; 
-            tsecs = tsecs + degL[5];
-            // console.log("degL[5]=",degL[5]);
-
-
-
-                // console.log(tt[i]+" * "+(ts*p)+" = "+degL[i]);
-                // tsecs = tsecs + degL[i];
-
-            // let degL1 = tt[1] * (360/6/6); 
-            // let degL2 = tt[2] * (360/6/6/6); 
-            // let degL3 = tt[3] * (360/6/6/6/6); 
-            // let degL4 = tt[4] * (360/6/6/6/6/6); 
-            // let degL5 = tt[5] * (360/6/6/6/6/6/6); 
-
-            // Lt = degL[0]//0+L1+L2+L3+L4+L5;
-            // alert(Lt)
-
-            // tsecs = Lt;
-            return tsecs;
-        }
+        writGrid([_]);
 
         if (zoomin == 0) {
             writGrid([_,"t_time",_,t_time]);rnum++;
-
-            // let _tts = ttimeStr(t_time);
-
-            // writGrid([_,"ttimeStr",_,_tts]);rnum++;
-
             writGrid([_,"tick_counter",_,tick_counter]);rnum++;
             writGrid([_,"tc Deg",_,ticks2degs()]);rnum++;
             writGrid([_,"tc Sec",_,ticks2secs()]);rnum++;
@@ -2186,22 +2116,21 @@ function makeQs(qs) {
 //! │ funcs to track tey min/max xy
 //! └───────────────────────────────────────────────
 function xytrack(x,y) {
-    if ((x+circle_radius) > gMax_x) {gMax_x = (x+circle_radius);}
-    if ((x-circle_radius) < gMin_x) {gMin_x = (x-circle_radius);}
-    if ((y+circle_radius) > gMax_y) {gMax_y = (y+circle_radius);}
-    if ((y-circle_radius) < gMin_y) {gMin_y = (y-circle_radius);}}
+    if (zoomin == 1) { //? only track if zoom is on
+        if ((x+circle_radius) > gMax_x) {gMax_x = (x+circle_radius);}
+        if ((x-circle_radius) < gMin_x) {gMin_x = (x-circle_radius);}
+        if ((y+circle_radius) > gMax_y) {gMax_y = (y+circle_radius);}
+        if ((y-circle_radius) < gMin_y) {gMin_y = (y-circle_radius);}}
+    }
 //! ┌───────────────────────────────────────────────
 //! │ test x/y min/max vals againt a list of x/y data
 //! └───────────────────────────────────────────────
 function updateListMinMax(data) {
-    //? no need to traxk if zoom is not on
-    if (zoomin ==1) {
-        for (let i=0;i<data.length;i++) {
-            xytrack(data[i][0],data[i][1]);
-
-            // console.log("xytrack("+data[i][0]+","+data[i][1]+")=>"+gMax_x+","+gMin_y)
-        }
-    }}
+    //? no need to track if zoom is not on
+    for (let i=0;i<data.length;i++) {
+        xytrack(data[i][0],data[i][1]);
+    }
+}
 //! ┌───────────────────────────────────────────────
 //! │ test x/y min/max vals againt anobject of x/y data
 //! └───────────────────────────────────────────────
@@ -2210,7 +2139,8 @@ function updateObjMinMax(data) {
         for (let j=0;j<data[i].length;j++){
             xytrack(data[i][j].x,data[i][j].y);
         }
-    }}
+    }
+}
 //! ┌───────────────────────────────────────────────
 //! │ zoom in the viewbox 
 //! └───────────────────────────────────────────────
@@ -2229,7 +2159,9 @@ function zoomvb(xmin, xmax, ymin, ymax) {
     eleSvg.setAttribute("viewBox", vbstr);
 
     // wTLp(vbMinX,vbMinY+20,ttimeStr(t_time) + "   ("+new Date()+")");
-    wTLp(vbMinX,vbMinY+20,t_time + "   ("+new Date()+")");
+    // clockWrite(vbMinX+100,vbMaxY-20,t_time.join(''));
+    clockWrite(vbMinX,vbMaxY-20,t_time.join(':'));
+    clockWrite(vbMinX+400,vbMaxY-20,new Date().toTimeString().split(' ')[0]);
     }
 //! ┌───────────────────────────────────────────────
 //! │ draw a box around the min/max xy... mainly for debugging
