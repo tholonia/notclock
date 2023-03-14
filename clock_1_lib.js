@@ -244,7 +244,7 @@ function drawTree(branch_angle, rotation) {
                 //? set CIRCLE radius by counter
                 circle_radius   = CiR(tcx[0],0,17,0)
                 //? set CIRCIE  OPACITY by counter
-                circle_opacity  = CiR(tc[4],0,200,0)/100  //@ does nothing to lines, only circles
+                circle_opacity  = CiR(tc[4],0,10,0)/10  //@ does nothing to lines, only circles
 
                 // % ════════════════════════════════════════════════
 
@@ -455,9 +455,9 @@ function drawTree(branch_angle, rotation) {
         }
 
         //? debug/viewing overrides
-        // path_color = "white";
-        // path_opacity="1";
-        // path_width='3'
+        path_color = "white";
+        path_opacity="1";
+        path_width='3'
 
 
         //? prepare the gradiant stroke for the PATHS
@@ -769,9 +769,14 @@ function drawTree(branch_angle, rotation) {
             // let altPolyColor_1 = colors2[cycle_colors][(clrIdx_1+1)%6]
             // let altPolyColor_2 = colors2[cycle_colors][(clrIdx_2+1)%6]
             // let altPolyColor_3 = colors2[cycle_colors][(clrIdx_3+1)%6]
-            let altPolyColor_1 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_1+1)%6])
-            let altPolyColor_2 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_2+1)%6])
-            let altPolyColor_3 = pSBC(-0.6,colors2[cycle_colors][(clrIdx_3+1)%6])
+
+            let tc1 = colors2[cycle_colors][(clrIdx_1+1)%6];
+            let tc2 = colors2[cycle_colors][(clrIdx_2+1)%6];
+            let tc3 = colors2[cycle_colors][(clrIdx_3+1)%6];
+
+            let altPolyColor_1 = pSBC(-0.6,tc1)
+            let altPolyColor_2 = pSBC(-0.6,tc2)
+            let altPolyColor_3 = pSBC(-0.6,tc3)
 
             // console.log("alt colors:",altPolyColor_1,altPolyColor_2,altPolyColor_3)
 
@@ -888,7 +893,7 @@ function drawTree(branch_angle, rotation) {
         //         console.log("nx2",nx2,"angle",angle,"rad",rad);
 
         //     }
-        // }//@ X
+        // }
 
         mLINEline[order].setAttribute('x1', nx1.toString())
         mLINEline[order].setAttribute('y1', ny1.toString())
@@ -1232,7 +1237,7 @@ class Tree {
 function nowsecs(d) {
     var datestamp = 0;
     if (d==0) {
-        datestamp = new Date.now();
+        datestamp = new Date();
     } else {
         datestamp = new Date(d);
     }
@@ -1637,6 +1642,36 @@ function putCircle(x,y,idx,offset) { //@ loop
 
     svg.appendChild(pcir_circle[porder]);}
 
+function putDot(x,y) { //@ loop
+    var svg = document.getElementById("svg");
+    dot_circle = document.createElementNS(svgns, 'circle');
+
+    dot_circle.setAttribute("class", "put_dot");
+    dot_circle.setAttribute("id", "put_dot");
+    dot_circle.setAttribute("cx", x.toString());
+    dot_circle.setAttribute("cy", y.toString());
+    dot_circle.setAttribute("r", "1");
+    dot_circle.setAttribute('fill', 'white');
+    dot_circle.setAttribute("opacity", 1);
+
+    svg.appendChild(dot_circle);}
+
+function connectDots(pts) { //@ loop
+    var svg = document.getElementById("svg");
+    dot_circle = document.createElementNS(svgns, 'polyline');
+
+    dot_circle.setAttribute("points", pts);
+    dot_circle.setAttribute('fill', 'white');
+    dot_circle.setAttribute('stroke', 'white');
+    dot_circle.setAttribute("fill-opacity", "0.0");
+    dot_circle.setAttribute("stroke-width", '1');
+    dot_circle.setAttribute("stroke-opacity", '1');
+    // dot_circle.setAttributeNS("stroke-linecap", "round");
+
+
+    svg.appendChild(dot_circle);
+}
+
 
 //! ┌───────────────────────────────────────────────
 //! │ standalone clock marker routine
@@ -1717,11 +1752,99 @@ function putMarker(x,y,style) {
 //! │ standalone clock routine, with much of the clock logic
 //! └───────────────────────────────────────────────
 function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
-    idx=current_level;
     var svg = document.getElementById("svg");
+    idx=current_level;
+
+    //? make path data
+    hand_coords[idx]= {'x':x1,'y':y1};
+    if (idx == 5) {
+        hand_coords[6]= {'x':x2,'y':y2};
+    } 
+    let b_hand_coords = BezierCurve(hand_coords);
+    let hand_path=[];
+
+    let x = "M 0 0,";
+    for (let i=1;i< b_hand_coords.length-1;i++) {  //? b_hand_coords has 100 elements
+        j=0;
+        //? Bezier curve
+        // x = x + "S " +b_hand_coords[i+j].x+" "+b_hand_coords[i+j].y+",";j++;
+        // x = x + "  " +b_hand_coords[i+j].x+" "+b_hand_coords[i+j].y+",";j++;
+        //? Quadratic curve curve .. smoother
+        x = x + "C " +b_hand_coords[i+j].x+" "+b_hand_coords[i+j].y+",";j++;
+        x = x + "  " +b_hand_coords[i+j].x+" "+b_hand_coords[i+j].y+",";j++;
+        x = x + "  " +b_hand_coords[i+j].x+" "+b_hand_coords[i+j].y+",";j++;
+
+        i= i+j;
+    }
+    // hand_path = x + "z 0,0";  //? ugly, not smooth
+    hand_path = x;
+    
+    //? now make path
+   if (idx ==3) {
+        // tot_end_pts.push([x2,y2]);  //? array
+        // for (let i = 0; i<tot_end_pts.length-1; i++) {
+        //     putDot(tot_end_pts[i][0],tot_end_pts[i][1],5,0);
+        // }   
+
+        // tot_end_pts_str = tot_end_pts_str + " "+x2+" "+y2;  //? string og pts
+        // connectDots(tot_end_pts_str);
+    }
+    if (idx == 1000000) {  //? disabled for now
+    // if (idx ==5) {
+    
+        var handpath_element = document.createElementNS(svgns, 'path');
+
+        //? debug/viewing overrides
+        path_color = "white";
+        path_opacity="1";
+        path_width='1'
+
+        // path_color = colors360[tc[10]%360];
+
+        var lcx = 0.0
+        var lcy = 0.0
+        var lr = 1
+
+        //? prepare the gradiant stroke for the PATHS
+        var hand_defs = document.createElementNS(svgns, 'defs');
+        var gradient = document.createElementNS(svgns, 'radialGradient');
+        var stops = [
+            {"color": path_color,      "offset": "0%"},
+            {"color": "#000000",    "offset": "100%"}
+        ];
+
+        for (var i = 0, length = stops.length; i < length; i++) {
+            var stop = document.createElementNS(svgns, 'stop');
+            stop.setAttribute('offset', stops[i].offset);
+            stop.setAttribute('stop-color', stops[i].color);
+            gradient.appendChild(stop);
+        }
+        gradient.id = 'datasetGradient';
+        gradient.setAttribute('cx', lcx);
+        gradient.setAttribute('cy', lcy);  //? light is slightly above horizon
+        gradient.setAttribute('r', lr);
+        hand_defs.appendChild(gradient);
+
+        handpath_element.setAttribute('d', ""+hand_path);
+        handpath_element.setAttribute("fill-opacity", "0");
+        handpath_element.setAttribute("stroke-width", path_width);
+        // handpath_element.setAttribute("stroke-opacity", path_opacity);
+        // handpath_element.setAttribute('stroke', 'url(#datasetGradient)');
+        handpath_element.setAttribute('stroke', 'white');
+        svg.appendChild(hand_defs);
+        svg.appendChild(handpath_element);
+    }
+
+
+    //? end path
+
+
+
+
+
 
     //? get angle
-    clock_angle[idx] = ((rad2deg(Math.atan2(y2-y1,x2-x1)))+360+0)%360;//@ X
+    clock_angle[idx] = ((rad2deg(Math.atan2(y2-y1,x2-x1)))+360+0)%360;
     let rad =   maxlengths[idx]*2 *.90;//@ why does it need to be adjusted?
 
 
@@ -1770,6 +1893,10 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
         svg.appendChild(pcir_circle[idx]);
     }
 
+    //? --------------------------------------------
+    //? ----- MARKERS ------------------------------
+    //? --------------------------------------------
+
     let mx = false;
     let my = false;
     //? put a marker at 0h
@@ -1777,7 +1904,7 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     if (idx == 1) {
         let ang = 30;
         for (let i = 0; i<12; i++) {
-            let tang = ang*(i+3);  //? (i+3) for 4Am bottom) //@ X
+            let tang = ang*(i+3);  //? (i+3) for 4Am bottom)
             mx = rad * adj * Math.cos(toRadians(tang))
             my = rad * adj * Math.sin(toRadians(tang))
             if (i == 0) {
@@ -1790,7 +1917,7 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
         ang = 15;
         for (let i = 0; i<24; i++) {
             if (i%2==0) {
-                let tang = ang*(i+3);  //? (i+3) for 4Am bottom) //@ X
+                let tang = ang*(i+3);  //? (i+3) for 4Am bottom) 
                 mx = rad * adj * Math.cos(toRadians(tang))
                 my = rad * adj * Math.sin(toRadians(tang))
                 putMarker(mx,my,4);
@@ -2154,11 +2281,13 @@ function zoomvb(xmin, xmax, ymin, ymax) {
     let vbstr =  vbMinX.toString()+" "+vbMinY.toString()+" "+vbLen.toString()+" "+vbHei.toString();
     eleSvg.setAttribute("viewBox", vbstr);
 
-    // wTLp(vbMinX,vbMinY+20,ttimeStr(t_time) + "   ("+new Date()+")");
-    // clockWrite(vbMinX+100,vbMaxY-20,t_time.join(''));
-    clockWrite(vbMinX,vbMaxY-20,t_time.join(':'));
-    clockWrite(vbMinX+400,vbMaxY-20,new Date().toTimeString().split(' ')[0]);
+    if (clock_mode > 0) {
+        // wTLp(vbMinX,vbMinY+20,ttimeStr(t_time) + "   ("+new Date()+")");
+        // clockWrite(vbMinX+100,vbMaxY-20,t_time.join(''));
+        clockWrite(vbMinX,vbMaxY-20,t_time.join(':'));
+        clockWrite(vbMinX+400,vbMaxY-20,new Date().toTimeString().split(' ')[0]);
     }
+}
 //! ┌───────────────────────────────────────────────
 //! │ draw a box around the min/max xy... mainly for debugging
 //! └───────────────────────────────────────────────
@@ -2191,9 +2320,6 @@ function drawBox(xmin, xmax, ymin, ymax) {
 //! │ func to alter the colors
 //! └───────────────────────────────────────────────
 //? https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors#:~:text=Just%20pass%20in%20a%20string,number%20(i.e.%20%2D20%20).
-const pSBC=(p,c0,c1,l)=>{
-// // Tests:
-
 // /*** Log Blending ***/
 // // Shade (Lighten or Darken)
 // pSBC ( 0.42, color1 ); // rgb(20,60,200) + [42% Lighter] => rgb(166,171,225)
@@ -2243,6 +2369,9 @@ const pSBC=(p,c0,c1,l)=>{
 
 // // Ripping
 // pSBCr ( color4 ); // #5567DAF0 + [Rip] => [object Object] => {'r':85,'g':103,'b':218,'a':0.941}    let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
+
+const pSBC=(p,c0,c1,l)=>{
+    let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
     if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
     if(!this.pSBCr)this.pSBCr=(d)=>{
         let n=d.length,x={};
@@ -2263,7 +2392,9 @@ const pSBC=(p,c0,c1,l)=>{
     else r=m((P*f.r**2+p*t.r**2)**0.5),g=m((P*f.g**2+p*t.g**2)**0.5),b=m((P*f.b**2+p*t.b**2)**0.5);
     a=f.a,t=t.a,f=a>=0||t>=0,a=f?a<0?t:t<0?a:a*P+t*p:0;
     if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
-    else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)}
+    else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
+}
+
 //! ┌───────────────────────────────────────────────
 //! │ user to alter array of gradiant stops
 //! └───────────────────────────────────────────────
@@ -2948,7 +3079,7 @@ function qget(tag, val) {
 //! ┌───────────────────────────────────────────────
 //! │ Build SVG 'd' paths 
 //! └───────────────────────────────────────────────
-function buildpath(xfr) {
+function buildpath(xfr) { 
     //? each xfry_* array has 63 elements
     //@ why is there 63 when there is supposed to be 31 each? 
     //@ Added {0,0} in idx 0 to make it 64

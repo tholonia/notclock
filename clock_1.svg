@@ -296,7 +296,7 @@
         //! ┌───────────────────────────────────────────────
         //! │ DEFAULTS
         //! └───────────────────────────────────────────────
-            var _VERSION = 3.61
+            var _VERSION = 3.66
             var _DEV_MODE = true;
 
             //? vars for drawing live box
@@ -356,8 +356,19 @@
             incremental = 0;
             var order = false;
             var gen = false;
-            var cg = [false,false,false,false,false,false,false]
+            var cg = [false,false,false,false,false,false,false];
             var current_level = 0;
+            var hand_coords = [
+                {"x":0,"y":0},
+                {"x":0,"y":0},
+                {"x":0,"y":0},
+                {"x":0,"y":0},
+                {"x":0,"y":0},
+                {"x":0,"y":0},
+                {"x":0,"y":0},
+            ];
+            var tot_end_pts = [];
+            var tot_end_pts_str = "";
 
             var inner_gen = false;
             var t_time_str = "";
