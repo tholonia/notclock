@@ -842,7 +842,7 @@ function drawTree(branch_angle, rotation) {
                                                                            
         //? DRAW THE LINE
         //? prepare the gradient for the line
-        //! The generatio indexing starts at 1, not 0 !!
+        //! The generation indexing starts at 1, not 0 !!
 
         linecolors = colors2[cycle_colors]
         mLINEcolor[order] = linecolors[order]
@@ -1119,8 +1119,12 @@ class Tree {
         var rel_len = false
         var realgen = (7 - gens) - 1  //? the 'gens' are indexed as 1-6
 
-        var newangleLEFT  = ((angle * genangLEFT[realgen])  % 360) + rotation;
-        var newangleRIGHT = ((angle * genangRIGHT[realgen]) % 360) - rotation;
+        var adjr = 0;
+        if (clock_mode >>0) {adjr=90;} //? start 0h at bottom.
+
+
+        var newangleLEFT  = ((angle * genangLEFT[realgen])  % 360) + rotation+adjr;
+        var newangleRIGHT = ((angle * genangRIGHT[realgen]) % 360) - rotation+adjr;
 
         maxlengths = [0, 0, 0, 0, 0, 0]  //reset
         for (let i = 0; i < pre_maxlengths.length; i++) {
@@ -1649,17 +1653,21 @@ function putMarker(x,y,style) {
     let marker_color = "white";
     let radius = 6;
 
-    if (style == 1) { //? every 0 
+    if (style == 4) { //? every 30 && !60 degrees
         marker_color = "white";
-        radius = 8;
-    }
-    if (style == 2) { //? every 60 degrees
-        marker_color = "red";
-        radius = 4; 
+        radius = 3;
     }
     if (style == 3) { //? every 30 && !60 degrees
         marker_color = "cyan";
-        radius = 2;
+        radius = 6;
+    }
+    if (style == 2) { //? every 60 degrees
+        marker_color = "red";
+        radius = 9; 
+    }
+    if (style == 1) { //? every 0 
+        marker_color = "white";
+        radius = 12;
     }
 
     // marker_stops = [
@@ -1750,37 +1758,17 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     pcir_circle[idx].setAttribute("stroke-width", "1");
     pcir_circle[idx].setAttribute("style","z-index:"+(current_level*10));
     pcir_circle[idx].setAttribute("style","mix-blend-mode: "+names_of_merges[merge_colors]);
-    // pcir_circle[idx].setAttribute("style","background-blend-mode: difference;");
-    // svg.setAttribute("style","isolation:isolate;");
 
     pcir_circle[idx].style.zIndex = (current_level*10).toString();
 
     //? https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "screen");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "darken");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "lighten");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "color-dodge");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "color-burn");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "hard-light");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "soft-light");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "difference");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "exclusion");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "hue");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "saturation");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "color");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "luminosity");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "screen");
-    // pcir_circle[idx].setAttribute("mix-blend-mode", "overlay");
-    // pcir_circle[idx].setAttribute("isolation","isolate");
 
     xytrack(x1+rad,y1+rad);
     xytrack(x1-rad,y1-rad);
 
-    // console.log("Appending id ","put_clock_circles"+idx,lOrder[idx])
     if (cycle_circles == 0) {  //? only put circles if spheres is turned off
         svg.appendChild(pcir_circle[idx]);
     }
-
 
     let mx = false;
     let my = false;
@@ -1789,16 +1777,24 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     if (idx == 1) {
         let ang = 30;
         for (let i = 0; i<12; i++) {
-            let tang = ang*(i);  //? (i+3) for 4Am bottom) //@ X
+            let tang = ang*(i+3);  //? (i+3) for 4Am bottom) //@ X
             mx = rad * adj * Math.cos(toRadians(tang))
             my = rad * adj * Math.sin(toRadians(tang))
             if (i == 0) {
                 putMarker(mx,my,1);
-            } 
-            if (i%2==0) {
+            } else if (i%2==0) {
                 putMarker(mx,my,2);
-            } 
-            putMarker(mx,my,3);
+            } else  putMarker(mx,my,3);
+        }
+        //? marker for each hour
+        ang = 15;
+        for (let i = 0; i<24; i++) {
+            if (i%2==0) {
+                let tang = ang*(i+3);  //? (i+3) for 4Am bottom) //@ X
+                mx = rad * adj * Math.cos(toRadians(tang))
+                my = rad * adj * Math.sin(toRadians(tang))
+                putMarker(mx,my,4);
+            }
         }
     }
 
