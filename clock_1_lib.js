@@ -1231,6 +1231,13 @@ class Tree {
 //% ████████████████                ████████████████                ████████████████                 
 //% ████████████████████████████████████████████████████████████████████████████████████████████████
 
+
+//! ┌───────────────────────────────────────────────
+//! │ TIME: convert t-time to HMS
+//! └───────────────────────────────────────────────
+function ttime2hms(val) {
+    return(toTimeString(ticks2secs(parseInt(val,6))));
+}
 //! ┌───────────────────────────────────────────────
 //! │ TIME: returns epoch in seconds
 //! └───────────────────────────────────────────────
@@ -1268,15 +1275,21 @@ function toTimeString(totalSeconds) {
 //! ┌───────────────────────────────────────────────
 //! │ TIME: returns current seconds in the circle
 //! └───────────────────────────────────────────────
-function ticks2secs() {
-    return (tick_counter * secs_per_level[5])%86400;
+function ticks2secs(t=false) {
+    if (t==false) {
+        t = tick_counter;
+    }
+    return (t * secs_per_level[5])%86400;
     // return (tick_counter * secs_per_level[5]);
 }
 //! ┌───────────────────────────────────────────────
 //! │ TIME: returns current degrees in the circle
 //! └───────────────────────────────────────────────
-function ticks2degs() {
-    return (tick_counter * degs_per_level[5])%360; 
+function ticks2degs(t=false) {
+    if (t==false) {
+        t = tick_counter;
+    }
+    return (t * degs_per_level[5])%360; 
     // return (tick_counter * degs_per_level[5]);
 }
 //! ┌───────────────────────────────────────────────
@@ -1411,8 +1424,6 @@ function putPoly(x,y,idx,offset=0) {//@ loop
         let v1= CiR(tc[12],1,12)
         let v2= CiR(tc[8],1,12)
 
-        // console.log(v1,v2)
-
         for (let i = 0; i<poly_varr_R.length;i++) {
             poly_varr_R[i][0] = poly_varr_R[i][0] * v1
             poly_varr_R[i][1] = poly_varr_R[i][1] * v2
@@ -1491,7 +1502,6 @@ function putPoly(x,y,idx,offset=0) {//@ loop
     this_color_2 = (randintEx(0,5,this_color_2))
     this_color_3 = (randintEx(0,5,this_color_3))
 
-//    console.log("this_color",this_color)
      let polyColor_1 = colors2[this_color_1][clrIdx_1]
      let polyColor_2 = colors2[this_color_2][clrIdx_2]
      let polyColor_3 = colors2[this_color_3][clrIdx_3]
@@ -1576,7 +1586,6 @@ function putPoly(x,y,idx,offset=0) {//@ loop
 //! │ standalone circle routine
 //! └───────────────────────────────────────────────
 function putCircle(x,y,idx,offset) { //@ loop
-    // console.log("putCircle",x,y,offset)
 
     var svg = document.getElementById("svg");
 
@@ -1882,8 +1891,7 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
             // let tmpt = clock_angle[idx]-90; 
             // if (clock_angle[idx] < 0) {clock_angle[idx] = clock_angle[idx]+360;}
             t_time[i] = Math.floor((clock_angle[idx]/360)*6)%6; 
-            // console.log(i,t_time[i])
-            console.log(idx,clock_angle[idx])
+            // console.log(idx,clock_angle[idx])
         }
     }
 

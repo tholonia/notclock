@@ -1,4 +1,6 @@
 
+For more information about, visit https://tholonia.com/index.php/gallery/notclock
+
 
 **notclock.svg** is an interactive, real-time animation SVG based in a 6-generation bifurcated point (i.e., one point becomes 2 point, each of those point becomes 2 points, etc., 6 times).  This is the basic model used to describe “Tholonic Expansion”, which describe the models of nature and energy, and this SVG was initially designed to be a clock based on this concept, but that seemingly simple idea tuned out to be far more challenging than imagined, so that code turned into this, which is not a clock.
 
@@ -8,7 +10,7 @@
 
 <img src="images/lightning-3.png"/>
 
-It uses no external links and requires no internet connection.  All the data, such as the MP3 files of piano keys, are embedded into the file.  These files in constantly being updated, so what is stated here may not be exactly accurate at times.  This document is accurate to version 3.43.
+It uses no external links and requires no internet connection.  All the data, such as the MP3 files of piano keys, are embedded into the file.  These files in constantly being updated, so what is stated here may not be exactly accurate at times.  This document is accurate to version 3.66.
 
 The four main files are:
 
@@ -33,7 +35,8 @@ The four main files are:
 - `qscan.py`
   - utility to quickly browse/save a list of files in a directory.  The directories are hard-coded, so change to you liking.  Requires pythion modules for selenium, shutil, termcolor and Firefox.
 
-
+- `ttime2hms.py`
+  - Utility to convert thollonic time to HMS, i.e.; `ttime2hms.py -n 02345` returns `0:57:34`.
 
 
 The files have been broken up in three parts to make editing easier.
@@ -138,13 +141,13 @@ The following query parameters are only available for use by adding them manuall
 - set the deg adjustment.  `ma=1` override this.  `de=-1`automatically sets `deg_adj=0.00771604938271605`, which is necessary for `clock mode`
 
 ```cm=1```
-- **Clock Mode 1**: Set initial clock timings based on realtime clock.  All timing after that are calculated, so with time, they are off but a bit.  You can make any adjustments, or jump forward or backward in time. This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=1&aQ=3)
+- **Clock Mode 1**: Set initial clock timings based on realtime clock.  All timing after that are calculated, so with time, they are off but a bit.  You can make any adjustments, or jump forward or backward in time. This mode is accessed via [this URL](https://tholonia.com/Images//SVG/clock_1.svg?de=-1&up=1815.851851&cm=1&aQ=3)
 
 ```cm=2```
-- **Clock Mode 2**: Set clock based on real-time clock.  The setting ensures you are synced to the actual 24 hr time.  You can’t make any adjustments, or jump forward or backward in time, but you can increase the update rate,  The default update rate for the clock is 1815ms, or `up=1815.851851` and each update advances the clock arm by 1/6 of the circle.  If you want to see a smooth clock arm, set `up=100`, for example.   This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=2&aQ=3)
+- **Clock Mode 2**: Set clock based on real-time clock, but allow for override.  The clock starts at 4AM rather that 00 hours (see [this](https://tholonia.com/index.php/gallery/notclock) for why). The setting ensures you are synced to the actual 24 hr time, but you make any adjustments, jump forward or backward in time, etc.  The default update rate for the clock is 1815ms, or `up=1815.851851`  If you want to see a smooth clock arm, set `up=100`, for example.   This mode is maonly used for testing and debugging.  This mode is accessed via [this URL](https://tholonia.com/Images//SVG/clock_1.svg?de=-1&up=1815.851851&cm=2&aQ=3), or something [like this](?cm=2&aQ=3up=100000&de=0&aJ=30) as well.
 
 ```cm=3```
-- **Clock Mode 3**: Like clock mode 1, but the clock starts at 4AM rather that 00 hours. This is because 4AM is when one day ends and the other begins.  More accurately, this is the the time when the energy cycle of the day is at its minumum for that particular part of the earth. This is also why this time has been called the "witching hour" or "devil's hour", which is typically associated with supernatural events, whereby witches, demons and ghosts are thought to appear and be at their most powerful.  This mode is accessed via [this URL](file:///home/jw/store/src/music/clock_1.svg?de=-1&up=1815.851851&cm=3&aQ=3)
+- **Clock Mode 3**: Like clock mode 1, the clock starts at 4AM rather that 00 hours. This mode is meant to be just a real-time tholonic clock in screen-saver-ish mode with no other options (even though they exist). This mode is accessed via [this URL](https://tholonia.com/Images//SVG/clock_1.svg?de=-1&up=1815.851851&cm=3&aQ=3)
 
 
 
@@ -180,6 +183,8 @@ The following query parameters are only available for use by adding them manuall
 
 ## Tips
 To have a image that only moves according to the mouse position, add the query parameters `up=100&ma=1&ia=0&de=0`.  This will update the screen 10 times a second (`up=100`), start at 0° (`ia=0`), and automatically advance by 0° (`de=0`).  
+
+the file can be opened lcoally with ```brave ./clock_1.svg``` without the need for a server.  To make the server version run ```clock_1_merge.py```, which produced the file ```notclock,svg``` (which can also be run locally).  
 
 ## Current Options
 

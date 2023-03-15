@@ -265,15 +265,18 @@
                 deg_adj = degs_per_level[5];
             } 
 
+            // var rotation    = DEF_rotation;
+
             if (clock_mode > 0) {
                 rotation = DEF_cmRotation;
+            }
+            if (clock_mode == 3) {
                 deg_adj =  degs_per_level[5];
                 loop_delay=1851.851851
             } else {
                 rotation = DEF_rotation;  //? somewhere 'rotation' is getting changed (but I can't find it!).. so reset it here
             }
 
-            var rotation    = DEF_rotation;
 
             //? these numbers determine the multiple of how many times the child gen rotates in relation to the parent
             //@ even numbers rotate the base by 90
@@ -296,8 +299,11 @@
         //! ┌───────────────────────────────────────────────
         //! │ DEFAULTS
         //! └───────────────────────────────────────────────
+            //? the line below can NOT have an ending semicolon... bug in the python merge code... will eventually fix
             var _VERSION = 3.66
-            var _DEV_MODE = true;
+
+
+            var _DEV_MODE = true; //? not currrently used, but one day...
 
             //? vars for drawing live box
             var gMin_x = 0;
@@ -569,7 +575,7 @@
             // thedate = "17 Dec 1995 01:00:00";
             // thedate = "17 Dec 1995 02:00:00";
             // thedate = "17 Dec 1995 03:00:00";
-            thedate = "17 Dec 1995 04:00:00";
+            // thedate = "17 Dec 1995 04:00:00";
             // thedate = "17 Dec 1995 05:00:00";
             // thedate = "17 Dec 1995 06:00:00";
             // thedate = "17 Dec 1995 07:00:00";
@@ -613,11 +619,6 @@
             }
             tick_counter = daysecs * ticks_per_sec
             branch_angle = (daysecs * secs_per_deg)%360;
-
-
-            //? ia=0&de=-1&up=1851.85185185
-               //? get seconds from 0:0:0
-
 
 
 
