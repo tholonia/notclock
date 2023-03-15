@@ -562,9 +562,40 @@
                 seconds +=1;
             },1000);
 
-            // var this_date = new Date('17 Dec 1995 00:00:00');
-            // var this_date = new Date('17 Dec 1995 04:00:00');
-            var this_date = new Date();
+            var thedate = false;
+            var this_date = false;
+
+            // thedate = "17 Dec 1995 00:00:00";
+            // thedate = "17 Dec 1995 01:00:00";
+            // thedate = "17 Dec 1995 02:00:00";
+            // thedate = "17 Dec 1995 03:00:00";
+            thedate = "17 Dec 1995 04:00:00";
+            // thedate = "17 Dec 1995 05:00:00";
+            // thedate = "17 Dec 1995 06:00:00";
+            // thedate = "17 Dec 1995 07:00:00";
+            // thedate = "17 Dec 1995 08:00:00";
+            // thedate = "17 Dec 1995 09:00:00";
+            // thedate = "17 Dec 1995 10:00:00";
+            // thedate = "17 Dec 1995 11:00:00";
+            // thedate = "17 Dec 1995 12:00:00";
+
+            // thedate = "17 Dec 1995 13:00:00";
+            // thedate = "17 Dec 1995 14:00:00";
+            // thedate = "17 Dec 1995 15:00:00";
+            // thedate = "17 Dec 1995 16:00:00";
+            // thedate = "17 Dec 1995 17:00:00";
+            // thedate = "17 Dec 1995 18:00:00";
+            // thedate = "17 Dec 1995 19:00:00";
+            // thedate = "17 Dec 1995 20:00:00";
+            // thedate = "17 Dec 1995 21:00:00";
+            // thedate = "17 Dec 1995 22:00:00";
+            // thedate = "17 Dec 1995 23:00:00";
+            
+            if (thedate == false) {
+                this_date = new Date();
+            } else {
+                this_date = new Date(thedate);
+            }
 
             //? if there are seconds in a day, need to update tick_counter to be n sync
             //? ticks / secs * increment = degs_per_tick  .... ergo
@@ -573,7 +604,9 @@
 
             let daysecs = getSecsInDay(this_date);
             //? override for 4AM mode
-            if (clock_mode == 3) {
+
+            // if (clock_mode == 3) {
+            if (clock_mode > 0) {
                 daysecs = getSecsInDay(this_date,14400);
             } else {
 

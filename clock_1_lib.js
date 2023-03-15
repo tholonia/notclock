@@ -1125,7 +1125,7 @@ class Tree {
         var realgen = (7 - gens) - 1  //? the 'gens' are indexed as 1-6
 
         var adjr = 0;
-        if (clock_mode >>0) {adjr=90;} //? start 0h at bottom.
+        if (clock_mode > 0) {adjr=90;} //? start 0h at bottom.
 
 
         var newangleLEFT  = ((angle * genangLEFT[realgen])  % 360) + rotation+adjr;
@@ -1269,12 +1269,16 @@ function toTimeString(totalSeconds) {
 //! │ TIME: returns current seconds in the circle
 //! └───────────────────────────────────────────────
 function ticks2secs() {
-    return tick_counter * secs_per_level[5];}
+    return (tick_counter * secs_per_level[5])%86400;
+    // return (tick_counter * secs_per_level[5]);
+}
 //! ┌───────────────────────────────────────────────
 //! │ TIME: returns current degrees in the circle
 //! └───────────────────────────────────────────────
 function ticks2degs() {
-    return tick_counter * degs_per_level[5];}
+    return (tick_counter * degs_per_level[5])%360; 
+    // return (tick_counter * degs_per_level[5]);
+}
 //! ┌───────────────────────────────────────────────
 //! │ standalone poly routine
 //! └───────────────────────────────────────────────
@@ -1866,8 +1870,20 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
     }
     for (let i = 0;i<6;i++) {
         if (idx == i) { 
-            t_time[i] = Math.floor((clock_angle[idx]/360)*6); 
+
+            //? this mess is to make 000000 start at 4AM at te bottom
+            if (idx == 0) {clock_angle[idx] = (clock_angle[idx] + 270 % 360);}
+            if (idx == 1) {clock_angle[idx] = clock_angle[idx] +120 ;}
+            if (idx == 2) {clock_angle[idx] = clock_angle[idx] + 120;}
+            if (idx == 3) {clock_angle[idx] = clock_angle[idx] + 120;}
+            if (idx == 4) {clock_angle[idx] = clock_angle[idx] + 120;}
+            if (idx == 5) {clock_angle[idx] = clock_angle[idx] + 120;}
+
+            // let tmpt = clock_angle[idx]-90; 
+            // if (clock_angle[idx] < 0) {clock_angle[idx] = clock_angle[idx]+360;}
+            t_time[i] = Math.floor((clock_angle[idx]/360)*6)%6; 
             // console.log(i,t_time[i])
+            console.log(idx,clock_angle[idx])
         }
     }
 
@@ -2149,8 +2165,8 @@ function writeMenu() {
             writGrid(["  !  ",_]);
         }
         menu_fontweight="300";menu_fontclr="RED";
-        writGrid([_,"CLOCK"]);rnum++
-        writGrid([_]);
+        writGrid([_,"CLOCK"]);rnum++;
+        rnum++;
 
         if (zoomin == 0) {
             writGrid([_,"t_time",_,t_time]);rnum++;
@@ -2158,7 +2174,9 @@ function writeMenu() {
             writGrid([_,"tc Deg",_,ticks2degs()]);rnum++;
             writGrid([_,"tc Sec",_,ticks2secs()]);rnum++;
             let current_secs = ticks2secs();
-            if (clock_mode == 3) {
+
+            // if (clock_mode == 3) { 
+            if (clock_mode > 0) { //@ X
                 current_secs = current_secs +14400;
                 if (current_secs > 86400) {
                     current_secs = current_secs - 86400;
