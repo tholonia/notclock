@@ -350,7 +350,6 @@ function drawTree(branch_angle, rotation) {
     //? this call has the arguments in the order they are called in 'Tree'
     // var draw_tree = new Tree(gens, this_length, start_x, start_y, branch_angle, rotation);
     //? but we need to use THIS swapped args to get symetrical results
-    // console.log("branch_angle:",branch_angle)
 
     var draw_tree = new Tree(gens, this_length, start_x, start_y, rotation, branch_angle);
     var draw_edges = getTreeEdges(draw_tree);
@@ -414,7 +413,6 @@ function drawTree(branch_angle, rotation) {
     if (dataform=="buildpath") {
         //? build the paths
         paths = buildpath(xfullary_right)
-//        console.log(JSON.stringify(paths),null,2)
         //? paths is just an array of 2 lists or 6 elements each...
         //? [["M0,0","M0,0","M0,0","M0,0","M0,0","M0,0"],["M0,0","M0,0","M0,0","M0,0","M0,0","M0,0",]]
         //? path_r and path_l contains 6 subarrays each
@@ -432,7 +430,6 @@ function drawTree(branch_angle, rotation) {
         //@ DEBUG Doesn't exactly do what I want
         let limiter = Math.round(1 / (Math.abs((loop_delay / 1000))))
 
-//        console.log(gen,cycle_colors,colors2)
         var newPath_r = document.createElementNS(svgns, 'path');
         var newPath_l = document.createElementNS(svgns, 'path');
 
@@ -513,7 +510,6 @@ function drawTree(branch_angle, rotation) {
     //? loop through the generated data
     //? length of adata_right is 126
     for (let idx = 0; idx<adata_right.length; idx++) {
-        // console.log("adata["+idx+"]");
         //? set the base data vars
         nx1 = adata_right[idx].x
         ny1 = adata_right[idx].y
@@ -661,7 +657,6 @@ function drawTree(branch_angle, rotation) {
 
             }
             if (n == 4) { //? currently not workng
-                // console.log("Usng polugon 4")
                 var petal = [
                     [0, 0]
                     , [nx1 % 10, -ny1 % 10]
@@ -757,7 +752,6 @@ function drawTree(branch_angle, rotation) {
                 stop.setAttribute('offset', fillGradient_stops[i].offset);
                 stop.setAttribute('stop-color', fillGradient_stops[i].color);
                 fillGradient.appendChild(stop);
-                // console.log("FILL STOP offsets:",fillGradient_stops[i].offset+"%",fillGradient_stops[i].color)
             }
 
             //? ------------------------------------
@@ -778,7 +772,6 @@ function drawTree(branch_angle, rotation) {
             let altPolyColor_2 = pSBC(-0.6,tc2)
             let altPolyColor_3 = pSBC(-0.6,tc3)
 
-            // console.log("alt colors:",altPolyColor_1,altPolyColor_2,altPolyColor_3)
 
 
             //? use the same offsets
@@ -788,15 +781,12 @@ function drawTree(branch_angle, rotation) {
                 {"color":  altPolyColor_3,"offset":  offsets[2]+"%"},
             ];
 
-            // console.log("---- STROKE -------------------------------------")
-            // console.log("FILL offsets:",polyColor_1_offset+"%",polyColor_2_offset+"%",polyColor_3_offset+"%")
 
             for (var i = 0, length = strokeGradient_stops.length; i < length; i++) {
                 var stop = document.createElementNS(svgns, 'stop');
                 stop.setAttribute('offset', strokeGradient_stops[i].offset);
                 stop.setAttribute('stop-color', strokeGradient_stops[i].color);
                 strokeGradient.appendChild(stop);
-                // console.log("FILL STOP offsets:",strokeGradient_stops[i].offset+"%",strokeGradient_stops[i].color)
 
             }
 
@@ -852,7 +842,6 @@ function drawTree(branch_angle, rotation) {
         linecolors = colors2[cycle_colors]
         mLINEcolor[order] = linecolors[order]
 
-        // console.log(linecolors)
 
         mLINEdefs[order]    = document.createElementNS(svgns, 'defs');
         mLINEgradient[order]= document.createElementNS(svgns, 'radialGradient');
@@ -890,7 +879,6 @@ function drawTree(branch_angle, rotation) {
         //         //? DOESN'T WORK HERE
         //         nx2 = Math.cos(deg2rad(angle) * rad + nx1);
         //         ny2 = Math.sin(deg2rad(angle) * rad + ny1);
-        //         console.log("nx2",nx2,"angle",angle,"rad",rad);
 
         //     }
         // }
@@ -1128,8 +1116,8 @@ class Tree {
         if (clock_mode > 0) {adjr=90;} //? start 0h at bottom.
 
 
-        var newangleLEFT  = ((angle * genangLEFT[realgen])  % 360) + rotation+adjr;
-        var newangleRIGHT = ((angle * genangRIGHT[realgen]) % 360) - rotation+adjr;
+        var newangleLEFT  = (((angle * genangLEFT[realgen]) ) + rotation+adjr)%360;
+        var newangleRIGHT = (((angle * genangRIGHT[realgen]) ) - rotation+adjr)%360;
 
         maxlengths = [0, 0, 0, 0, 0, 0]  //reset
         for (let i = 0; i < pre_maxlengths.length; i++) {
@@ -1197,6 +1185,9 @@ class Tree {
 
             //<!--  generate a tree beginning at the right/left node, with a lower depth and new start angle -->               
 
+            //? save line angle for later (clock)
+            line_angles[realgen] = newangleLEFT;
+
             this.left_tree = new Tree(
                     gens - 1,
                     maxlengths[realgen],
@@ -1205,6 +1196,7 @@ class Tree {
                     newangleLEFT,
                     rotation
             );
+
 
             this.right_tree = new Tree(
                     gens - 1,
@@ -1698,23 +1690,29 @@ function putMarker(x,y,style) {
     let marker_gradient = document.createElementNS(svgns, 'radialGradient');
     let marker_circle = document.createElementNS(svgns, 'circle');
 
-    let marker_color = "white";
+    let marker_color = false;
     let radius = 6;
 
-    if (style == 4) { //? every 30 && !60 degrees
-        marker_color = "white";
+    let cidx1 = parseInt((line_angles[0] - 90 + 360 )%360);
+    let cidx2 = parseInt((line_angles[1] - 90 + 360 )%360);
+    let cidx3 = parseInt((line_angles[2] - 90 + 360 )%360);
+    let cidx4 = parseInt((line_angles[3] - 90 + 360 )%360);
+
+
+    if (style == 4) { //? every 15 degrees
+        marker_color = colors360[cidx4];//"white";
         radius = 3;
     }
     if (style == 3) { //? every 30 && !60 degrees
-        marker_color = "cyan";
+        marker_color = colors360[cidx3];//"cyan";
         radius = 6;
     }
     if (style == 2) { //? every 60 degrees
-        marker_color = "red";
-        radius = 9; 
+        marker_color = colors360[cidx2];//"red";
+        radius = 7; 
     }
     if (style == 1) { //? every 0 
-        marker_color = "white";
+        marker_color = colors360[cidx1];//"white";
         radius = 12;
     }
 
@@ -1891,7 +1889,6 @@ function putClock(x1,y1,x2,y2,idx,offset) { //@ loop
             // let tmpt = clock_angle[idx]-90; 
             // if (clock_angle[idx] < 0) {clock_angle[idx] = clock_angle[idx]+360;}
             t_time[i] = Math.floor((clock_angle[idx]/360)*6)%6; 
-            // console.log(idx,clock_angle[idx])
         }
     }
 
@@ -1992,7 +1989,6 @@ function writGrid(args) {
             mCols = menuAltCols
         }
         wTL({'str': args[i], 'row': rnum, 'col': mCols[i],});
-        // console.log("mCols:",mCols[i],i)
     }}
 //! ┌───────────────────────────────────────────────
 //! │ wtite text from left->right in grod format
@@ -2474,7 +2470,11 @@ function HSVtoRGB(h, s, v) { //? excpects h,s,v to be in range from 0...1
             r = v, g = p, b = q;
             break;
     }
-    return "#" + Math.round(r * 255).toString(16) + Math.round(g * 255).toString(16) + Math.round(b * 255).toString(16);}
+    return "#" 
+        + Math.round(r * 255).toString(16).padStart(2,'0') 
+        + Math.round(g * 255).toString(16).padStart(2,'0') 
+        + Math.round(b * 255).toString(16).padStart(2,'0');
+    }
 //! ┌───────────────────────────────────────────────
 //! │ Convert HSV to RGB
 //! └───────────────────────────────────────────────
@@ -2580,7 +2580,6 @@ function CiR(number, amin, amax, invert = 0) {
 //    for (let i = amin; i<amax;i++) { curveAry.push(i) }
 //    for (let i = amin; i<amax;i++) { curveAry.push(amax) }
 //
-////        console.log(curveAry.length)
 //    cary = []
 //    for (let i = 0; i<curveAry.length-4;i++) {
 //        avg = (curveAry[i]+ curveAry[i+1]+ curveAry[i+2]+ curveAry[i+3]+ curveAry[i+4]+ curveAry[i+5])/6;
@@ -2595,7 +2594,6 @@ function CiR(number, amin, amax, invert = 0) {
 //    for (let i=cary.length/2 ; i<cary.length ; i++) {
 //        cary2.push(parseInt(cary[i]))
 //    }
-//    console.log(cary2)
 
 //@ e.g, CiR(45, 3, 20, invert = 0)
 //@                    ((5-0) / (20-0 )) * (20-3) + 3
@@ -2969,7 +2967,6 @@ function initSound(state) {
 //! └───────────────────────────────────────────────
 function playSound_0(v1, dv) {
     if (sound_initialized == 1) {
-        //console.log("PLAY SOUND",tree_counter)
         var osc = context.createOscillator()
         var gain = context.createGain()
 
@@ -2987,7 +2984,6 @@ function playSound_0(v1, dv) {
 
         setTimeout(function () {
             osc.stop();
-            //console.log("killed oscillator")
         }, v1 * 2 * 2 * 1000);
     }}
 //! ┌───────────────────────────────────────────────
@@ -2999,7 +2995,6 @@ function playSound_1(v1, dv) {
         var osc = context.createOscillator()
         var gain = context.createGain()
         let x = Math.abs((parseInt(notes[v1] / dv) * 1000) / 1000)
-        // console.log(x)
         osc.frequency.value = x;// A note
         osc.start(0);
         osc.connect(gain);
@@ -3016,7 +3011,6 @@ function playSound_1(v1, dv) {
 
         setTimeout(function () {
             osc.stop();
-            //console.log("killed oscillator")
         }, dnt * 1000);
     }}
 //! ┌───────────────────────────────────────────────
@@ -3044,7 +3038,6 @@ function playSound_2() {
 //! └───────────────────────────────────────────────
 function playSound_1(v1, dv) {
     if (sound_initialized == 1) {
-        //console.log("PLAY SOUND",tree_counter)
         var osc = context.createOscillator()
         var gain = context.createGain()
         let x = Math.abs((parseInt(notes[v1] / dv) * 1000) / 1000)
@@ -3065,7 +3058,6 @@ function playSound_1(v1, dv) {
 
         setTimeout(function () {
             osc.stop();
-            //console.log("killed oscillator")
         }, dnt * 1000);
     }}
 //! ┌───────────────────────────────────────────────
